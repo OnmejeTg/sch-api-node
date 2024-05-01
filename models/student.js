@@ -141,6 +141,10 @@ studentSchema.methods.verifyPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+studentSchema.methods.fullName =  function (){
+  return `${this.surname} ${this.othernames}`
+}
+
 const Student = mongoose.model("Student", studentSchema);
 
 export default Student;

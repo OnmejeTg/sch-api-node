@@ -1,5 +1,62 @@
 import Student from "../../models/student.js";
 
+//LOGIN
+const login = async (req, res) => {
+  // Step 1: Data Validation
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Both username and password are required.",
+    });
+  }
+
+  try {
+    // Step 2: Find the student in the database
+    const student = await Student.findOne({ admissionId: username });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    // Step 3: Verify password
+    const isPasswordValid = await student.verifyPassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+    }
+
+    // Step 4: Respond with successful login
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      student: {
+        id: student._id,
+        username: student.fullName(),
+        // Include other necessary student information here
+      },
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred during login.",
+    });
+  }
+};
+
+//LOGOUT
+const logout = async (req, res) => {
+  console.log("logout");
+};
+
+//Create
 const registerStudent = async (req, res) => {
   try {
     // Destructure required fields from request body
@@ -61,7 +118,8 @@ const registerStudent = async (req, res) => {
   }
 };
 
-const getStudent = async (req, res) => {
+//Get all students
+const getStudents = async (req, res) => {
   try {
     // Fetch all students from the database
     const students = await Student.find();
@@ -83,4 +141,4 @@ const getStudent = async (req, res) => {
   }
 };
 
-export { registerStudent, getStudent };
+export { registerStudent, getStudents, login, logout };

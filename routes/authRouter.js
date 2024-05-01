@@ -1,10 +1,18 @@
 import express from "express";
-import { login, logout } from "../controllers/auth/AuthControllers.js";
+import {
+  createUser,
+  getUser,
+  updateUser,
+  deleteUser,
+  getAllUsers,
+} from "../controllers/auth/AuthControllers.js";
 
 const authRouter = express.Router();
 
-authRouter.get("/login", login);
-authRouter.get("/logout", logout);
-
+authRouter.post("/create", createUser);
+authRouter.get("/user/:id", getUser);
+authRouter.put("/update/:id", updateUser);
+authRouter.delete("/delete/:id", deleteUser);
+authRouter.get("/all-users", getAllUsers);
 
 export default authRouter;
