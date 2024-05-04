@@ -1,6 +1,8 @@
 import Student from "../../models/student.js";
+import User from "../../models/user.js";
+import { generateStudentID, isValidUserData } from "../../utils/studentUtils.js";
 
-//LOGIN
+//*******************LOGIN*******************
 const login = async (req, res) => {
   // Step 1: Data Validation
   const { username, password } = req.body;
@@ -51,12 +53,12 @@ const login = async (req, res) => {
   }
 };
 
-//LOGOUT
+//*****************************LOGOUT*****************************
 const logout = async (req, res) => {
   console.log("logout");
 };
 
-//Create
+//***********************Create Student*********************
 const registerStudent = async (req, res) => {
   try {
     // Destructure required fields from request body
@@ -64,7 +66,6 @@ const registerStudent = async (req, res) => {
       surname,
       othernames,
       email,
-      password,
       classLevels,
       dateOfBirth,
       sex,
@@ -79,14 +80,60 @@ const registerStudent = async (req, res) => {
       religion,
     } = req.body;
 
-    // Create a new instance of Student model
+    // Check if required fields are present
+    if (!isValidUserData(req.body)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid user data. Please provide a surname, othernames, and email.",
+      });
+    }
+
+    // Generate admission ID
+    const admissionId = generateStudentID(surname);
+
+    // Check if a student with the provided email or admission ID already exists
+    const existingStudent = await Student.findOne({
+      $or: [{ email }, { admissionId }],
+    });
+    if (existingStudent) {
+      let errorMessage;
+      if (existingStudent.email === email) {
+        errorMessage = "A student with the same email already exists";
+      } else {
+        errorMessage = "A student with the same admission ID already exists";
+      }
+      return res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+    }
+
+    // Create authentication user
+    const authUser = new User({
+      username: admissionId,
+      password: surname.toLowerCase(),
+    });
+
+    try {
+      // Save authentication user
+      await authUser.save();
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to save authentication user",
+        error: error.message,
+      });
+    }
+    // Create student object
     const student = new Student({
+      authUser,
       surname,
       othernames,
       entrySession,
       email,
-      password,
       dateOfBirth,
+      admissionId,
       sex,
       dateOfAdmission,
       parentSurname,
@@ -98,19 +145,30 @@ const registerStudent = async (req, res) => {
       religion,
     });
 
-    // Save the student instance to the database
-    const savedStudent = await student.save();
+    try {
+      // Save student to database
+      const savedStudent = await student.save();
 
-    // Respond with success message and the saved student data
-    res.status(201).json({
-      success: true,
-      message: "Student registered successfully",
-      data: savedStudent,
-    });
+      // Respond with success message and the saved student data
+      return res.status(201).json({
+        success: true,
+        message: "Student registered successfully",
+        data: savedStudent,
+      });
+    } catch (error) {
+      // Delete the authentication user created for the new student
+      await User.deleteOne({ username: admissionId });
+
+      console.error("Error saving student:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to save student",
+        error: error.message,
+      });
+    }
   } catch (error) {
-    // Handle errors
     console.error("Error registering student:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to register student",
       error: error.message,
@@ -118,7 +176,8 @@ const registerStudent = async (req, res) => {
   }
 };
 
-//Get all students
+
+//******************Get all students******************************
 const getStudents = async (req, res) => {
   try {
     // Fetch all students from the database

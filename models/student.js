@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 const studentSchema = new mongoose.Schema({
+  authUser:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+
+  },
   surname: {
     type: String,
     required: true,
@@ -10,25 +16,10 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
   admissionId: {
     type: String,
     required: true,
-    default: function () {
-      return (
-        "STU" +
-        Math.floor(100 + Math.random() * 900) +
-        Date.now().toString().slice(2, 4) +
-        this.surname
-          .split(" ")
-          .map((name) => name[0])
-          .join("")
-          .toUpperCase()
-      );
-    },
+    unique: true,
   },
   role: {
     type: String,
@@ -106,7 +97,10 @@ const studentSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    lowercase: true, // Ensures email is stored in lowercase
+    match: /^\S+@\S+\.\S+$/,
+    minLength:3,
+    unique: true
   },
 
   healthStatus: {
@@ -126,20 +120,7 @@ const studentSchema = new mongoose.Schema({
   }
 });
 
-studentSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
 
-  try {
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
-studentSchema.methods.verifyPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
 
 studentSchema.methods.fullName =  function (){
   return `${this.surname} ${this.othernames}`

@@ -1,4 +1,5 @@
-import User from "../../models/users.js";
+import User from "../../models/user.js";
+import { isValidUserData } from "../../utils/authUtils.js";
 
 //CREATE USER
 const createUser = async (req, res) => {
@@ -147,8 +148,5 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const isValidUserData = (userData) => {
-  return userData && userData.username && userData.password;
-};
 
 export { createUser, getUser, updateUser, deleteUser, getAllUsers};

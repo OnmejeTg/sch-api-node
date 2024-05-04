@@ -18,13 +18,6 @@ const userSchema = new mongoose.Schema({
   othernames: {
     type: String,
   },
-  email: {
-    type: String,
-    unique: true,
-    lowercase: true, // Ensures email is stored in lowercase
-    match: /^\S+@\S+\.\S+$/,
-    minLength:3
-  },
   active: {
     type: Boolean,
     default: true,
@@ -55,27 +48,6 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.verifyPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
-
-// Method to get full name
-// Method to get full name
-userSchema.methods.getFullName = function () {
-    let fullName = "";
-  
-    // Check if surname and othernames are present
-    if (this.surname) {
-      fullName += this.surname;
-    }
-    
-    if (this.othernames) {
-      if (fullName.length > 0) {
-        fullName += " ";
-      }
-      fullName += this.othernames;
-    }
-  
-    // Return full name
-    return fullName || "Unknown";
-  };
   
 
 // Create model
