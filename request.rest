@@ -1,0 +1,19 @@
+GET http://localhost:3100/api/v2/auth/all-users
+
+
+###
+POST http://localhost:3100/api/v2/student/login
+Content-Type: application/json
+
+{
+    "username":"STU85414S",
+    "password":"sammy"
+}
+
+###
+POST http://localhost:3100/api/v2/auth/refresh
+Content-Type: application/json
+{
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzYwYTViN2YxMTMyY2Y3MWE3NGY2OCIsInVzZXJuYW1lIjoiU2FtbXkgRG9lIiwiaWF0IjoxNzE0OTkzMTg0fQ.M09EMvOyn3ldLGZJoesESHq8E7NSjQ5JLLZFHZ9Nb_k"
+
+}

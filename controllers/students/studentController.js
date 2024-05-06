@@ -1,6 +1,10 @@
 import Student from "../../models/student.js";
 import User from "../../models/user.js";
-import { generateStudentID, isValidUserData } from "../../utils/studentUtils.js";
+import {
+  generateStudentID,
+  isValidUserData,
+} from "../../utils/studentUtils.js";
+import { generateAccessToken, generateRefreshToken } from "../../utils/authUtils.js";
 
 //*******************LOGIN*******************
 const login = async (req, res) => {
@@ -23,9 +27,9 @@ const login = async (req, res) => {
         message: "Student not found",
       });
     }
-
     // Step 3: Verify password
-    const isPasswordValid = await student.verifyPassword(password);
+    const authUser = await User.findById(student.authUser);
+    const isPasswordValid = await authUser.verifyPassword(password);
 
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -34,15 +38,22 @@ const login = async (req, res) => {
       });
     }
 
+    const payLoad = {
+      id: student._id,
+      username: student.fullName(),
+    };
+
+    const accessToken = generateAccessToken(payLoad);
+    const refreshToken = generateRefreshToken(payLoad);
+
+    //TODO: save the refresh token to a separate table (userid and refresh token)
+
     // Step 4: Respond with successful login
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      student: {
-        id: student._id,
-        username: student.fullName(),
-        // Include other necessary student information here
-      },
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -175,7 +186,6 @@ const registerStudent = async (req, res) => {
     });
   }
 };
-
 
 //******************Get all students******************************
 const getStudents = async (req, res) => {

@@ -1,5 +1,10 @@
 import User from "../../models/user.js";
 import { isValidUserData } from "../../utils/authUtils.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+import { generateAccessToken } from "../../utils/authUtils.js";
+
 
 //CREATE USER
 const createUser = async (req, res) => {
@@ -79,19 +84,17 @@ const updateUser = async (req, res) => {
       new: true,
     });
     if (!updatedUser) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
     return res.status(200).json({
       success: true,
       message: "User updated",
       data: updatedUser,
     });
-  
   } catch (error) {
-
     console.error("Error updating user:", error);
     return res.status(500).json({
       success: false,
@@ -102,7 +105,6 @@ const updateUser = async (req, res) => {
 };
 
 //DELETE USER
-
 const deleteUser = async (req, res) => {
   const userId = req.params.id;
 
@@ -148,5 +150,43 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+//REFRESH TOKEN
+const refreshToken = (req, res) => {
+  const refreshToken = req.body.refreshToken;
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: "No refresh token provided",
+    });
+  }
+  //TODO: if user and refresh token exists in the refresh token table
+  //
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid refresh token",
+      });
+    }
+    const payLoad = {
+      id: user._id,
+      username: user.username,
+    };
+    const accessToken = generateAccessToken(payLoad);
+    return res.json({
+      success: true,
+      message: "Token refreshed successfully",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    });
+  });
+};
 
-export { createUser, getUser, updateUser, deleteUser, getAllUsers};
+export {
+  createUser,
+  getUser,
+  updateUser,
+  deleteUser,
+  getAllUsers,
+  refreshToken,
+};
