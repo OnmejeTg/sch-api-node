@@ -17,3 +17,19 @@ Content-Type: application/json
       "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzYwYTViN2YxMTMyY2Y3MWE3NGY2OCIsInVzZXJuYW1lIjoiU2FtbXkgRG9lIiwiaWF0IjoxNzE0OTkzMTg0fQ.M09EMvOyn3ldLGZJoesESHq8E7NSjQ5JLLZFHZ9Nb_k"
 
 }
+
+###
+POST http://localhost:3100/api/v2/admin/create-admin
+Content-Type: application/json
+
+{
+    "username":"admin",
+    "password":"password",
+    "surname":"John",
+    "othername":"Doe",
+    "email":"doe@example.com"
+
+}
+
+###
+GET http://localhost:3100/api/v2/admin/all-admin

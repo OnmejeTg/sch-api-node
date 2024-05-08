@@ -124,6 +124,7 @@ const registerStudent = async (req, res) => {
     const authUser = new User({
       username: admissionId,
       password: surname.toLowerCase(),
+      userType:"student"
     });
 
     try {

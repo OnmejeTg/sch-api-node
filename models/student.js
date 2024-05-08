@@ -21,10 +21,6 @@ const studentSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  role: {
-    type: String,
-    default: "student",
-  },
   classLevels: [
     {
       type: mongoose.Schema.Types.ObjectId,
