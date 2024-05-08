@@ -37,7 +37,7 @@ const adminSchema = new mongoose.Schema({
 });
 
 adminSchema.methods.fullName =  function (){
-  return `${this.surname} ${this.othernames}`
+  return `${this.surname} ${this.othername}`
 }
 
 const Admin = mongoose.model("Admin", adminSchema);

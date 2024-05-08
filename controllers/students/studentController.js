@@ -241,7 +241,7 @@ const getStudent = async (req, res) => {
 };
 
 const updateStudent = async (req, res) => {
-  const studentId = req.params.id;
+  const studentId = req.user.id;
   const updateData = req.body;
 
   try {

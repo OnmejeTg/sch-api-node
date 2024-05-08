@@ -8,7 +8,7 @@ import {
   updateStudent,
   deleteStudent
 } from "../controllers/students/studentController.js";
-import { isAdmin } from "../middleware/auth.js";
+import { isAdmin, isLoggedin } from "../middleware/auth.js";
 
 const studentRouter = express.Router();
 
@@ -17,7 +17,7 @@ studentRouter.post("/logout", logout);
 studentRouter.post("/register", registerStudent);
 studentRouter.get("/all", isAdmin, getStudents);
 studentRouter.get("/get/:id", isAdmin, getStudent);
-studentRouter.put("/update/:id", isAdmin, updateStudent);
+studentRouter.put("/update/:id", isLoggedin, updateStudent);
 studentRouter.delete("/delete/:id", isAdmin, deleteStudent);
 
 export default studentRouter;

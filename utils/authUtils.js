@@ -8,7 +8,7 @@ const isValidUserData = (userData) => {
 
 const generateAccessToken = (payLoad) => {
   return jwt.sign(payLoad, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "10minutes",
+    expiresIn: "60minutes",
   });
 };
 
