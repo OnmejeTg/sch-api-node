@@ -41,6 +41,7 @@ const login = async (req, res) => {
     const payLoad = {
       id: student._id,
       username: student.fullName(),
+      userType:authUser.userType
     };
 
     const accessToken = generateAccessToken(payLoad);

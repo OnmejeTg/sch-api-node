@@ -1,14 +1,39 @@
+
 GET http://localhost:3100/api/v2/auth/all-users
 
+###
+POST http://localhost:3100/api/v2/student/register
+Content-Type: application/json
+
+{
+     "surname": "Sammy",
+      "othernames":"Doe",
+     "email":"xyz@email12.com",
+      "classLevels":"",
+      "dateOfBirth":"2022-09-11",
+      "sex":"male",
+      "parentSurname":"James",
+      "parentOthernames":"Doew",
+      "parentOccupation":"DEV",
+      "phone":"09087652333",
+      "address":"Home",
+      "healthStatus":"Healthy",
+      "religion":"Christainity",
+      "entrySession":"2023/2024"
+}
 
 ###
 POST http://localhost:3100/api/v2/student/login
 Content-Type: application/json
 
 {
-    "username":"STU85414S",
+    "username":"STU51715S",
     "password":"sammy"
 }
+
+###
+GET http://localhost:3100/api/v2/student/all-students
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTY2MDA2LCJleHAiOjE3MTUxNjY2MDZ9.o0hsjZISnF1tz7MKd4_ptraypk8Y5fz8uej9Qx6qvM4
 
 ###
 POST http://localhost:3100/api/v2/auth/refresh
@@ -23,13 +48,37 @@ POST http://localhost:3100/api/v2/admin/create-admin
 Content-Type: application/json
 
 {
-    "username":"admin",
+    "username":"xyz",
     "password":"password",
     "surname":"John",
     "othername":"Doe",
-    "email":"doe@example.com"
+    "email":"xyz@example.com"
 
 }
 
 ###
 GET http://localhost:3100/api/v2/admin/all-admin
+
+
+###
+PUT http://localhost:3100/api/v2/admin/update-admin/65f6ec2ea188a6d614f60173
+Content-Type: application/json
+
+{
+    "username":"adminUpdated"
+}
+
+###
+DELETE http://localhost:3100/api/v2/admin/delete-admin/663b430b3278afd855251b84
+
+###
+GET http://localhost:3100/api/v2/admin/get-admin/663b4129108cb5e008e4fcfb
+
+###
+POST http://localhost:3100/api/v2/admin/login
+Content-Type: application/json
+
+{
+    "username":"xyz",
+    "password":"password"
+}
