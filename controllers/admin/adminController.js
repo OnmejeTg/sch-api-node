@@ -1,4 +1,5 @@
 import Admin from "../../models/admin.js";
+import Student from "../../models/student.js";
 import User from "../../models/user.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/authUtils.js";
 
@@ -219,5 +220,39 @@ const login = async (req, res) => {
   }
 };
 
+const adminUpdateStudent = async (req, res) =>{
+  const studentId = req.params.id
+  const updateData = req.body;
+  
 
-export { createAdmin, getAllAdmins, deleteAdmin, updateAdmin, getAdmin, login };
+  try {
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      updateData,
+      {
+        new: true,
+      }
+    );
+    if (!updatedStudent) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Student updated successfully",
+      data: updatedStudent,
+    });
+  } catch (error) {
+    console.error("Failed to update student:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+}
+
+
+export { createAdmin, getAllAdmins, deleteAdmin, updateAdmin, getAdmin, login, adminUpdateStudent };

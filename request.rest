@@ -1,6 +1,6 @@
 
 GET http://localhost:3100/api/v2/auth/all
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTc0NTAwLCJleHAiOjE3MTUxNzgxMDB9.29_8yjNkJFNPkIku3c5BRCWT--DDQPrWxcgotQdKOXw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjAwNzc3LCJleHAiOjE3MTUyMDQzNzd9.stQ6JMIKCokEqVeJfBf-0LMReX9iKEwh6AWgQGN8Ro8
 
 
 ###
@@ -41,7 +41,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkO
 
 ###
 GET http://localhost:3100/api/v2/student/all
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTc0NTAwLCJleHAiOjE3MTUxNzgxMDB9.29_8yjNkJFNPkIku3c5BRCWT--DDQPrWxcgotQdKOXw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjAwNzc3LCJleHAiOjE3MTUyMDQzNzd9.stQ6JMIKCokEqVeJfBf-0LMReX9iKEwh6AWgQGN8Ro8
 
 ###
 PUT http://localhost:3100/api/v2/student/update/66360a5b7f1132cf71a74f68
@@ -87,12 +87,21 @@ GET http://localhost:3100/api/v2/admin/all
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTc0NTAwLCJleHAiOjE3MTUxNzgxMDB9.29_8yjNkJFNPkIku3c5BRCWT--DDQPrWxcgotQdKOXw
 
 ###
-PUT http://localhost:3100/api/v2/admin/update-admin/65f6ec2ea188a6d614f60173
+PUT http://localhost:3100/api/v2/admin/update/65f6ec2ea188a6d614f60173
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTY2ODY3LCJleHAiOjE3MTUxNjc0Njd9.CnRGk-rxXBg5D0jAn7wNXZ_nMqe4QkPSoBpz5SefC0M
 
 {
     "username":"adminUpdated"
+}
+
+###
+PUT http://localhost:3100/api/v2/admin/update-student/663be395bae9c8a1fe857d97
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjAwNzc3LCJleHAiOjE3MTUyMDQzNzd9.stQ6JMIKCokEqVeJfBf-0LMReX9iKEwh6AWgQGN8Ro8
+
+{
+    "surname":"StudentUpdated"
 }
 
 ###
