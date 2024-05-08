@@ -4,7 +4,10 @@ import {
   generateStudentID,
   isValidUserData,
 } from "../../utils/studentUtils.js";
-import { generateAccessToken, generateRefreshToken } from "../../utils/authUtils.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../utils/authUtils.js";
 
 //*******************LOGIN*******************
 const login = async (req, res) => {
@@ -41,7 +44,7 @@ const login = async (req, res) => {
     const payLoad = {
       id: student._id,
       username: student.fullName(),
-      userType:authUser.userType
+      userType: authUser.userType,
     };
 
     const accessToken = generateAccessToken(payLoad);
@@ -125,7 +128,7 @@ const registerStudent = async (req, res) => {
     const authUser = new User({
       username: admissionId,
       password: surname.toLowerCase(),
-      userType:"student"
+      userType: "student",
     });
 
     try {
@@ -212,4 +215,101 @@ const getStudents = async (req, res) => {
   }
 };
 
-export { registerStudent, getStudents, login, logout };
+const getStudent = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "student not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "student found",
+      data: student,
+    });
+  } catch (error) {
+    console.error("Error getting student:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get student",
+      error: error.message,
+    });
+  }
+};
+
+const updateStudent = async (req, res) => {
+  const studentId = req.params.id;
+  const updateData = req.body;
+
+  try {
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      updateData,
+      {
+        new: true,
+      }
+    );
+    if (!updatedStudent) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Student updated successfully",
+      data: updatedStudent,
+    });
+  } catch (error) {
+    console.error("Failed to update student:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+const deleteStudent = async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+    const authUserId = student.authUser;
+
+    await Promise.all([
+      User.findByIdAndDelete(authUserId),
+      Student.deleteOne({ _id: studentId }),
+    ]);
+
+    res.json({
+      success: true,
+      message: "Student deleted successfully",
+    });
+  } catch (error) {
+    console.error("Failed to delete student:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+export {
+  registerStudent,
+  getStudents,
+  login,
+  logout,
+  getStudent,
+  updateStudent,
+  deleteStudent,
+};

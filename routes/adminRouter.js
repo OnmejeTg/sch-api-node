@@ -11,11 +11,11 @@ import { isAdmin } from "../middleware/auth.js";
 
 const adminRouter = express.Router();
 
-adminRouter.post("/create-admin", isAdmin, createAdmin);
-adminRouter.get("/all-admin", isAdmin, getAllAdmins);
-adminRouter.delete("/delete-admin/:adminId", isAdmin, deleteAdmin);
-adminRouter.put("/update-admin/:adminId", isAdmin, updateAdmin);
-adminRouter.get("/get-admin/:adminId", isAdmin, getAdmin);
+adminRouter.post("/create", isAdmin, createAdmin);
+adminRouter.get("/all", isAdmin, getAllAdmins);
+adminRouter.delete("/delete/:adminId", isAdmin, deleteAdmin);
+adminRouter.put("/update/:adminId", isAdmin, updateAdmin);
+adminRouter.get("/get/:adminId", isAdmin, getAdmin);
 adminRouter.post("/login", login);
 
 export { adminRouter };

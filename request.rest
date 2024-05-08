@@ -23,6 +23,15 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:3100/api/v2/student/get-student/66360a5b7f1132cf71a74f68
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTcyMjQ4LCJleHAiOjE3MTUxNzI4NDh9.XB7QUyJAoQE3OspSW4AcHrtKQpEGWTX5Zx01eC4Ee3A
+
+
+###
+GET http://localhost:3100/api/v2/student/all-students
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTcyMjQ4LCJleHAiOjE3MTUxNzI4NDh9.XB7QUyJAoQE3OspSW4AcHrtKQpEGWTX5Zx01eC4Ee3A
+
+###
 POST http://localhost:3100/api/v2/student/login
 Content-Type: application/json
 
@@ -31,9 +40,6 @@ Content-Type: application/json
     "password":"sammy"
 }
 
-###
-GET http://localhost:3100/api/v2/student/all-students
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTY2MDA2LCJleHAiOjE3MTUxNjY2MDZ9.o0hsjZISnF1tz7MKd4_ptraypk8Y5fz8uej9Qx6qvM4
 
 ###
 POST http://localhost:3100/api/v2/auth/refresh

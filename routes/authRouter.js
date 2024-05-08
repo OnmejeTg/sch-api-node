@@ -15,7 +15,7 @@ authRouter.post("/create", isAdmin, createUser);
 authRouter.get("/user/:id", isAdmin,  getUser);
 authRouter.put("/update/:id", isAdmin, updateUser);
 authRouter.delete("/delete/:id", isAdmin, deleteUser);
-authRouter.get("/all-users", isAdmin, getAllUsers);
+authRouter.get("/all", isAdmin, getAllUsers);
 authRouter.post("/refresh", refreshToken)
 
 export default authRouter;
