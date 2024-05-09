@@ -224,7 +224,6 @@ const adminUpdateStudent = async (req, res) =>{
   const studentId = req.params.id
   const updateData = req.body;
   
-
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
       studentId,

@@ -1,6 +1,14 @@
 
 GET http://localhost:3100/api/v2/auth/all
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjAwNzc3LCJleHAiOjE3MTUyMDQzNzd9.stQ6JMIKCokEqVeJfBf-0LMReX9iKEwh6AWgQGN8Ro8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+###
+GET http://localhost:3100/api/v2/auth/user/663ca809168cc984d0e4aab9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjUwNTEyLCJleHAiOjE3MTUyNTQxMTJ9.i4CRyN7WzM0ix8IQAGaYdnBtf4W44I3sLaTGpgo55Ko
+
+###
+DELETE  http://localhost:3100/api/v2/auth/delete/663d46ae99c177e7eb6b3f3a
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
 
 ###
@@ -21,7 +29,7 @@ Content-Type: application/json
 {
      "surname": "Sammy",
       "othernames":"Doe",
-     "email":"xyz@email12.com",
+     "email":"myemail@gmail.com",
       "classLevels":"",
       "dateOfBirth":"2022-09-11",
       "sex":"male",
@@ -41,7 +49,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkO
 
 ###
 GET http://localhost:3100/api/v2/student/all
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjAwNzc3LCJleHAiOjE3MTUyMDQzNzd9.stQ6JMIKCokEqVeJfBf-0LMReX9iKEwh6AWgQGN8Ro8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
 ###
 PUT http://localhost:3100/api/v2/student/update/66360a5b7f1132cf71a74f68
@@ -53,8 +61,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkO
 }
 
 ###
-DELETE  http://localhost:3100/api/v2/student/delete/663b53ee58191902c04ea42b
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTc0NTAwLCJleHAiOjE3MTUxNzgxMDB9.29_8yjNkJFNPkIku3c5BRCWT--DDQPrWxcgotQdKOXw
+DELETE  http://localhost:3100/api/v2/student/delete/663d46ae99c177e7eb6b3f3a
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
 ###
 POST http://localhost:3100/api/v2/student/login

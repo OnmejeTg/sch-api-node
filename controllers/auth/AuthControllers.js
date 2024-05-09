@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 import { generateAccessToken } from "../../utils/authUtils.js";
-
+import Student from "../../models/student.js";
+import mongoose from 'mongoose';
+import Admin from "../../models/admin.js";
 
 //CREATE USER
 const createUser = async (req, res) => {
@@ -106,30 +108,28 @@ const updateUser = async (req, res) => {
 
 //DELETE USER
 const deleteUser = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.params.userId;
 
   try {
-    const deletedUser = await User.findByIdAndDelete(userId);
-    if (!deletedUser) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+    // Use Promise.all to perform parallel deletion of related documents
+    const [user] = await Promise.all([
+      User.findByIdAndDelete(userId),
+      Admin.deleteMany({ authUser: userId }),
+      Student.deleteMany({ authUser: userId })
+      // Add more delete operations for other related models if needed
+    ]);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-    return res.status(200).json({
-      success: true,
-      message: "User deleted",
-      data: deletedUser,
-    });
+
+    return res.status(200).json({ message: "User and all linked instances deleted successfully" });
   } catch (error) {
-    console.error("Error deleting user:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to delete user",
-      error: error.message,
-    });
+    console.log(error);
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 //GET ALL USERS
 const getAllUsers = async (req, res) => {
