@@ -10,7 +10,6 @@ const subjectSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
     },
     teacher: {
       type: Schema.Types.ObjectId,
@@ -28,7 +27,6 @@ const subjectSchema = new Schema(
     },
     duration: {
       type: String,
-      required: true,
       default: "3 months",
     },
   },

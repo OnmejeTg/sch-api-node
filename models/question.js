@@ -33,6 +33,10 @@ const questionSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    mark: {
+      type: String,
+      default: 1,
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "Teacher",

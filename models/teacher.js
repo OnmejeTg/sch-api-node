@@ -1,15 +1,20 @@
 const mongoose = require("mongoose");
 const teacherSchema = new mongoose.Schema(
   {
-    name: {
+    authUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    surname: {
+      type: String,
+      required: true,
+    },
+    othername: {
       type: String,
       required: true,
     },
     email: {
-      type: String,
-      required: true,
-    },
-    password: {
       type: String,
       required: true,
     },
@@ -42,10 +47,6 @@ const teacherSchema = new mongoose.Schema(
     isSuspended: {
       type: Boolean,
       default: false,
-    },
-    role: {
-      type: String,
-      default: "teacher",
     },
     subject: {
       type: mongoose.Schema.Types.ObjectId,
