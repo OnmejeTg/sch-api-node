@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
@@ -28,4 +28,4 @@ const academicTermSchema = new Schema(
 
 const AcademicTerm = mongoose.model("AcademicTerm", academicTermSchema);
 
-module.exports = AcademicTerm;
+export default AcademicTerm

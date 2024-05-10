@@ -22,4 +22,4 @@ adminRouter.put("/update-student/:id", isAdmin, adminUpdateStudent);
 adminRouter.put("/update-teacher/:id", isAdmin, adminUpdateTeacher);
 adminRouter.post("/login", login);
 
-export { adminRouter };
+export default adminRouter;

@@ -160,8 +160,12 @@ GET http://localhost:3100/api/v2/teacher/663e07bd3674ba06e0a17bd2
 
 ###
 PUT http://localhost:3100/api/v2/teacher/update
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2UxMDFhZmI0NDFmODQxOWE1ZWUxMyIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6InRlYWNoZXIiLCJpYXQiOjE3MTUzNDU2ODh9.sX-gj_DOWumA2-wAkXHDz4Na5Z82N0QYMCELaOlvuAo
+Content-Type: application/json
 
+{
+    "applicationStatus":"success"
+}
 ###
 DELETE  http://localhost:3100/api/v2/teacher/delete/663e0f21c6c5372ff1a437ce
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
@@ -174,3 +178,43 @@ Content-Type: application/json
     "username":"TEA12515J",
     "password":"john"
 }
+
+
+
+
+
+###
+POST http://localhost:3100/api/v2/acadmics/create-term
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+Content-Type: application/json
+
+{
+    "name":"first term",
+    "description":"description",
+    "duration":"3 months"
+}
+
+###
+GET  http://localhost:3100/api/v2/acadmics/all-terms
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+###
+GET  http://localhost:3100/api/v2/acadmics/get-term/663e22589970810883a5e295
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+###
+PUT  http://localhost:3100/api/v2/acadmics/update-term/663e22589970810883a5e295
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+Content-Type: application/json
+
+{
+    "name":"second term",
+    "description":"description",
+    "duration":"3 months"
+}
+
+###
+DELETE   http://localhost:3100/api/v2/acadmics/delete-term/663e228048b7b79af8f1f9ff
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+

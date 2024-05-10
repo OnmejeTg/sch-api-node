@@ -18,4 +18,4 @@ teacherRouter.put("/update", isTeacher, updateTeacher);
 teacherRouter.delete("/delete/:id", isAdmin, deleteTeacher);
 teacherRouter.post("/login", login);
 
-export { teacherRouter };
+export default teacherRouter;
