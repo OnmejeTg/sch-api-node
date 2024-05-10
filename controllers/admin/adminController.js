@@ -1,7 +1,11 @@
 import Admin from "../../models/admin.js";
 import Student from "../../models/student.js";
+import Teacher from "../../models/teacher.js";
 import User from "../../models/user.js";
-import { generateAccessToken, generateRefreshToken } from "../../utils/authUtils.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../utils/authUtils.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -91,7 +95,10 @@ const deleteAdmin = async (req, res) => {
 
     const authUserId = admin.authUser;
 
-    await Promise.all([User.findByIdAndDelete(authUserId), Admin.deleteOne({ _id: adminId })]);
+    await Promise.all([
+      User.findByIdAndDelete(authUserId),
+      Admin.deleteOne({ _id: adminId }),
+    ]);
 
     res.json({
       success: true,
@@ -161,7 +168,6 @@ const getAdmin = async (req, res) => {
   }
 };
 
-
 const login = async (req, res) => {
   // Step 1: Data Validation
   const { username, password } = req.body;
@@ -196,7 +202,7 @@ const login = async (req, res) => {
     const payLoad = {
       id: admin._id,
       username: admin.fullName(),
-      userType:authUser.userType
+      userType: authUser.userType,
     };
 
     const accessToken = generateAccessToken(payLoad);
@@ -220,10 +226,11 @@ const login = async (req, res) => {
   }
 };
 
-const adminUpdateStudent = async (req, res) =>{
-  const studentId = req.params.id
+//Admin update student information
+const adminUpdateStudent = async (req, res) => {
+  const studentId = req.params.id;
   const updateData = req.body;
-  
+
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
       studentId,
@@ -251,7 +258,49 @@ const adminUpdateStudent = async (req, res) =>{
       message: "Server error",
     });
   }
-}
+};
 
+//Admin update teacher information
+const adminUpdateTeacher = async (req, res) => {
+  const teacherId = req.params.id;
+  const updateData = req.body;
 
-export { createAdmin, getAllAdmins, deleteAdmin, updateAdmin, getAdmin, login, adminUpdateStudent };
+  try {
+    const updatedTeacher = await Teacher.findByIdAndUpdate(
+      teacherId,
+      updateData,
+      {
+        new: true,
+      }
+    );
+    if (!updatedTeacher) {
+      return res.status(404).json({
+        success: false,
+        message: "Teacher not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Teacher updated successfully",
+      data: updatedTeacher,
+    });
+  } catch (error) {
+    console.error("Failed to update teacher:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+export {
+  createAdmin,
+  getAllAdmins,
+  deleteAdmin,
+  updateAdmin,
+  getAdmin,
+  login,
+  adminUpdateStudent,
+  adminUpdateTeacher,
+};
