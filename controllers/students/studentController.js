@@ -79,7 +79,7 @@ const registerStudent = async (req, res) => {
     // Destructure required fields from request body
     const {
       surname,
-      othernames,
+      othername,
       email,
       classLevels,
       dateOfBirth,
@@ -87,7 +87,7 @@ const registerStudent = async (req, res) => {
       dateOfAdmission,
       entrySession,
       parentSurname,
-      parentOthernames,
+      parentOthername,
       parentOccupation,
       phone,
       address,
@@ -100,7 +100,7 @@ const registerStudent = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "Invalid user data. Please provide a surname, othernames, and email.",
+          "Invalid user data. Please provide a surname, othername, and email.",
       });
     }
 
@@ -145,7 +145,7 @@ const registerStudent = async (req, res) => {
     const student = new Student({
       authUser,
       surname,
-      othernames,
+      othername,
       entrySession,
       email,
       dateOfBirth,
@@ -153,7 +153,7 @@ const registerStudent = async (req, res) => {
       sex,
       dateOfAdmission,
       parentSurname,
-      parentOthernames,
+      parentOthername,
       parentOccupation,
       phone,
       address,

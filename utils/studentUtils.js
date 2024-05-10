@@ -13,7 +13,7 @@ const generateStudentID = function (surname) {
   };
   
   const isValidUserData = (userData) => {
-    return userData && userData.surname && userData.othernames && userData.email;
+    return userData && userData.surname && userData.othername && userData.email;
   };
   
 

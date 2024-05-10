@@ -28,13 +28,13 @@ Content-Type: application/json
 
 {
      "surname": "Sammy",
-      "othernames":"Doe",
+      "othername":"Doe",
      "email":"myemail@gmail.com",
       "classLevels":"",
       "dateOfBirth":"2022-09-11",
       "sex":"male",
       "parentSurname":"James",
-      "parentOthernames":"Doew",
+      "parentOthername":"Doew",
       "parentOccupation":"DEV",
       "phone":"09087652333",
       "address":"Home",

@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
   surname: {
     type: String,
   },
-  othernames: {
+  othername: {
     type: String,
   },
   active: {

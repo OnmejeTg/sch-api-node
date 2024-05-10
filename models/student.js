@@ -2,17 +2,16 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 const studentSchema = new mongoose.Schema({
-  authUser:{
+  authUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
-
+    required: true,
   },
   surname: {
     type: String,
     required: true,
   },
-  othernames: {
+  othername: {
     type: String,
     required: true,
   },
@@ -45,6 +44,14 @@ const studentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  academicYear: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AcademicYear",
+  },
+  program: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Program",
+  },
   sex: {
     type: String,
     required: true,
@@ -58,8 +65,8 @@ const studentSchema = new mongoose.Schema({
     default: Date.now(),
   },
   entrySession: {
-    type:String,
-    required: true
+    type: String,
+    required: true,
   },
   examResults: [
     {
@@ -75,7 +82,7 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  parentOthernames: {
+  parentOthername: {
     type: String,
     required: true,
   },
@@ -95,8 +102,8 @@ const studentSchema = new mongoose.Schema({
     type: String,
     lowercase: true, // Ensures email is stored in lowercase
     match: /^\S+@\S+\.\S+$/,
-    minLength:3,
-    unique: true
+    minLength: 3,
+    unique: true,
   },
 
   healthStatus: {
@@ -112,21 +119,17 @@ const studentSchema = new mongoose.Schema({
     default: Date.now(),
   },
   updatedAt: {
-    type: String
-  }
+    type: String,
+  },
 });
 
-
-
-studentSchema.methods.fullName =  function (){
-  return `${this.surname} ${this.othernames}`
-}
+studentSchema.methods.fullName = function () {
+  return `${this.surname} ${this.othername}`;
+};
 
 const Student = mongoose.model("Student", studentSchema);
 
 export default Student;
-
-
 
 // const mongoose = require("mongoose");
 // const studentSchema = new mongoose.Schema(
