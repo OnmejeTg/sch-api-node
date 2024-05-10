@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const teacherSchema = new mongoose.Schema(
   {
     authUser: {
@@ -25,18 +25,6 @@ const teacherSchema = new mongoose.Schema(
     teacherId: {
       type: String,
       required: true,
-      default: function () {
-        return (
-          "TEA" +
-          Math.floor(100 + Math.random() * 900) +
-          Date.now().toString().slice(2, 4) +
-          this.name
-            .split(" ")
-            .map(name => name[0])
-            .join("")
-            .toUpperCase()
-        );
-      },
     },
     //if witdrawn, the teacher will not be able to login
     isWitdrawn: {
@@ -89,7 +77,11 @@ const teacherSchema = new mongoose.Schema(
   }
 );
 
+teacherSchema.methods.fullName = function () {
+  return `${this.surname} ${this.othername}`;
+};
+
 //model
 const Teacher = mongoose.model("Teacher", teacherSchema);
 
-module.exports = Teacher;
+export default Teacher

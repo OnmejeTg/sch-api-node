@@ -7,6 +7,7 @@ import { generateAccessToken } from "../../utils/authUtils.js";
 import Student from "../../models/student.js";
 import mongoose from 'mongoose';
 import Admin from "../../models/admin.js";
+import Teacher from "../../models/teacher.js";
 
 //CREATE USER
 const createUser = async (req, res) => {
@@ -115,7 +116,8 @@ const deleteUser = async (req, res) => {
     const [user] = await Promise.all([
       User.findByIdAndDelete(userId),
       Admin.deleteMany({ authUser: userId }),
-      Student.deleteMany({ authUser: userId })
+      Student.deleteMany({ authUser: userId }),
+      Teacher.deleteMany({ authUser: userId })
       // Add more delete operations for other related models if needed
     ]);
 

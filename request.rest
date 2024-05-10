@@ -3,13 +3,12 @@ GET http://localhost:3100/api/v2/auth/all
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
 ###
-GET http://localhost:3100/api/v2/auth/user/663ca809168cc984d0e4aab9
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjUwNTEyLCJleHAiOjE3MTUyNTQxMTJ9.i4CRyN7WzM0ix8IQAGaYdnBtf4W44I3sLaTGpgo55Ko
-
-###
-DELETE  http://localhost:3100/api/v2/auth/delete/663d46ae99c177e7eb6b3f3a
+GET http://localhost:3100/api/v2/auth/user/663e07bd3674ba06e0a17bd0
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
+###
+DELETE  http://localhost:3100/api/v2/auth/delete/663e07823674ba06e0a17bc9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
 ###
 POST http://localhost:3100/api/v2/auth/refresh
@@ -18,6 +17,28 @@ Content-Type: application/json
       "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzYwYTViN2YxMTMyY2Y3MWE3NGY2OCIsInVzZXJuYW1lIjoiU2FtbXkgRG9lIiwiaWF0IjoxNzE0OTkzMTg0fQ.M09EMvOyn3ldLGZJoesESHq8E7NSjQ5JLLZFHZ9Nb_k"
 
 }
+
+
+
+
+
+###
+DELETE http://localhost:3100/api/v2/admin/delete/663b47ed8c6b52b66f271d00
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTc0NTAwLCJleHAiOjE3MTUxNzgxMDB9.29_8yjNkJFNPkIku3c5BRCWT--DDQPrWxcgotQdKOXw
+
+###
+GET http://localhost:3100/api/v2/admin/get-admin/663b4129108cb5e008e4fcfb
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTY2ODY3LCJleHAiOjE3MTUxNjc0Njd9.CnRGk-rxXBg5D0jAn7wNXZ_nMqe4QkPSoBpz5SefC0M
+
+###
+POST http://localhost:3100/api/v2/admin/login
+Content-Type: application/json
+
+{
+    "username":"xyz",
+    "password":"password"
+}
+
 
 
 
@@ -112,19 +133,44 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkO
     "surname":"StudentUpdated"
 }
 
-###
-DELETE http://localhost:3100/api/v2/admin/delete/663b47ed8c6b52b66f271d00
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTc0NTAwLCJleHAiOjE3MTUxNzgxMDB9.29_8yjNkJFNPkIku3c5BRCWT--DDQPrWxcgotQdKOXw
+
+
+
+
 
 ###
-GET http://localhost:3100/api/v2/admin/get-admin/663b4129108cb5e008e4fcfb
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTY2ODY3LCJleHAiOjE3MTUxNjc0Njd9.CnRGk-rxXBg5D0jAn7wNXZ_nMqe4QkPSoBpz5SefC0M
-
-###
-POST http://localhost:3100/api/v2/admin/login
+POST  http://localhost:3100/api/v2/teacher/create
 Content-Type: application/json
 
 {
-    "username":"xyz",
-    "password":"password"
+    "sex":"sex",
+    "surname":"John",
+    "othername":"Doe",
+    "email":"xyz@example.com",
+    "dateEmployed":"2020-05-04"
+}
+
+###
+GET  http://localhost:3100/api/v2/teacher/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+
+###
+GET http://localhost:3100/api/v2/teacher/663e07bd3674ba06e0a17bd2
+
+###
+PUT http://localhost:3100/api/v2/teacher/update
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+###
+DELETE  http://localhost:3100/api/v2/teacher/delete/663e0f21c6c5372ff1a437ce
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+###
+POST http://localhost:3100/api/v2/teacher/login
+Content-Type: application/json
+
+{
+    "username":"TEA12515J",
+    "password":"john"
 }
