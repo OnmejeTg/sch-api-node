@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const academicYearSchema = new mongoose.Schema(
   {
@@ -47,4 +47,4 @@ const academicYearSchema = new mongoose.Schema(
 //model
 const AcademicYear = mongoose.model("AcademicYear", academicYearSchema);
 
-module.exports = AcademicYear;
+export default AcademicYear

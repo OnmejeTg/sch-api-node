@@ -214,7 +214,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE   http://localhost:3100/api/v2/acadmics/delete-term/663e228048b7b79af8f1f9ff
+DELETE   http://localhost:3100/api/v2/acadmics/delete-term/663f59b94d1ed8db8e30df39
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
 
