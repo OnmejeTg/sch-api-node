@@ -254,3 +254,40 @@ Content-Type: application/json
 DELETE http://localhost:3100/api/v2/acadmic-year/delete/66407bbe2d008cc52e0d3310
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
 
+
+
+
+
+
+###
+POST http://localhost:3100/api/v2/class-level/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+Content-Type: application/json
+
+{
+    "name":"JSS1A",
+    "description":"Junior Secondary"
+    
+}
+
+###
+GET http://localhost:3100/api/v2/class-level/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+###
+
+GET http://localhost:3100/api/v2/class-level/664085d2dc8fc2847524e63f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+
+###
+PUT http://localhost:3100/api/v2/class-level/664085d2dc8fc2847524e63f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+Content-Type: application/json
+
+{
+    "name":"JSS1B",
+    "description":"Junior Secondary"
+}
+###
+DELETE http://localhost:3100/api/v2/class-level/664085d2dc8fc2847524e63f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MjkxMzA2fQ.YRprMpaA12tYIUyhX6bevf8vScQmeCAV5O3UDS68aK0
+

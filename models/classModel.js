@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
@@ -43,4 +43,4 @@ const ClassLevelSchema = new Schema(
 
 const ClassLevel = mongoose.model("ClassLevel", ClassLevelSchema);
 
-module.exports = ClassLevel;
+export default ClassLevel
