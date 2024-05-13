@@ -14,7 +14,7 @@ const studentRouter = express.Router();
 
 studentRouter.post("/login", login);
 studentRouter.post("/logout", logout);
-studentRouter.post("/register", registerStudent);
+studentRouter.post("/create", registerStudent);
 studentRouter.get("/all", isAdmin, getStudents);
 studentRouter.get("/get/:id", isAdmin, getStudent);
 studentRouter.put("/update/:id", isLoggedin, updateStudent);

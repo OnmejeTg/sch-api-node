@@ -27,7 +27,7 @@ DELETE http://localhost:3100/api/v2/admin/delete/663b47ed8c6b52b66f271d00
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTc0NTAwLCJleHAiOjE3MTUxNzgxMDB9.29_8yjNkJFNPkIku3c5BRCWT--DDQPrWxcgotQdKOXw
 
 ###
-GET http://localhost:3100/api/v2/admin/get-admin/663b4129108cb5e008e4fcfb
+GET http://localhost:3100/api/v2/admin/get/663b4129108cb5e008e4fcfb
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkOGM2YjUyYjY2ZjI3MWQwMiIsInVzZXJuYW1lIjoiSm9obiB1bmRlZmluZWQiLCJ1c2VyVHlwZSI6ImFkbWluIiwiaWF0IjoxNzE1MTY2ODY3LCJleHAiOjE3MTUxNjc0Njd9.CnRGk-rxXBg5D0jAn7wNXZ_nMqe4QkPSoBpz5SefC0M
 
 ###

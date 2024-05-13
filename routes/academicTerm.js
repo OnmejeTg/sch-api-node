@@ -3,10 +3,10 @@ import { createAcademicTerm, getAllTerms, updateTerm, deleteTerm , getTerm} from
 import { isAdmin } from '../middleware/auth.js';
 const acadmicTermRouter  = express.Router();
 
-acadmicTermRouter.post('/create-term', isAdmin, createAcademicTerm)
-acadmicTermRouter.get('/all-terms', isAdmin, getAllTerms)
-acadmicTermRouter.get('/get-term/:id', isAdmin, getTerm)
-acadmicTermRouter.put('/update-term/:id', isAdmin, updateTerm)
-acadmicTermRouter.delete('/delete-term/:id', isAdmin, deleteTerm)
+acadmicTermRouter.post('/create', isAdmin, createAcademicTerm)
+acadmicTermRouter.get('/all', isAdmin, getAllTerms)
+acadmicTermRouter.get('/:id', isAdmin, getTerm)
+acadmicTermRouter.put('/update/:id', isAdmin, updateTerm)
+acadmicTermRouter.delete('/delete/:id', isAdmin, deleteTerm)
 
 export default acadmicTermRouter;
