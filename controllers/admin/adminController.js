@@ -6,6 +6,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../utils/authUtils.js";
+import asyncHandler from "express-async-handler";
 
 const createAdmin = async (req, res) => {
   try {
@@ -294,6 +295,61 @@ const adminUpdateTeacher = async (req, res) => {
   }
 };
 
+const adminAssignTeacherRole = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { program, classLevel, academicYear, subject } = req.body;
+  const teacher = await Teacher.findById(id);
+  if (!teacher) {
+    return res.status(404).json({
+      success: false,
+      message: "Teacher not found",
+    });
+  }
+  if (teacher.isWitdrawn || teacher.isSuspended) {
+    return res.status(400).json({
+      success: false,
+      message: "Teacher is withdrawn or suspended",
+    });
+  }
+
+  if (program) {
+    teacher.program = program;
+    await teacher.save();
+    return res.status(200).json({
+      success: true,
+      message: "Teacher program updated successfully",
+      data: teacher,
+    });
+  }
+  if (classLevel) {
+    teacher.classLevel = classLevel;
+    await teacher.save();
+    return res.status(200).json({
+      success: true,
+      message: "Teacher class level updated successfully",
+      data: teacher,
+    });
+  }
+  if (academicYear) {
+    teacher.classLevel = classLevel;
+    await teacher.save();
+    return res.status(200).json({
+      success: true,
+      message: "Teacher class level updated successfully",
+      data: teacher,
+    });
+  }
+  if (subject) {
+    teacher.subject = subject;
+    await teacher.save();
+    return res.status(200).json({
+      success: true,
+      message: "Teacher subject updated successfully",
+      data: teacher,
+    });
+  }
+});
+
 export {
   createAdmin,
   getAllAdmins,
@@ -303,4 +359,5 @@ export {
   login,
   adminUpdateStudent,
   adminUpdateTeacher,
+  adminAssignTeacherRole,
 };
