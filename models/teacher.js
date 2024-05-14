@@ -27,7 +27,7 @@ const teacherSchema = new mongoose.Schema(
       required: true,
     },
     //if witdrawn, the teacher will not be able to login
-    isWitdrawn: {
+    isWithdrawn: {
       type: Boolean,
       default: false,
     },

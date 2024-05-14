@@ -295,9 +295,11 @@ const adminUpdateTeacher = async (req, res) => {
   }
 };
 
+
 const adminAssignTeacherRole = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { program, classLevel, academicYear, subject } = req.body;
+
   const teacher = await Teacher.findById(id);
   if (!teacher) {
     return res.status(404).json({
@@ -305,50 +307,50 @@ const adminAssignTeacherRole = asyncHandler(async (req, res) => {
       message: "Teacher not found",
     });
   }
-  if (teacher.isWitdrawn || teacher.isSuspended) {
+
+  if (teacher.isWithdrawn || teacher.isSuspended) {
     return res.status(400).json({
       success: false,
       message: "Teacher is withdrawn or suspended",
     });
   }
 
-  if (program) {
+  if (program !== undefined) {
     teacher.program = program;
-    await teacher.save();
-    return res.status(200).json({
-      success: true,
-      message: "Teacher program updated successfully",
-      data: teacher,
-    });
   }
-  if (classLevel) {
+
+  if (classLevel !== undefined) {
     teacher.classLevel = classLevel;
-    await teacher.save();
-    return res.status(200).json({
-      success: true,
-      message: "Teacher class level updated successfully",
-      data: teacher,
-    });
   }
-  if (academicYear) {
-    teacher.classLevel = classLevel;
-    await teacher.save();
-    return res.status(200).json({
-      success: true,
-      message: "Teacher class level updated successfully",
-      data: teacher,
-    });
+
+  if (academicYear !== undefined) {
+    teacher.academicYear = academicYear;
   }
-  if (subject) {
+
+  if (subject !== undefined) {
     teacher.subject = subject;
-    await teacher.save();
-    return res.status(200).json({
-      success: true,
-      message: "Teacher subject updated successfully",
-      data: teacher,
-    });
   }
+
+  await teacher.save();
+
+  let message = "";
+  if (program) {
+    message = "Teacher program updated successfully";
+  } else if (classLevel) {
+    message = "Teacher class level updated successfully";
+  } else if (academicYear) {
+    message = "Teacher academic year updated successfully";
+  } else if (subject) {
+    message = "Teacher subject updated successfully";
+  }
+
+  return res.status(200).json({
+    success: true,
+    message,
+    data: teacher,
+  });
 });
+
 
 const suspendWithdrawTeacher = asyncHandler(async (req, res) => {
   const { id } = req.params;
