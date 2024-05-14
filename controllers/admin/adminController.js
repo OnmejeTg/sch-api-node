@@ -350,6 +350,35 @@ const adminAssignTeacherRole = asyncHandler(async (req, res) => {
   }
 });
 
+const suspendWithdrawTeacher = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { isSuspended, isWithdrawn } = req.body;
+
+  const teacher = await Teacher.findById(id);
+  if (!teacher) {
+    return res.status(404).json({
+      success: false,
+      message: "Teacher not found",
+    });
+  }
+
+  if (isSuspended !== undefined) {
+    teacher.isSuspended = isSuspended;
+  }
+
+  if (isWithdrawn !== undefined) {
+    teacher.isWithdrawn = isWithdrawn;
+  }
+
+  await teacher.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Teacher status updated successfully",
+    data: teacher,
+  });
+});
+
 export {
   createAdmin,
   getAllAdmins,
@@ -360,4 +389,5 @@ export {
   adminUpdateStudent,
   adminUpdateTeacher,
   adminAssignTeacherRole,
+  suspendWithdrawTeacher,
 };
