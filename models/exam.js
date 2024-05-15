@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
@@ -32,12 +32,6 @@ const examSchema = new Schema(
       type: Number,
       required: true,
       default: 100,
-    },
-
-    academicTerm: {
-      type: Schema.Types.ObjectId,
-      ref: "AcademicTerm",
-      required: true,
     },
     duration: {
       type: String,
@@ -96,4 +90,4 @@ const examSchema = new Schema(
 
 const Exam = mongoose.model("Exam", examSchema);
 
-module.exports = Exam;
+export default Exam

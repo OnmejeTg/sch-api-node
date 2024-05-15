@@ -11,6 +11,7 @@ import {
 import academicYearRouter from "../routes/academicYear.js";
 import claasLevelRouter from "../routes/classLevel.js";
 import subjectRouter from "../routes/subjectRouter.js";
+import examRouter from "../routes/examRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -24,6 +25,7 @@ app.use("/api/v2/acadmic-term", acadmicTermRouter);
 app.use("/api/v2/acadmic-year", academicYearRouter);
 app.use("/api/v2/class-level", claasLevelRouter);
 app.use("/api/v2/subject", subjectRouter);
+app.use("/api/v2/exam", examRouter);
 
 // Use error handlers
 app.use(notFoundHandler);
