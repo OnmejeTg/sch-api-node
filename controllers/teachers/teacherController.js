@@ -47,6 +47,8 @@ const createTeacher = async (req, res) => {
     // Create authentication user
     const authUser = new User({
       username: teacherId,
+      surname,
+      othername,
       password: surname.toLowerCase(),
       userType: "teacher",
     });
@@ -247,7 +249,9 @@ const login = async (req, res) => {
 
     const payLoad = {
       id: authUser._id,
-      username: teacher.fullName(),
+      username: authUser.username,
+      surname: authUser.surname,
+      othername:authUser.othername,
       userType: authUser.userType,
     };
 

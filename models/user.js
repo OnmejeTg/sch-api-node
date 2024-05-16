@@ -52,6 +52,10 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.verifyPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
+userSchema.methods.fullName = function () {
+  return `${this.surname} ${this.othername}`;
+};
   
 
 // Create model

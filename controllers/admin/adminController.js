@@ -23,6 +23,8 @@ const createAdmin = async (req, res) => {
     const authUser = new User({
       username: username,
       password: password,
+      surname: surname,
+      othername: othername,
       userType: "admin",
     });
 
@@ -202,8 +204,10 @@ const login = async (req, res) => {
 
     const payLoad = {
       id: authUser._id,
-      username: admin.fullName(),
+      username: authUser.username,
+      fullName: authUser.fullName(),
       userType: authUser.userType,
+
     };
 
     const accessToken = generateAccessToken(payLoad);

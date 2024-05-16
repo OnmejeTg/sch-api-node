@@ -43,7 +43,8 @@ const login = async (req, res) => {
 
     const payLoad = {
       id: authUser._id,
-      username: student.fullName(),
+      username: authUser.username,
+      fullNames:authUser.fullName(),
       userType: authUser.userType,
     };
 
@@ -127,6 +128,8 @@ const registerStudent = async (req, res) => {
     // Create authentication user
     const authUser = new User({
       username: admissionId,
+      surname: surname,
+      othername: othername,
       password: surname.toLowerCase(),
       userType: "student",
     });
