@@ -6,7 +6,8 @@ import {
   deleteUser,
   getAllUsers,
   refreshToken,
-  changePassword
+  changePassword,
+  adminChangePassword,
 } from "../controllers/auth/AuthControllers.js";
 import { isAdmin, isLoggedin } from "../middleware/auth.js";
 
@@ -19,5 +20,6 @@ authRouter.delete("/delete/:userId", isAdmin, deleteUser);
 authRouter.get("/all", isAdmin, getAllUsers);
 authRouter.post("/refresh", refreshToken)
 authRouter.post("/reset-password", isLoggedin, changePassword)
+authRouter.post("/admin-reset-password/:id", isAdmin, adminChangePassword)
 
 export default authRouter;

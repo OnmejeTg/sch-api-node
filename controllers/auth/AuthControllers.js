@@ -208,6 +208,25 @@ const changePassword = asyncHandler(async (req, res) => {
   });
 });
 
+const adminChangePassword = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const { newPassword } = req.body;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+  user.password = newPassword;
+  await user.save();
+  return res.status(200).json({
+    success: true,
+    message: "Password changed successfully",
+    data: user,
+  });
+});
+
 export {
   createUser,
   getUser,
@@ -216,4 +235,5 @@ export {
   getAllUsers,
   refreshToken,
   changePassword,
+  adminChangePassword
 };
