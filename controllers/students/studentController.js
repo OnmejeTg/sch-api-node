@@ -42,7 +42,7 @@ const login = async (req, res) => {
     }
 
     const payLoad = {
-      id: student._id,
+      id: authUser._id,
       username: student.fullName(),
       userType: authUser.userType,
     };

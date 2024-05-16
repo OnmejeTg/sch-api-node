@@ -246,7 +246,7 @@ const login = async (req, res) => {
     }
 
     const payLoad = {
-      id: teacher._id,
+      id: authUser._id,
       username: teacher.fullName(),
       userType: authUser.userType,
     };

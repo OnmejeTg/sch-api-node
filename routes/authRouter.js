@@ -5,9 +5,10 @@ import {
   updateUser,
   deleteUser,
   getAllUsers,
-  refreshToken
+  refreshToken,
+  changePassword
 } from "../controllers/auth/AuthControllers.js";
-import { isAdmin } from "../middleware/auth.js";
+import { isAdmin, isLoggedin } from "../middleware/auth.js";
 
 const authRouter = express.Router();
 
@@ -17,5 +18,6 @@ authRouter.put("/update/:id", isAdmin, updateUser);
 authRouter.delete("/delete/:userId", isAdmin, deleteUser);
 authRouter.get("/all", isAdmin, getAllUsers);
 authRouter.post("/refresh", refreshToken)
+authRouter.post("/reset-password", isLoggedin, changePassword)
 
 export default authRouter;

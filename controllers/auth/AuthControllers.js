@@ -5,9 +5,10 @@ import dotenv from "dotenv";
 dotenv.config();
 import { generateAccessToken } from "../../utils/authUtils.js";
 import Student from "../../models/student.js";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import Admin from "../../models/admin.js";
 import Teacher from "../../models/teacher.js";
+import asyncHandler from "express-async-handler";
 
 //CREATE USER
 const createUser = async (req, res) => {
@@ -117,7 +118,7 @@ const deleteUser = async (req, res) => {
       User.findByIdAndDelete(userId),
       Admin.deleteMany({ authUser: userId }),
       Student.deleteMany({ authUser: userId }),
-      Teacher.deleteMany({ authUser: userId })
+      Teacher.deleteMany({ authUser: userId }),
       // Add more delete operations for other related models if needed
     ]);
 
@@ -125,13 +126,16 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.status(200).json({ message: "User and all linked instances deleted successfully" });
+    return res
+      .status(200)
+      .json({ message: "User and all linked instances deleted successfully" });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
 };
-
 
 //GET ALL USERS
 const getAllUsers = async (req, res) => {
@@ -184,6 +188,28 @@ const refreshToken = (req, res) => {
   });
 };
 
+const changePassword = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  const { newPassword } = req.body;
+  console.log(req.user)
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+  user.password = newPassword;
+  await user.save();
+  return res.status(200).json({
+    success: true,
+    message: "Password changed successfully",
+    data: user,
+  });
+});
+
 export {
   createUser,
   getUser,
@@ -191,4 +217,5 @@ export {
   deleteUser,
   getAllUsers,
   refreshToken,
+  changePassword,
 };
