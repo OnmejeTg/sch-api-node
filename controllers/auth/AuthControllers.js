@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import Admin from "../../models/admin.js";
 import Teacher from "../../models/teacher.js";
 import asyncHandler from "express-async-handler";
+import { sendOtp } from "../../utils/emailSender.js";
 
 //CREATE USER
 const createUser = async (req, res) => {
@@ -227,6 +228,12 @@ const adminChangePassword = asyncHandler(async (req, res) => {
   });
 });
 
+const sendEmail = asyncHandler(async (req, res) => {
+  const email = req.body.email;
+  const otp = req.body.otp;
+  sendOtp(email, otp);
+});
+
 export {
   createUser,
   getUser,
@@ -235,5 +242,6 @@ export {
   getAllUsers,
   refreshToken,
   changePassword,
-  adminChangePassword
+  adminChangePassword,
+  sendEmail,
 };
