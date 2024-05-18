@@ -30,6 +30,7 @@ const createQuestion = asyncHandler(async (req, res) => {
       message: "Exam not found",
     });
   }
+  console.log(req.user.id)
 
   // Check if exam already exists
   const questionExists = await Question.exists({
@@ -54,15 +55,16 @@ const createQuestion = asyncHandler(async (req, res) => {
     optionD,
     correctAnswer,
     isCorrect,
-    mark
+    mark,
+    createdBy:req.user.id
   });
 
   // Save new question
   const questionCreated = await newQuestion.save();
 
   // Update teacher's examsCreated
-  teacher.examsCreated.push(newQuestion._id);
-  await teacher.save();
+  exam.questions.push(newQuestion._id);
+  await exam.save();
 
   res.status(200).json({
     success: true,
@@ -70,6 +72,8 @@ const createQuestion = asyncHandler(async (req, res) => {
     data: questionCreated,
   });
 });
+
+
 
 // READ Exam
 const getExam = asyncHandler(async (req, res) => {
@@ -137,4 +141,4 @@ const getAllExams = asyncHandler(async (req, res) => {
   });
 });
 
-export { createExam, getExam, updateExam, deleteExam, getAllExams };
+export { createQuestion, getExam, updateExam, deleteExam, getAllExams };

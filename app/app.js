@@ -13,6 +13,7 @@ import academicYearRouter from "../routes/academicYear.js";
 import claasLevelRouter from "../routes/classLevel.js";
 import subjectRouter from "../routes/subjectRouter.js";
 import examRouter from "../routes/examRouter.js";
+import questionRouter from "../routes/questionRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use("/api/v2/acadmic-year", academicYearRouter);
 app.use("/api/v2/class-level", claasLevelRouter);
 app.use("/api/v2/subject", subjectRouter);
 app.use("/api/v2/exam", examRouter);
+app.use("/api/v2/question", questionRouter);
 
 // Use error handlers
 app.use(notFoundHandler);
