@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import studentRouter from "../routes/studentRouter.js";
 import authRouter from "../routes/authRouter.js";
 import adminRouter from "../routes/adminRouter.js";
@@ -15,6 +16,15 @@ import examRouter from "../routes/examRouter.js";
 
 const app = express();
 app.use(express.json());
+
+const corsOptions = {
+  origin: 'http://new-project-35520.web.app',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
+
 
 // Mount your routers
 app.use("/api/v2/student", studentRouter);
