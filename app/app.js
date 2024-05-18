@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: 'http://new-project-35520.web.app',
+  origin: ['http://new-project-35520.web.app', 'http://localhost:5173'],
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
