@@ -207,7 +207,6 @@ const login = async (req, res) => {
       username: authUser.username,
       fullName: authUser.fullName(),
       userType: authUser.userType,
-
     };
 
     const accessToken = generateAccessToken(payLoad);
@@ -299,7 +298,6 @@ const adminUpdateTeacher = async (req, res) => {
   }
 };
 
-
 const adminAssignTeacherRole = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { program, classLevel, academicYear, subject } = req.body;
@@ -355,7 +353,6 @@ const adminAssignTeacherRole = asyncHandler(async (req, res) => {
   });
 });
 
-
 const suspendWithdrawTeacher = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { isSuspended, isWithdrawn } = req.body;
@@ -385,6 +382,86 @@ const suspendWithdrawTeacher = asyncHandler(async (req, res) => {
   });
 });
 
+const generalLogin = async (req, res) => {
+  // Step 1: Data Validation
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Both username and password are required.",
+    });
+  }
+
+  try {
+    // Step 2: Find user by username
+    const authUser = await User.findOne({ username });
+    if (!authUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    console.log(authUser.userType)
+
+    // Step 3: Check user type and find corresponding user
+    let user;
+    if (authUser.userType === "admin") {
+      user = await Admin.findOne({ authUser:authUser.id });
+    } else if (authUser.userType === "student") {
+      user = await Student.findOne({  authUser:authUser.id });
+    } else if (authUser.userType === "teacher") {
+      user = await Teacher.findOne({  authUser:authUser.id });
+    }
+
+    // If user type is invalid or specific user not found
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `${
+          authUser.userType.charAt(0).toUpperCase() + authUser.userType.slice(1)
+        } not found`,
+      });
+    }
+
+    // Step 4: Verify password
+    const isPasswordValid = await authUser.verifyPassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+    }
+
+    // Step 5: Prepare payload and generate tokens
+    const payLoad = {
+      id: authUser._id,
+      username: authUser.username,
+      fullName: authUser.fullName(),
+      userType: authUser.userType,
+    };
+
+    const accessToken = generateAccessToken(payLoad);
+    const refreshToken = generateRefreshToken(payLoad);
+
+    // TODO: save the refresh token to a separate table (userid and refresh token)
+
+    // Step 6: Respond with successful login
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      userType: authUser.userType
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred during login.",
+    });
+  }
+};
+
 export {
   createAdmin,
   getAllAdmins,
@@ -396,4 +473,5 @@ export {
   adminUpdateTeacher,
   adminAssignTeacherRole,
   suspendWithdrawTeacher,
+  generalLogin,
 };

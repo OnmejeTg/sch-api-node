@@ -9,7 +9,8 @@ import {
   adminUpdateStudent,
   adminUpdateTeacher,
   adminAssignTeacherRole,
-  suspendWithdrawTeacher
+  suspendWithdrawTeacher,
+  generalLogin
 } from "../controllers/admin/adminController.js";
 import { isAdmin } from "../middleware/auth.js";
 
@@ -24,6 +25,7 @@ adminRouter.put("/update-student/:id", isAdmin, adminUpdateStudent);
 adminRouter.put("/update-teacher/:id", isAdmin, adminUpdateTeacher);
 adminRouter.put("/assign-teacher-roles/:id", isAdmin, adminAssignTeacherRole);
 adminRouter.put("/suspend-withdraw-teacher/:id", isAdmin, suspendWithdrawTeacher);
+adminRouter.post("/general-login", generalLogin);
 adminRouter.post("/login", login);
 
 export default adminRouter;

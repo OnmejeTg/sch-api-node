@@ -30,8 +30,7 @@ const createQuestion = asyncHandler(async (req, res) => {
       message: "Exam not found",
     });
   }
-  console.log(req.user.id)
-
+ 
   // Check if exam already exists
   const questionExists = await Question.exists({
     question,
