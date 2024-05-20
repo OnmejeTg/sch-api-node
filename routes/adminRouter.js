@@ -10,9 +10,10 @@ import {
   adminUpdateTeacher,
   adminAssignTeacherRole,
   suspendWithdrawTeacher,
-  generalLogin
+  generalLogin,
+  getLoggdInUser
 } from "../controllers/admin/adminController.js";
-import { isAdmin } from "../middleware/auth.js";
+import { isAdmin, isLoggedin } from "../middleware/auth.js";
 
 const adminRouter = express.Router();
 
@@ -26,6 +27,7 @@ adminRouter.put("/update-teacher/:id", isAdmin, adminUpdateTeacher);
 adminRouter.put("/assign-teacher-roles/:id", isAdmin, adminAssignTeacherRole);
 adminRouter.put("/suspend-withdraw-teacher/:id", isAdmin, suspendWithdrawTeacher);
 adminRouter.post("/general-login", generalLogin);
+adminRouter.get("/me", isLoggedin, getLoggdInUser);
 adminRouter.post("/login", login);
 
 export default adminRouter;

@@ -401,16 +401,15 @@ const generalLogin = async (req, res) => {
         message: "User not found",
       });
     }
-    console.log(authUser.userType)
 
     // Step 3: Check user type and find corresponding user
     let user;
     if (authUser.userType === "admin") {
-      user = await Admin.findOne({ authUser:authUser.id });
+      user = await Admin.findOne({ authUser: authUser.id });
     } else if (authUser.userType === "student") {
-      user = await Student.findOne({  authUser:authUser.id });
+      user = await Student.findOne({ authUser: authUser.id });
     } else if (authUser.userType === "teacher") {
-      user = await Teacher.findOne({  authUser:authUser.id });
+      user = await Teacher.findOne({ authUser: authUser.id });
     }
 
     // If user type is invalid or specific user not found
@@ -451,7 +450,8 @@ const generalLogin = async (req, res) => {
       message: "Login successful",
       accessToken: accessToken,
       refreshToken: refreshToken,
-      userType: authUser.userType
+      userType: authUser.userType,
+      id: authUser._id,
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -460,6 +460,25 @@ const generalLogin = async (req, res) => {
       message: "An unexpected error occurred during login.",
     });
   }
+};
+
+const getLoggdInUser = async (req, res) => {
+  const authUser = req.user;
+
+  let user;
+  if (authUser.userType === "admin") {
+    user = await Admin.findOne({ authUser: authUser.id });
+  } else if (authUser.userType === "student") {
+    user = await Student.findOne({ authUser: authUser.id });
+  } else if (authUser.userType === "teacher") {
+    user = await Teacher.findOne({ authUser: authUser.id });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Login successful",
+    user,
+  });
 };
 
 export {
@@ -474,4 +493,5 @@ export {
   adminAssignTeacherRole,
   suspendWithdrawTeacher,
   generalLogin,
+  getLoggdInUser,
 };
