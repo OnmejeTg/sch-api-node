@@ -3,8 +3,6 @@ import Question from "../../models/question.js";
 import Teacher from "../../models/teacher.js";
 import asyncHandler from "express-async-handler";
 
-
-
 // Teacher create question. logged in user can create question with this method
 const createQuestion = asyncHandler(async (req, res) => {
   const {
@@ -16,7 +14,7 @@ const createQuestion = asyncHandler(async (req, res) => {
     correctAnswer,
     isCorrect,
     mark,
-    examId
+    examId,
   } = req.body;
 
   // Get teacher
@@ -30,7 +28,7 @@ const createQuestion = asyncHandler(async (req, res) => {
       message: "Exam not found",
     });
   }
- 
+
   // Check if exam already exists
   const questionExists = await Question.exists({
     question,
@@ -38,7 +36,7 @@ const createQuestion = asyncHandler(async (req, res) => {
     optionB,
     optionC,
     optionD,
-    correctAnswer
+    correctAnswer,
   });
 
   if (questionExists) {
@@ -55,7 +53,7 @@ const createQuestion = asyncHandler(async (req, res) => {
     correctAnswer,
     isCorrect,
     mark,
-    createdBy:req.user.id
+    createdBy: req.user.id,
   });
 
   // Save new question
@@ -72,72 +70,70 @@ const createQuestion = asyncHandler(async (req, res) => {
   });
 });
 
+// READ Question
+const getQuestion = asyncHandler(async (req, res) => {
+  const questionId = req.params.id;
 
+  const question = await Exam.findById(questionId); // Assuming you want to populate teacher details
 
-// READ Exam
-const getExam = asyncHandler(async (req, res) => {
-  const examId = req.params.id;
-
-  const exam = await Exam.findById(examId); // Assuming you want to populate teacher details
-
-  if (!exam) {
+  if (!question) {
     res.status(404);
-    throw new Error("Exam not found");
+    throw new Error("Question not found");
   }
 
   res.status(200).json({
     success: true,
-    data: exam,
+    data: question,
   });
 });
 
-// UPDATE Exam
-const updateExam = asyncHandler(async (req, res) => {
-  const examId = req.params.id;
+// UPDATE Question
+const updateQuestion = asyncHandler(async (req, res) => {
+  const questionId = req.params.id;
   const updateData = req.body;
-  const updatedExam = await Exam.findByIdAndUpdate(examId, updateData, {
+  const updatedQuestion = await Exam.findByIdAndUpdate(questionId, updateData, {
     new: true,
   });
 
-  if (!updatedExam) {
+  if (!updatedQuestion) {
     res.status(404).json({
       success: false,
-      message: "Exam not found",
+      message: "Question not found",
     });
   } else {
     res.status(200).json({
       success: true,
-      message: "Exam updated successfully",
-      data: updatedExam,
+      message: "Question updated successfully",
+      data: updatedQuestion,
     });
   }
 });
 
-// DELETE Exam
-const deleteExam = asyncHandler(async (req, res) => {
-  const examId = req.params.id;
-  const deletedExam = await Exam.findByIdAndDelete(examId);
-  if (!deletedExam) {
+// DELETE Question
+const deleteQuestion = asyncHandler(async (req, res) => {
+  const questionId = req.params.id;
+  const deletedQuestion = await Exam.findByIdAndDelete(questionId);
+  if (!deletedQuestion) {
     res.status(404).json({
       success: false,
-      message: "Exam not found",
+      message: "Question not found",
     });
   } else {
     res.status(200).json({
       success: true,
-      message: "Exam deleted successfully",
+      message: "Question deleted successfully",
     });
   }
 });
 
-// READ All Exams
-const getAllExams = asyncHandler(async (req, res) => {
-  const exams = await Exam.find(); // Assuming you want to populate teacher details
+// READ All Questions
+const getAllQuestions = asyncHandler(async (req, res) => {
+  const questions = await Exam.find();
 
   res.status(200).json({
     success: true,
-    data: exams,
+    data: questions,
   });
 });
 
-export { createQuestion, getExam, updateExam, deleteExam, getAllExams };
+export { createQuestion, getQuestion, updateQuestion, deleteQuestion, getAllQuestions };
