@@ -12,7 +12,8 @@ import {
   suspendWithdrawTeacher,
   generalLogin,
   getLoggdInUser,
-  uploadStudent
+  uploadStudent,
+  uploadQuestion
 } from "../controllers/admin/adminController.js";
 import { isAdmin, isLoggedin } from "../middleware/auth.js";
 import multer from 'multer';
@@ -39,6 +40,7 @@ adminRouter.put("/suspend-withdraw-teacher/:id", isAdmin, suspendWithdrawTeacher
 adminRouter.post("/general-login", generalLogin);
 adminRouter.get("/me", isLoggedin, getLoggdInUser);
 adminRouter.post("/login", login);
-adminRouter.post("/upload-student", upload.single('file'), uploadStudent);
+adminRouter.post("/upload-student", isAdmin, upload.single('file'), uploadStudent);
+adminRouter.post("/upload-questions", isAdmin, upload.single('file'), uploadQuestion);
 
 export default adminRouter;

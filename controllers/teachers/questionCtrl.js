@@ -59,7 +59,7 @@ const createQuestion = asyncHandler(async (req, res) => {
   // Save new question
   const questionCreated = await newQuestion.save();
 
-  // Update teacher's examsCreated
+
   exam.questions.push(newQuestion._id);
   await exam.save();
 

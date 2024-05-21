@@ -9,6 +9,7 @@ import {
 import asyncHandler from "express-async-handler";
 import xlsx from "xlsx";
 import { generateStudentID } from "../../utils/studentUtils.js";
+import Question from "../../models/question.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -483,8 +484,6 @@ const getLoggdInUser = async (req, res) => {
   });
 };
 
-
-
 //TODO: Optimize this
 // Endpoint to handle file upload and student creation
 const uploadStudent = asyncHandler(async (req, res) => {
@@ -564,6 +563,76 @@ const uploadStudent = asyncHandler(async (req, res) => {
   }
 });
 
+// Endpoint to handle file upload and question creation
+const uploadQuestion = asyncHandler(async (req, res) => {
+  try {
+    const { buffer } = req.file;
+    const { examId } = req.body;
+
+    const exam = await Exam.findById(examId);
+    if (!exam) {
+      return res.status(400).json({ message: 'Invalid exam ID' });
+    }
+
+    const workbook = xlsx.read(buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    let successCount = 0;
+    let failureCount = 0;
+    const failedRecords = [];
+    const newQuestions = [];
+
+    for (const question of jsonData) {
+      try {
+        // Check if the question already exists
+        const existingQuestion = await Question.findOne({ question: question.question });
+        if (existingQuestion) {
+          failureCount++;
+          failedRecords.push(question);
+          continue;
+        }
+
+        const newQuestion = new Question({
+          question: question.question,
+          optionA: question.optionA,
+          optionB: question.optionB,
+          optionC: question.optionC,
+          optionD: question.optionD,
+          correctAnswer: question.correctAnswer,
+          isCorrect: question.isCorrect,
+          mark: question.mark,
+          createdBy: req.user.id,
+        });
+
+        newQuestions.push(newQuestion);
+      } catch (error) {
+        console.error('Error processing question:', question, error);
+        failureCount++;
+        failedRecords.push(question);
+      }
+    }
+
+    // Save all new questions in bulk
+    const savedQuestions = await Question.insertMany(newQuestions);
+    successCount += savedQuestions.length;
+
+    // Add question IDs to the exam and save the exam
+    exam.questions.push(...savedQuestions.map(q => q._id));
+    await exam.save();
+
+    res.status(200).json({
+      message: 'Question upload process completed',
+      successCount,
+      failureCount,
+      failedRecords,
+    });
+  } catch (error) {
+    console.error('Error processing file:', error);
+    res.status(500).json({ success: false, message: 'Error processing file' });
+  }
+});
 
 
 export {
@@ -580,4 +649,5 @@ export {
   generalLogin,
   getLoggdInUser,
   uploadStudent,
+  uploadQuestion,
 };
