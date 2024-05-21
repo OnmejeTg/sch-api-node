@@ -7,6 +7,8 @@ import {
   generateRefreshToken,
 } from "../../utils/authUtils.js";
 import asyncHandler from "express-async-handler";
+import xlsx from "xlsx";
+import { generateStudentID } from "../../utils/studentUtils.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -481,6 +483,89 @@ const getLoggdInUser = async (req, res) => {
   });
 };
 
+
+
+//TODO: Optimize this
+// Endpoint to handle file upload and student creation
+const uploadStudent = asyncHandler(async (req, res) => {
+  try {
+    const { buffer } = req.file;
+
+    const workbook = xlsx.read(buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    let successCount = 0;
+    let failureCount = 0;
+    const failedRecords = [];
+
+    for (const student of jsonData) {
+      try {
+        // Check if student with the same admissionId or email already exists
+        const existingStudent = await Student.findOne({
+          $or: [{ admissionId: student.admissionId }, { email: student.email }],
+        });
+
+        if (existingStudent) {
+          failureCount++;
+          failedRecords.push(student);
+          continue;
+        }
+
+        const newUser = new User({
+          username: generateStudentID(student.surname),
+          surname: student.surname,
+          othername: student.othername,
+          password: student.surname.toLowerCase(),
+          userType: "student",
+        });
+
+        await newUser.save();
+
+        const newStudent = new Student({
+          authUser: newUser._id,
+          admissionId: generateStudentID(student.surname),
+          surname: student.surname,
+          othername: student.othername,
+          entrySession: student.entrySession,
+          email: student.email,
+          sex: student.sex,
+          dateOfBirth: new Date(student.dateOfBirth),
+          dateOfAdmission: new Date(student.dateOfAdmission),
+          parentSurname: student.parentSurname,
+          parentOthername: student.parentOthername,
+          parentOccupation: student.parentOccupation,
+          phone: student.phone,
+          address: student.address,
+          healthStatus: student.healthStatus,
+          religion: student.religion,
+          createdAt: new Date(),
+        });
+
+        await newStudent.save();
+        successCount++;
+      } catch (error) {
+        console.error("Error adding student:", student, error);
+        failureCount++;
+        failedRecords.push(student);
+      }
+    }
+
+    res.status(200).json({
+      message: "Student upload process completed",
+      successCount,
+      failureCount,
+      failedRecords,
+    });
+  } catch (error) {
+    console.error("Error processing file:", error);
+    res.status(500).json({ success: false, message: "Error processing file" });
+  }
+});
+
+
+
 export {
   createAdmin,
   getAllAdmins,
@@ -494,4 +579,5 @@ export {
   suspendWithdrawTeacher,
   generalLogin,
   getLoggdInUser,
+  uploadStudent,
 };

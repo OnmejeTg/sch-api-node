@@ -11,11 +11,21 @@ import {
   adminAssignTeacherRole,
   suspendWithdrawTeacher,
   generalLogin,
-  getLoggdInUser
+  getLoggdInUser,
+  uploadStudent
 } from "../controllers/admin/adminController.js";
 import { isAdmin, isLoggedin } from "../middleware/auth.js";
+import multer from 'multer';
+
+
 
 const adminRouter = express.Router();
+
+// Configure Multer for memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+
 
 adminRouter.post("/create", isAdmin, createAdmin);
 adminRouter.get("/all", isAdmin, getAllAdmins);
@@ -29,5 +39,6 @@ adminRouter.put("/suspend-withdraw-teacher/:id", isAdmin, suspendWithdrawTeacher
 adminRouter.post("/general-login", generalLogin);
 adminRouter.get("/me", isLoggedin, getLoggdInUser);
 adminRouter.post("/login", login);
+adminRouter.post("/upload-student", upload.single('file'), uploadStudent);
 
 export default adminRouter;
