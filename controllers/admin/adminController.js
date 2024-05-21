@@ -10,6 +10,7 @@ import asyncHandler from "express-async-handler";
 import xlsx from "xlsx";
 import { generateStudentID } from "../../utils/studentUtils.js";
 import Question from "../../models/question.js";
+import Exam from "../../models/exam.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -601,7 +602,6 @@ const uploadQuestion = asyncHandler(async (req, res) => {
           optionC: question.optionC,
           optionD: question.optionD,
           correctAnswer: question.correctAnswer,
-          isCorrect: question.isCorrect,
           mark: question.mark,
           createdBy: req.user.id,
         });

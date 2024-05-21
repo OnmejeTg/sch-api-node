@@ -40,7 +40,7 @@ adminRouter.put("/suspend-withdraw-teacher/:id", isAdmin, suspendWithdrawTeacher
 adminRouter.post("/general-login", generalLogin);
 adminRouter.get("/me", isLoggedin, getLoggdInUser);
 adminRouter.post("/login", login);
-adminRouter.post("/upload-student", isAdmin, upload.single('file'), uploadStudent);
+adminRouter.post("/upload-students", isAdmin, upload.single('file'), uploadStudent);
 adminRouter.post("/upload-questions", isAdmin, upload.single('file'), uploadQuestion);
 
 export default adminRouter;
