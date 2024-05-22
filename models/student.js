@@ -114,6 +114,13 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  paymentStatus: {
+    type: String,
+    default: "Not Paid",
+  },
+  currentPayment:{
+    type:String,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
@@ -130,4 +137,3 @@ studentSchema.methods.fullName = function () {
 const Student = mongoose.model("Student", studentSchema);
 
 export default Student;
-

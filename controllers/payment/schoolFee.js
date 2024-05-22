@@ -7,7 +7,13 @@ import {
   verifyTransaction,
 } from "../../services/paystack.js";
 
-const schoolFeeRouter = express.Router();
+
+
+import dotenv from "dotenv";
+dotenv.config();
+
+const currentSession = process.env.currentSession;
+const currentTerm = process.env.currentTerm;
 
 // Make Payment
 const makeSchoolFeePayment =  async (req, res) => {
@@ -62,7 +68,7 @@ const verifyPayment =  async (req, res) => {
 
   try {
     const paymentData = await verifyTransaction(reference);
-    console.log(paymentData);
+    // console.log(paymentData);
     if (paymentData.data.status !== "success") {
       console.log("Transaction failed:", paymentData.data.status);
       return res.status(400).send("Transaction failed");
@@ -99,14 +105,16 @@ const verifyPayment =  async (req, res) => {
       message: "Payment successful",
       data: invoice,
     });
-    // try {
-    //   const userObject = await User.findOne({ _id: user });
-    //   userObject.paymentStatus = paymentData.data.status;
-    //   console.log(userObject);
-    //   userObject.save();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const studentObject = await Student.findOne({ _id: user });
+      studentObject.paymentStatus = paymentData.data.status;
+      // studentObject.currentPayment = `${currentSession} ${currentTerm} term`;
+      studentObject.currentPayment = `${currentSession} ${currentTerm}`;
+      // console.log(studentObject);
+      studentObject.save();
+    } catch (error) {
+      console.log(error);
+    }
   } catch (error) {
     console.error("Error verifying transaction:", error);
     res.status(500).send("Internal Server Error");
