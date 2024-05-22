@@ -13,7 +13,8 @@ import {
   generalLogin,
   getLoggdInUser,
   uploadStudent,
-  uploadQuestion
+  uploadQuestion,
+  portalAnalytics
 } from "../controllers/admin/adminController.js";
 import { isAdmin, isLoggedin } from "../middleware/auth.js";
 import multer from 'multer';
@@ -42,5 +43,6 @@ adminRouter.get("/me", isLoggedin, getLoggdInUser);
 adminRouter.post("/login", login);
 adminRouter.post("/upload-students", isAdmin, upload.single('file'), uploadStudent);
 adminRouter.post("/upload-questions", isAdmin, upload.single('file'), uploadQuestion);
+adminRouter.get("/analytics", isAdmin, portalAnalytics);
 
 export default adminRouter;

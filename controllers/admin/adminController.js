@@ -572,10 +572,10 @@ const uploadQuestion = asyncHandler(async (req, res) => {
 
     const exam = await Exam.findById(examId);
     if (!exam) {
-      return res.status(400).json({ message: 'Invalid exam ID' });
+      return res.status(400).json({ message: "Invalid exam ID" });
     }
 
-    const workbook = xlsx.read(buffer, { type: 'buffer' });
+    const workbook = xlsx.read(buffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = xlsx.utils.sheet_to_json(worksheet);
@@ -588,7 +588,9 @@ const uploadQuestion = asyncHandler(async (req, res) => {
     for (const question of jsonData) {
       try {
         // Check if the question already exists
-        const existingQuestion = await Question.findOne({ question: question.question });
+        const existingQuestion = await Question.findOne({
+          question: question.question,
+        });
         if (existingQuestion) {
           failureCount++;
           failedRecords.push(question);
@@ -608,7 +610,7 @@ const uploadQuestion = asyncHandler(async (req, res) => {
 
         newQuestions.push(newQuestion);
       } catch (error) {
-        console.error('Error processing question:', question, error);
+        console.error("Error processing question:", question, error);
         failureCount++;
         failedRecords.push(question);
       }
@@ -619,21 +621,50 @@ const uploadQuestion = asyncHandler(async (req, res) => {
     successCount += savedQuestions.length;
 
     // Add question IDs to the exam and save the exam
-    exam.questions.push(...savedQuestions.map(q => q._id));
+    exam.questions.push(...savedQuestions.map((q) => q._id));
     await exam.save();
 
     res.status(200).json({
-      message: 'Question upload process completed',
+      message: "Question upload process completed",
       successCount,
       failureCount,
       failedRecords,
     });
   } catch (error) {
-    console.error('Error processing file:', error);
-    res.status(500).json({ success: false, message: 'Error processing file' });
+    console.error("Error processing file:", error);
+    res.status(500).json({ success: false, message: "Error processing file" });
   }
 });
 
+const portalAnalytics = asyncHandler(async (req, res) => {
+  try {
+    const adminCount = await Admin.countDocuments();
+    const teacherCount = await Teacher.countDocuments();
+    const studentCount = await Student.countDocuments();
+    const examCount = await Exam.countDocuments();
+    res.status(200).json({
+      success: true,
+      adminCount,
+      teacherCount,
+      studentCount,
+      examCount,
+      message: "Portal analytics retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Something  went wrong", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error getting portal analytics" });
+  }
+
+  console.log(`Total number of students: ${studentCount}`);
+});
+
+//TODO: Portal anayltics
+//TODO: payment
+//TODO: profile pictures for users
+//TODO: Announcement
+//TODO: Result
 
 export {
   createAdmin,
@@ -650,4 +681,5 @@ export {
   getLoggdInUser,
   uploadStudent,
   uploadQuestion,
+  portalAnalytics,
 };
