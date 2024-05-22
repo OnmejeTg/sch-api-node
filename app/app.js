@@ -14,6 +14,8 @@ import claasLevelRouter from "../routes/classLevel.js";
 import subjectRouter from "../routes/subjectRouter.js";
 import examRouter from "../routes/examRouter.js";
 import questionRouter from "../routes/questionRouter.js";
+import schoolFeeRouter from "../routes/schoolFee.js";
+import bodyParser from "body-parser";
 
 const app = express();
 app.use(express.json());
@@ -25,6 +27,8 @@ const corsOptions = {
 
 // Use CORS middleware
 app.use(cors(corsOptions));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 
 // Mount your routers
@@ -38,6 +42,7 @@ app.use("/api/v2/class-level", claasLevelRouter);
 app.use("/api/v2/subject", subjectRouter);
 app.use("/api/v2/exam", examRouter);
 app.use("/api/v2/question", questionRouter);
+app.use("/api/v2/payment", schoolFeeRouter);
 
 // Use error handlers
 app.use(notFoundHandler);
