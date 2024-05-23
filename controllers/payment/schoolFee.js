@@ -1,4 +1,3 @@
-import express from "express";
 import SchoolFeeInvoice from "../../models/schoolFeeeInvoice.js";
 import generateRandomString from "../../utils/randomCharacterGen.js";
 import Student from "../../models/student.js";
@@ -7,8 +6,6 @@ import {
   verifyTransaction,
 } from "../../services/paystack.js";
 
-
-
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -16,7 +13,7 @@ const currentSession = process.env.currentSession;
 const currentTerm = process.env.currentTerm;
 
 // Make Payment
-const makeSchoolFeePayment =  async (req, res) => {
+const makeSchoolFeePayment = async (req, res) => {
   try {
     let { user, email, amount } = req.body;
     if (!user || !email || !amount) {
@@ -63,7 +60,7 @@ const makeSchoolFeePayment =  async (req, res) => {
 };
 
 // Verify Payment
-const verifyPayment =  async (req, res) => {
+const verifyPayment = async (req, res) => {
   const { reference, user, email } = req.query;
 
   try {
@@ -122,76 +119,78 @@ const verifyPayment =  async (req, res) => {
 };
 
 // Form for sending payments data
-const testPayment =  (req, res) => {
+const testPayment = (req, res) => {
   res.render("index.ejs");
-}
+};
 
-// // Get all invoices
-// schoolFeeRouter.get("/invoice", [auth, isSpecialUSer], async (req, res) => {
-//   try {
-//     const invoices = await Invoice.find().populate("user");
-//     return res.status(200).json({
-//       success: true,
-//       data: invoices,
-//     });
-//   } catch (err) {
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
+// Get all invoices
+const allSchoolFeeinvoices = async (req, res) => {
+  try {
+    const invoices = await SchoolFeeInvoice.find().populate("user");
+    return res.status(200).json({
+      success: true,
+      data: invoices,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-// schoolFeeRouter.get("/invoice/user", [auth], async (req, res) => {
-//   try {
-//     const invoices = await Invoice.find({ user: req.user.id });
-//     const responseData =
-//       invoices.length > 0
-//         ? { success: true, data: invoices }
-//         : { success: false, message: "No invoices found" };
-//     return res.status(invoices.length > 0 ? 200 : 204).json(responseData);
-//   } catch (err) {
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
+// get payment for a student
+const invoiceByLoggedInStudent = async (req, res) => {
+  try {
+    const student = await Student.find({authUser: req.user.id})
+    const invoices = await SchoolFeeInvoice.find({ user: student});
+    console.log(req.user.id)
+    const responseData =
+      invoices.length > 0
+        ? { success: true, data: invoices }
+        : { success: false, message: "No invoices found" };
+    return res.status(invoices.length > 0 ? 200 : 204).json(responseData);
+  } catch (err) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-// // Get single invoice
-// schoolFeeRouter.get("/invoice/:id", [auth], async (req, res) => {
-//   try {
-//     const invoices = await Invoice.find({ user: req.params.id });
+// Get single invoice
+const invoiceById = async (req, res) => {
+  try {
+    const invoices = await SchoolFeeInvoice.findById(req.params.id);
+    console.log(invoices)
+    const responseData =
+      invoices.length > 0
+        ? { success: true, data: invoices }
+        : { success: false, message: "No invoices found" };
+    return res.status(invoices.length > 0 ? 200 : 204).json(responseData);
+  } catch (err) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-//     const responseData =
-//       invoices.length > 0
-//         ? { success: true, data: invoices }
-//         : { success: false, message: "No invoices found" };
-//     return res.status(invoices.length > 0 ? 200 : 204).json(responseData);
-//   } catch (err) {
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
+// Delete an invoice by ID
+const deleteInvoice = async (req, res) => {
+  const { id } = req.params; // Extract invoice ID from request parameters
 
-// // Delete an invoice by ID
-// schoolFeeRouter.delete(
-//   "/invoice/:id",
-//   [auth, isSpecialUSer],
-//   async (req, res) => {
-//     const { id } = req.params; // Extract invoice ID from request parameters
+  try {
+    const deletedInvoice = await Invoice.findByIdAndDelete(id);
 
-//     try {
-//       const deletedInvoice = await Invoice.findByIdAndDelete(id);
+    if (!deletedInvoice) {
+      return res.status(404).json({ error: "Invoice not found" });
+    }
 
-//       if (!deletedInvoice) {
-//         return res.status(404).json({ error: "Invoice not found" });
-//       }
-
-//       res.json({ message: "Invoice deleted successfully", deletedInvoice });
-//     } catch (err) {
-//       console.error("Error deleting invoice:", err);
-//       res.status(500).json({ error: "Internal Server Error" });
-//     }
-//   }
-// );
+    res.json({ message: "Invoice deleted successfully", deletedInvoice });
+  } catch (err) {
+    console.error("Error deleting invoice:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 export {
-    makeSchoolFeePayment,
-    verifyPayment,
-    testPayment
-
-} ;
+  makeSchoolFeePayment,
+  verifyPayment,
+  testPayment,
+  allSchoolFeeinvoices,
+  invoiceByLoggedInStudent,
+  invoiceById,
+  deleteInvoice
+};
