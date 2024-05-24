@@ -9,15 +9,16 @@ import {
   deleteStudent
 } from "../controllers/students/studentController.js";
 import { isAdmin, isLoggedin } from "../middleware/auth.js";
+import { memoryupload, upload } from "../utils/multer.js";
 
 const studentRouter = express.Router();
 
 studentRouter.post("/login", login);
 studentRouter.post("/logout", logout);
-studentRouter.post("/create", registerStudent);
+studentRouter.post("/create", memoryupload.single("file"), registerStudent);
 studentRouter.get("/all", isAdmin, getStudents);
 studentRouter.get("/get/:id", isAdmin, getStudent);
-studentRouter.put("/update/:id", isLoggedin, updateStudent);
+studentRouter.put("/update/:id",  isLoggedin, updateStudent);
 studentRouter.delete("/delete/:id", isAdmin, deleteStudent);
 
 export default studentRouter;

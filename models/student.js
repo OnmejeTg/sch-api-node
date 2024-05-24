@@ -15,6 +15,11 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    default:
+      "https://res.cloudinary.com/tgod/image/upload/v1716561104/test/swpzzvle2je29zkbyldz.png",
+  },
   admissionId: {
     type: String,
     required: true,
@@ -118,8 +123,8 @@ const studentSchema = new mongoose.Schema({
     type: String,
     default: "Not Paid",
   },
-  currentPayment:{
-    type:String,
+  currentPayment: {
+    type: String,
   },
   createdAt: {
     type: Date,

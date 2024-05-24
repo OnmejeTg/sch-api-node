@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
 
 const adminSchema = new mongoose.Schema({
-  authUser:{
+  authUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
-
+    required: true,
   },
   surname: {
     type: String,
@@ -24,21 +23,26 @@ const adminSchema = new mongoose.Schema({
     type: String,
     lowercase: true, // Ensures email is stored in lowercase
     match: /^\S+@\S+\.\S+$/,
-    minLength:3,
-    unique: true
+    minLength: 3,
+    unique: true,
+  },
+  image: {
+    type: String,
+    default:
+      "https://res.cloudinary.com/tgod/image/upload/v1716561104/test/swpzzvle2je29zkbyldz.png",
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
   updatedAt: {
-    type: String
-  }
+    type: String,
+  },
 });
 
-adminSchema.methods.fullName =  function (){
-  return `${this.surname} ${this.othername}`
-}
+adminSchema.methods.fullName = function () {
+  return `${this.surname} ${this.othername}`;
+};
 
 const Admin = mongoose.model("Admin", adminSchema);
 

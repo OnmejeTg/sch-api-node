@@ -14,6 +14,11 @@ const teacherSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/tgod/image/upload/v1716561104/test/swpzzvle2je29zkbyldz.png",
+    },
     email: {
       type: String,
       required: true,
@@ -84,4 +89,4 @@ teacherSchema.methods.fullName = function () {
 //model
 const Teacher = mongoose.model("Teacher", teacherSchema);
 
-export default Teacher
+export default Teacher;

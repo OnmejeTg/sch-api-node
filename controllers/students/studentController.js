@@ -8,6 +8,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../utils/authUtils.js";
+import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
 
 //*******************LOGIN*******************
 const login = async (req, res) => {
@@ -44,7 +45,7 @@ const login = async (req, res) => {
     const payLoad = {
       id: authUser._id,
       username: authUser.username,
-      fullNames:authUser.fullName(),
+      fullNames: authUser.fullName(),
       userType: authUser.userType,
     };
 
@@ -76,6 +77,11 @@ const logout = async (req, res) => {
 
 //***********************Create Student*********************
 const registerStudent = async (req, res) => {
+  const imageBuffer = req.file.buffer;
+  const folder = "test/studentProfile";
+
+  const stdImage = await uploadImage(imageBuffer, folder);
+
   try {
     // Destructure required fields from request body
     const {
@@ -162,6 +168,7 @@ const registerStudent = async (req, res) => {
       address,
       healthStatus,
       religion,
+      image: stdImage,
     });
 
     try {
