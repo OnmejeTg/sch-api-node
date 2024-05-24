@@ -678,12 +678,15 @@ const portalAnalytics = asyncHandler(async (req, res) => {
   }
 });
 
-
+// Done
 //TODO: Portal anayltics
-//TODO: payment
-//TODO: profile pictures for users
+//TODO: payment 
 //TODO: Announcement
+
+
 //TODO: Result
+//TODO: profile pictures for users
+
 
 export {
   createAdmin,

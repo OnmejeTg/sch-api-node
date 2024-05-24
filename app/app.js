@@ -17,6 +17,7 @@ import questionRouter from "../routes/questionRouter.js";
 import schoolFeeRouter from "../routes/schoolFee.js";
 import bodyParser from "body-parser";
 import announcementRouter from "../routes/announcements.js";
+import inquiresRouter from "../routes/inquiries.js";
 
 const app = express();
 app.use(express.json());
@@ -47,6 +48,7 @@ app.use("/api/v2/exam", examRouter);
 app.use("/api/v2/question", questionRouter);
 app.use("/api/v2/payment", schoolFeeRouter);
 app.use("/api/v2/announcement", announcementRouter);
+app.use("/api/v2/inquiry", inquiresRouter);
 
 // Use error handlers
 app.use(notFoundHandler);
