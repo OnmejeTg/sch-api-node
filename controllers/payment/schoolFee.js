@@ -172,13 +172,13 @@ const deleteInvoice = async (req, res) => {
   const { id } = req.params; // Extract invoice ID from request parameters
 
   try {
-    const deletedInvoice = await Invoice.findByIdAndDelete(id);
+    const deletedInvoice = await SchoolFeeInvoice.findByIdAndDelete(id);
 
     if (!deletedInvoice) {
       return res.status(404).json({ error: "Invoice not found" });
     }
 
-    res.json({ message: "Invoice deleted successfully", deletedInvoice });
+    res.json.status(204)({ message: "Invoice deleted successfully", deletedInvoice });
   } catch (err) {
     console.error("Error deleting invoice:", err);
     res.status(500).json({ error: "Internal Server Error" });
