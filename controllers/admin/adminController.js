@@ -11,6 +11,7 @@ import xlsx from "xlsx";
 import { generateStudentID } from "../../utils/studentUtils.js";
 import Question from "../../models/question.js";
 import Exam from "../../models/exam.js";
+import SchoolFeeInvoice from "../../models/schoolFeeeInvoice.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -638,27 +639,45 @@ const uploadQuestion = asyncHandler(async (req, res) => {
 
 const portalAnalytics = asyncHandler(async (req, res) => {
   try {
-    const adminCount = await Admin.countDocuments();
-    const teacherCount = await Teacher.countDocuments();
-    const studentCount = await Student.countDocuments();
-    const examCount = await Exam.countDocuments();
+    // Run all count queries in parallel
+    const [
+      adminCount,
+      teacherCount,
+      studentCount,
+      examCount,
+      invoiceCount,
+      totalAmount
+    ] = await Promise.all([
+      Admin.countDocuments(),
+      Teacher.countDocuments(),
+      Student.countDocuments(),
+      Exam.countDocuments(),
+      SchoolFeeInvoice.countDocuments({ paymentStatus: "success" }),
+      SchoolFeeInvoice.aggregate([
+        { $match: { paymentStatus: "success" } },
+        { $group: { _id: null, totalAmount: { $sum: "$amount" } } }
+      ])
+    ]);
+
+    // Extract the total amount from the aggregation result
+    const amount = totalAmount.length > 0 ? totalAmount[0].totalAmount : 0;
+
     res.status(200).json({
       success: true,
       adminCount,
       teacherCount,
       studentCount,
       examCount,
-      message: "Portal analytics retrieved successfully",
+      invoiceCount,
+      amount,
+      message: "Portal analytics retrieved successfully"
     });
   } catch (error) {
-    console.error("Something  went wrong", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Error getting portal analytics" });
+    console.error("Something went wrong", error);
+    res.status(500).json({ success: false, message: "Error getting portal analytics" });
   }
-
-  console.log(`Total number of students: ${studentCount}`);
 });
+
 
 //TODO: Portal anayltics
 //TODO: payment
