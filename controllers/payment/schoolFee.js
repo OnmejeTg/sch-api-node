@@ -141,7 +141,7 @@ const invoiceByLoggedInStudent = async (req, res) => {
   try {
     const student = await Student.find({authUser: req.user.id})
     const invoices = await SchoolFeeInvoice.find({ user: student});
-    console.log(req.user.id)
+    
     const responseData =
       invoices.length > 0
         ? { success: true, data: invoices }
@@ -156,7 +156,7 @@ const invoiceByLoggedInStudent = async (req, res) => {
 const invoiceById = async (req, res) => {
   try {
     const invoices = await SchoolFeeInvoice.findById(req.params.id);
-    console.log(invoices)
+    
     const responseData =
       invoices.length > 0
         ? { success: true, data: invoices }
