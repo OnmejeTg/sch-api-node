@@ -26,7 +26,7 @@ adminRouter.get("/all", isAdmin, getAllAdmins);
 adminRouter.delete("/delete/:adminId", isAdmin, deleteAdmin);
 adminRouter.put("/update/:adminId", isAdmin, updateAdmin);
 adminRouter.get("/get/:adminId", isAdmin, getAdmin);
-adminRouter.put("/update-student/:id", isAdmin, adminUpdateStudent);
+adminRouter.put("/update-student/:id", isLoggedin, isAdmin, adminUpdateStudent);
 adminRouter.put("/update-teacher/:id", isAdmin, adminUpdateTeacher);
 adminRouter.put("/assign-teacher-roles/:id", isAdmin, adminAssignTeacherRole);
 adminRouter.put(

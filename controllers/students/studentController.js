@@ -251,12 +251,35 @@ const getStudent = async (req, res) => {
 };
 
 const updateStudent = async (req, res) => {
-  const studentId = req.user.id;
+  const userId = req.user.id;
+  const student = await Student.findOne({ authUser: userId });
   const updateData = req.body;
+  console.log(process.env.DEFAULT_PROFILE_PHOTO_URL)
+  console.log(student.image)
 
+  const imageBuffer = req.file?.buffer;
+  if (imageBuffer) {
+    //check if user already has a photo thats not default 
+    //deelete the photo
+
+    if (student.image!==process.env.DEFAULT_PROFILE_PHOTO_URL) {
+      
+      // await cloudinary.uploader.destroy(student.image);
+    }
+    const folder = "test/studentProfile";
+    const stdImage = await uploadImage(imageBuffer, folder);
+    updateData.image = stdImage;
+    console.log(stdImage);
+
+    // const folder = "test/studentProfile";
+    // const stdImage = await uploadImage(imageBuffer, folder);
+    // updateData.image = stdImage;
+    // console.log(stdImage);
+  }
+  
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
-      studentId,
+      student,
       updateData,
       {
         new: true,
