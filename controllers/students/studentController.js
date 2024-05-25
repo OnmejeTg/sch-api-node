@@ -252,45 +252,58 @@ const getStudent = async (req, res) => {
 
 const updateStudent = async (req, res) => {
   const userId = req.user.id;
-  const student = await Student.findOne({ authUser: userId });
   const updateData = req.body;
-  console.log(process.env.DEFAULT_PROFILE_PHOTO_URL)
-  console.log(student.image)
 
-  const imageBuffer = req.file?.buffer;
-  if (imageBuffer) {
-    //check if user already has a photo thats not default 
-    //deelete the photo
-
-    if (student.image!==process.env.DEFAULT_PROFILE_PHOTO_URL) {
-      
-      // await cloudinary.uploader.destroy(student.image);
-    }
-    const folder = "test/studentProfile";
-    const stdImage = await uploadImage(imageBuffer, folder);
-    updateData.image = stdImage;
-    console.log(stdImage);
-
-    // const folder = "test/studentProfile";
-    // const stdImage = await uploadImage(imageBuffer, folder);
-    // updateData.image = stdImage;
-    // console.log(stdImage);
-  }
-  
   try {
-    const updatedStudent = await Student.findByIdAndUpdate(
-      student,
-      updateData,
-      {
-        new: true,
-      }
-    );
-    if (!updatedStudent) {
+    // Find the student associated with the authenticated user
+    const student = await Student.findOne({ authUser: userId });
+
+    if (!student) {
       return res.status(404).json({
         success: false,
         message: "Student not found",
       });
     }
+
+    const imageBuffer = req.file?.buffer;
+    if (imageBuffer) {
+      // Check if user already has a photo that's not default
+      if (
+        student.image &&
+        student.image !== process.env.DEFAULT_PROFILE_PHOTO_URL
+      ) {
+        const url = student.image;
+
+        // Regular expression to match the desired part of the URL
+        const regex = /\/upload\/v\d+\/(.+)\.jpg$/;
+        // Execute the regex on the URL
+        const match = url.match(regex);
+
+        const extractedPath = match[1];
+
+        // Delete the existing photo from Cloudinary
+        const deletedImg = await cloudinary.api.delete_resources(
+          [extractedPath],
+          { type: "upload", resource_type: "image" }
+        );
+      }
+
+      // Define the folder where the new image will be uploaded
+      const folder = "test/studentProfile";
+
+      // Upload the new image
+      const stdImage = await uploadImage(imageBuffer, folder);
+
+      // Update the student's data with the new image URL
+      updateData.image = stdImage;
+    }
+
+    // Update the student data in the database
+    const updatedStudent = await Student.findByIdAndUpdate(
+      student._id,
+      updateData,
+      { new: true }
+    );
 
     res.json({
       success: true,
