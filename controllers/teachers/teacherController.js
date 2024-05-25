@@ -4,6 +4,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../utils/authUtils.js";
+import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
 
 import {
   generateTeacherID,
@@ -157,8 +158,52 @@ const updateTeacher = async (req, res) => {
   const updateData = req.body;
 
   try {
+    const teacher = await Teacher.findOne({ authUser: teacherId });
+    console.log(teacher)
+
+    if (!teacher) {
+      return res.status(404).json({
+        success: false,
+        message: "Teacher not found",
+      });
+    }
+
+    const imageBuffer = req.file?.buffer;
+    if (imageBuffer) {
+      // Check if user already has a photo that's not default
+      if (
+        teacher.image &&
+        teacher.image !== process.env.DEFAULT_PROFILE_PHOTO_URL
+      ) {
+        const url = teacher.image;
+
+        // Regular expression to match the desired part of the URL
+        const regex = /\/upload\/v\d+\/(.+)\.jpg$/;
+        // Execute the regex on the URL
+        const match = url.match(regex);
+
+        const extractedPath = match[1];
+
+        // Delete the existing photo from Cloudinary
+        const deletedImg = await cloudinary.api.delete_resources(
+          [extractedPath],
+          { type: "upload", resource_type: "image" }
+        );
+        console.log("Deleted image:", deletedImg);
+      }
+
+      // Define the folder where the new image will be uploaded
+      const folder = "test/studentProfile";
+
+      // Upload the new image
+      const stdImage = await uploadImage(imageBuffer, folder);
+
+      // Update the student's data with the new image URL
+      updateData.image = stdImage;
+    }
+
     const updatedTeacher = await Teacher.findByIdAndUpdate(
-      teacherId,
+      teacher,
       updateData,
       {
         new: true,
