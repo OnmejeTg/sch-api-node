@@ -1,0 +1,139 @@
+import mongoose from "mongoose";
+
+const { Schema } = mongoose;
+
+const subjectSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  assessment1: {
+    type: Number,
+    default: 0,
+  },
+  assessment2: {
+    type: Number,
+    default: 0,
+  },
+  assessment3: {
+    type: Number,
+    default: 0,
+  },
+  exam: {
+    type: Number,
+    default: 0,
+  },
+  total: {
+    type: Number,
+    default: 0,
+  },
+  grade: {
+    type: String,
+    default: "F",
+  },
+});
+
+// Calculate total and grade before saving
+subjectSchema.pre("save", function (next) {
+  this.total = this.assessment1 + this.assessment2 + this.assessment3 + this.exam;
+  
+  if (this.total >= 90) {
+    this.grade = "A";
+  } else if (this.total >= 80) {
+    this.grade = "B";
+  } else if (this.total >= 70) {
+    this.grade = "C";
+  } else if (this.total >= 60) {
+    this.grade = "D";
+  } else {
+    this.grade = "F";
+  }
+
+  next();
+});
+
+const studentResultSchema = new Schema(
+  {
+    studentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+        required: true
+    },
+    subjects: [subjectSchema],
+    average: {
+      type: Number,
+      default: 0,
+    },
+    grandScore: {
+      type: Number,
+      default: 0,
+    },
+    passMark: {
+      type: Number,
+      required: true,
+      default: 50,
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ["failed", "passed"],
+      default: "failed",
+    },
+    remarks: {
+      type: String,
+      required: true,
+      enum: ["Excellent", "Good", "Poor"],
+      default: "Poor",
+    },
+    position: {
+      type: Number,
+      default: 0,
+    },
+    classLevel: {
+      type: String,
+     
+    },
+    academicTerm: {
+      type: String,
+      required: true,
+    },
+    academicYear: {
+      type: String,
+      required: true,
+    },
+    isPublished: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Calculate grand score, average, status, and remarks before saving
+studentResultSchema.pre("save", function (next) {
+  if (this.subjects && this.subjects.length > 0) {
+    this.grandScore = this.subjects.reduce((acc, subject) => acc + subject.total, 0);
+    this.average = this.grandScore / this.subjects.length;
+
+    if (this.average >= this.passMark) {
+      this.status = "passed";
+      if (this.average >= 90) {
+        this.remarks = "Excellent";
+      } else if (this.average >= 75) {
+        this.remarks = "Good";
+      } else {
+        this.remarks = "Poor";
+      }
+    } else {
+      this.status = "failed";
+      this.remarks = "Poor";
+    }
+  }
+  next();
+});
+
+const StudentResult = mongoose.model("StudentResult", studentResultSchema);
+
+export default StudentResult;
