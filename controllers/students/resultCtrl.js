@@ -135,7 +135,10 @@ const uploadScores = asyncHandler(async (req, res) => {
 
 const allResults = asyncHandler(async (req, res) => {
   try {
-    const results = await StudentResult.find();
+    const results = await StudentResult.find()
+      .populate("academicYear")
+      .populate("studentId")
+      .populate("academicTerm");
     if (!results) {
       return res.status(404).json({ message: "No results found" });
     } else {
