@@ -5,9 +5,14 @@ import Student from "../../models/student.js";
 import { validationResult } from "express-validator";
 
 const uploadScores = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: "No file uploaded",
+    });
+  }
   try {
     const { assessmentType } = req.body;
-
     if (
       assessmentType !== "assessment1" &&
       assessmentType !== "assessment2" &&
