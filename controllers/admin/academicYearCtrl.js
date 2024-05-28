@@ -3,7 +3,6 @@ import AcademicYear from "../../models/academicYear.js";
 import Admin from "../../models/admin.js";
 import { validationResult } from "express-validator";
 
-
 // Create a new academic year
 const createAcademicYear = asyncHandler(async (req, res) => {
   const { name, fromYear, toYear } = req.body;
@@ -112,10 +111,36 @@ const getAcademicYearById = asyncHandler(async (req, res) => {
   });
 });
 
+const getCurrentYear = asyncHandler(async (req, res) => {
+  try {
+    const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({ updatedAt: -1 });
+
+    if (!academicYear) {
+      return res.status(404).json({
+        success: false,
+        message: "No current academic year found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: academicYear,
+    });
+  } catch (error) {
+    console.error("Error fetching current academic year:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching the current academic year",
+      error: error.message,
+    });
+  }
+});
+
 export {
   createAcademicYear,
   getAcademicYears,
   updateAcademicYear,
   deleteAcademicYear,
   getAcademicYearById,
+  getCurrentYear,
 };
