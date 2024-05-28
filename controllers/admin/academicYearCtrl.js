@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
 import AcademicYear from "../../models/academicYear.js";
-import Admin from "../../models/admin.js";
 import { validationResult } from "express-validator";
 
 // Create a new academic year
