@@ -7,19 +7,24 @@ import {
 } from "../../services/paystack.js";
 
 import dotenv from "dotenv";
-dotenv.config();
+import AcademicTerm from "../../models/academicTerm.js";
+import AcademicYear from "../../models/academicYear.js";
 
-const currentSession = process.env.currentSession;
-const currentTerm = process.env.currentTerm;
+dotenv.config();
 
 // Make Payment
 const makeSchoolFeePayment = async (req, res) => {
   try {
-    let { user, email, amount } = req.body;
-    if (!user || !email || !amount) {
-      return res.status(400).json({ message: "fill all fields" });
-    }
+    const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    });
+    const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    });
 
+    
+    let { user, email, amount } = req.body;
+    
     // Check if invoice already exists
     const existingInvoice = await SchoolFeeInvoice.findOne({ user, email });
     if (
@@ -48,7 +53,9 @@ const makeSchoolFeePayment = async (req, res) => {
       amount,
       paymentReference,
       url: authorizationUrl,
-      paystackReference: paystackJson.data.reference, // Assuming reference is needed
+      paystackReference: paystackJson.data.reference,
+      academicTerm: currentTerm,
+      academicYear: currentSession,
     });
     await newInvoice.save();
 
@@ -64,6 +71,13 @@ const verifyPayment = async (req, res) => {
   const { reference, user, email } = req.query;
 
   try {
+    const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    })._id;
+    const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    })._id;
+    
     const paymentData = await verifyTransaction(reference);
     // console.log(paymentData);
     if (paymentData.data.status !== "success") {
@@ -93,6 +107,8 @@ const verifyPayment = async (req, res) => {
         url: paymentData.data.authorization_url,
         paymentStatus: paymentData.data.status,
         paystackReference: reference,
+        academicYear: currentSession,
+        academicTerm: currentTerm,
       });
       await invoice.save();
     }
@@ -139,9 +155,9 @@ const allSchoolFeeinvoices = async (req, res) => {
 // get payment for a student
 const invoiceByLoggedInStudent = async (req, res) => {
   try {
-    const student = await Student.find({authUser: req.user.id})
-    const invoices = await SchoolFeeInvoice.find({ user: student});
-    
+    const student = await Student.find({ authUser: req.user.id });
+    const invoices = await SchoolFeeInvoice.find({ user: student });
+
     const responseData =
       invoices.length > 0
         ? { success: true, data: invoices }
@@ -156,7 +172,7 @@ const invoiceByLoggedInStudent = async (req, res) => {
 const invoiceById = async (req, res) => {
   try {
     const invoices = await SchoolFeeInvoice.findById(req.params.id);
-    
+
     const responseData =
       invoices.length > 0
         ? { success: true, data: invoices }
@@ -178,7 +194,10 @@ const deleteInvoice = async (req, res) => {
       return res.status(404).json({ error: "Invoice not found" });
     }
 
-    res.json.status(204)({ message: "Invoice deleted successfully", deletedInvoice });
+    res.json.status(204)({
+      message: "Invoice deleted successfully",
+      deletedInvoice,
+    });
   } catch (err) {
     console.error("Error deleting invoice:", err);
     res.status(500).json({ error: "Internal Server Error" });
@@ -192,5 +211,5 @@ export {
   allSchoolFeeinvoices,
   invoiceByLoggedInStudent,
   invoiceById,
-  deleteInvoice
+  deleteInvoice,
 };

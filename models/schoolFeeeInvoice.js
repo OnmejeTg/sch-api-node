@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const schoolFeeInvoiceSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -45,9 +44,21 @@ const schoolFeeInvoiceSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 50,
   },
+  academicYear: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AcademicYear",
+    
+  },
+  academicTerm: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AcademicTerm",
+    
+  },
 });
 
-const SchoolFeeInvoice = mongoose.model("SchoolFeeInvoice", schoolFeeInvoiceSchema);
-
+const SchoolFeeInvoice = mongoose.model(
+  "SchoolFeeInvoice",
+  schoolFeeInvoiceSchema
+);
 
 export default SchoolFeeInvoice;

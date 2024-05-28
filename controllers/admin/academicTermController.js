@@ -130,6 +130,7 @@ const getCurrentTerm = asyncHandler(async (req, res) => {
     const academicTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
     });
+    console.log(academicTerm)
 
     if (!academicTerm) {
       return res.status(404).json({

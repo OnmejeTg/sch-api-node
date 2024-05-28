@@ -9,10 +9,11 @@ import {
   verifyPayment,
 } from "../controllers/payment/schoolFee.js";
 import { isAdmin, isLoggedin, isStudent } from "../middleware/auth.js";
+import { paymentDataValidationRules } from "../validators/paymentValidators.js";
 
 const schoolFeeRouter = express.Router();
 
-schoolFeeRouter.post("/", makeSchoolFeePayment);
+schoolFeeRouter.post("/", paymentDataValidationRules, makeSchoolFeePayment);
 schoolFeeRouter.get("/verify", verifyPayment);
 schoolFeeRouter.get("/test", testPayment);
 schoolFeeRouter.get("/all-invoices",isLoggedin, isAdmin, allSchoolFeeinvoices);
