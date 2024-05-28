@@ -3,6 +3,8 @@ import asyncHandler from "express-async-handler";
 import xlsx from "xlsx";
 import Student from "../../models/student.js";
 import { validationResult } from "express-validator";
+import AcademicYear from "../../models/academicYear.js";
+import AcademicTerm from "../../models/academicTerm.js";
 
 const uploadScores = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -12,6 +14,14 @@ const uploadScores = asyncHandler(async (req, res) => {
     });
   }
   try {
+    const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort(
+      {
+        updatedAt: -1,
+      }
+    );
+    const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    });
     const { assessmentType } = req.body;
     if (
       assessmentType !== "assessment1" &&
@@ -54,8 +64,8 @@ const uploadScores = asyncHandler(async (req, res) => {
       // Check if the student result already exists for the current term and year
       let studentResult = await StudentResult.findOne({
         studentId: student._id,
-        academicTerm: process.env.currentTerm, // Replace with actual ObjectId
-        academicYear: process.env.currentSession, // Replace with actual ObjectId
+        academicTerm: currentSession, // Replace with actual ObjectId
+        academicYear: currentTerm, // Replace with actual ObjectId
       });
 
       if (studentResult) {
@@ -89,8 +99,8 @@ const uploadScores = asyncHandler(async (req, res) => {
           subjects,
           passMark: 50,
           classLevel: student.currentClassLevel, // Replace with actual ObjectId
-          academicTerm: process.env.currentTerm, // Replace with actual ObjectId
-          academicYear: process.env.currentSession, // Replace with actual ObjectId
+          academicTerm: currentTerm, // Replace with actual ObjectId
+          academicYear: currentSession, // Replace with actual ObjectId
         });
       }
 

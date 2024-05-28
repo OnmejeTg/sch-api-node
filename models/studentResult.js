@@ -35,8 +35,9 @@ const subjectSchema = new Schema({
 
 // Calculate total and grade before saving
 subjectSchema.pre("save", function (next) {
-  this.total = this.assessment1 + this.assessment2 + this.assessment3 + this.exam;
-  
+  this.total =
+    this.assessment1 + this.assessment2 + this.assessment3 + this.exam;
+
   if (this.total >= 90) {
     this.grade = "A";
   } else if (this.total >= 80) {
@@ -55,9 +56,9 @@ subjectSchema.pre("save", function (next) {
 const studentResultSchema = new Schema(
   {
     studentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true,
     },
     subjects: [subjectSchema],
     average: {
@@ -91,14 +92,15 @@ const studentResultSchema = new Schema(
     },
     classLevel: {
       type: String,
-     
     },
     academicTerm: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicTerm",
       required: true,
     },
     academicYear: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
       required: true,
     },
     isPublished: {
@@ -114,7 +116,10 @@ const studentResultSchema = new Schema(
 // Calculate grand score, average, status, and remarks before saving
 studentResultSchema.pre("save", function (next) {
   if (this.subjects && this.subjects.length > 0) {
-    this.grandScore = this.subjects.reduce((acc, subject) => acc + subject.total, 0);
+    this.grandScore = this.subjects.reduce(
+      (acc, subject) => acc + subject.total,
+      0
+    );
     this.average = this.grandScore / this.subjects.length;
 
     if (this.average >= this.passMark) {
