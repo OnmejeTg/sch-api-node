@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import AcademicYear from "../../models/academicYear.js";
 import Admin from "../../models/admin.js";
+import { validationResult } from "express-validator";
+
 
 // Create a new academic year
 const createAcademicYear = asyncHandler(async (req, res) => {
@@ -20,7 +22,7 @@ const createAcademicYear = asyncHandler(async (req, res) => {
     createdBy: req.user.id,
   });
   await newAcademicYear.save();
-  
+
   res.status(201).json({
     status: "success",
     message: "Academic year created successfully",
@@ -31,7 +33,7 @@ const createAcademicYear = asyncHandler(async (req, res) => {
 // Get all academic years
 const getAcademicYears = asyncHandler(async (req, res) => {
   const academicYears = await AcademicYear.find();
-  
+
   res.status(200).json({
     status: "success",
     data: academicYears,
@@ -40,25 +42,29 @@ const getAcademicYears = asyncHandler(async (req, res) => {
 
 // Update an academic year
 const updateAcademicYear = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { name, fromYear, toYear } = req.body;
-
-  // Find academic year by ID
-  let academicYear = await AcademicYear.findById(id);
-
-  // If academic year not found, return error
-  if (!academicYear) {
-    res.status(404);
-    throw new Error("Academic Year not found");
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed",
+      errors: errors.array(),
+    });
   }
 
-  // Update academic year data
-  academicYear.name = name || academicYear.name;
-  academicYear.fromYear = fromYear || academicYear.fromYear;
-  academicYear.toYear = toYear || academicYear.toYear;
+  const { id } = req.params;
+  const updateData = req.body;
 
-  // Save updated academic year
-  academicYear = await academicYear.save();
+  // Find academic year by ID and update
+  const academicYear = await AcademicYear.findByIdAndUpdate(id, updateData, {
+    new: true,
+  });
+
+  if (!academicYear) {
+    return res.status(404).json({
+      success: false,
+      message: "Academic Year not found",
+    });
+  }
 
   res.status(200).json({
     status: "success",
@@ -89,23 +95,27 @@ const deleteAcademicYear = asyncHandler(async (req, res) => {
 
 // Get a single academic year by ID
 const getAcademicYearById = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-  
-    // Find academic year by ID
-    const academicYear = await AcademicYear.findById(id);
-  
-    // If academic year not found, return error
-    if (!academicYear) {
-      res.status(404);
-      throw new Error("Academic Year not found");
-    }
-  
-    res.status(200).json({
-      status: "success",
-      data: academicYear,
-    });
-  });
-  
-  
+  const { id } = req.params;
 
-export { createAcademicYear, getAcademicYears, updateAcademicYear, deleteAcademicYear, getAcademicYearById };
+  // Find academic year by ID
+  const academicYear = await AcademicYear.findById(id);
+
+  // If academic year not found, return error
+  if (!academicYear) {
+    res.status(404);
+    throw new Error("Academic Year not found");
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: academicYear,
+  });
+});
+
+export {
+  createAcademicYear,
+  getAcademicYears,
+  updateAcademicYear,
+  deleteAcademicYear,
+  getAcademicYearById,
+};

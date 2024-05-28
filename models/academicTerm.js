@@ -17,6 +17,10 @@ const academicTermSchema = new Schema(
       required: true,
       default: "3 months",
     },
+    isCurrent: {
+      type: Boolean,
+      default: false,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
