@@ -4,7 +4,8 @@ import {
   updateResult,
   uploadScores,
   deleteResult,
-  deleteAllResult
+  deleteAllResult,
+  getResultById
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -36,6 +37,12 @@ resultRouter.delete(
   "/delete-all/",
   isAdmin,
   deleteAllResult
+);
+
+resultRouter.get(
+  "/get-result/:studentId",
+  isAdmin,
+  getResultById
 );
 
 export default resultRouter;

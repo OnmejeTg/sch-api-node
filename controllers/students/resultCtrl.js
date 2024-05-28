@@ -135,10 +135,11 @@ const uploadScores = asyncHandler(async (req, res) => {
 
 const allResults = asyncHandler(async (req, res) => {
   try {
-    const results = await StudentResult.find()
-      .populate("academicYear")
-      .populate("studentId")
-      .populate("academicTerm");
+    const results = await StudentResult.find().populate([
+      "studentId",
+      "academicYear",
+      "academicTerm",
+    ]);
     if (!results) {
       return res.status(404).json({ message: "No results found" });
     } else {
@@ -263,10 +264,42 @@ const deleteAllResult = asyncHandler(async (req, res) => {
   }
 });
 
+const getResultById = asyncHandler(async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const result = await StudentResult.findOne({ studentId }).populate([
+      "studentId",
+      "academicYear",
+      "academicTerm",
+    ]);
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Result not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Result was successfully found",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error fetching result:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching the result",
+      error: error.message,
+    });
+  }
+});
+
 export {
   uploadScores,
   allResults,
   updateResult,
   deleteResult,
   deleteAllResult,
+  getResultById,
 };
