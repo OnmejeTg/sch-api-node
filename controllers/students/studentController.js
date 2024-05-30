@@ -10,6 +10,8 @@ import {
 } from "../../utils/authUtils.js";
 import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
 import mongoose from "mongoose";
+import AcademicYear from "../../models/academicYear.js";
+
 
 //*******************LOGIN*******************
 const login = async (req, res) => {
@@ -101,6 +103,9 @@ const registerStudent = async (req, res) => {
 
     // Generate student ID
     const studentId = await generateStudentID(entrySession);
+    const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    });
   
     // Create student object
     const student = new Student({
@@ -119,6 +124,7 @@ const registerStudent = async (req, res) => {
       address,
       healthStatus,
       religion,
+      academicYear,
     });
 
     // Save student to database

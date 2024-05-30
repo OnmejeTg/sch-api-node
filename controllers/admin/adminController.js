@@ -12,6 +12,8 @@ import { generateStudentID } from "../../utils/studentUtils.js";
 import Question from "../../models/question.js";
 import Exam from "../../models/exam.js";
 import SchoolFeeInvoice from "../../models/schoolFeeeInvoice.js";
+import ClassLevel from "../../models/classModel.js";
+import AcademicYear from "../../models/academicYear.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -505,7 +507,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
       try {
         // Check if student with the same studentId or email already exists
         const existingStudent = await Student.findOne({
-          $or: [{ studentId: student.studentId }, { email: student.email }],
+          $or: [{ studentId: student.studentId }],
         });
 
         if (existingStudent) {
@@ -513,9 +515,15 @@ const uploadStudent = asyncHandler(async (req, res) => {
           failedRecords.push(student);
           continue;
         }
+        const classLevels = await ClassLevel.findOne({"name":student.class})
+        if (!classLevels) {
+          failureCount++;
+          failedRecords.push(student);
+          continue;
+        }
 
         const newUser = new User({
-          username: generateStudentID(student.surname),
+          username: generateStudentID(student.entrySession),
           surname: student.surname,
           othername: student.othername,
           password: student.surname.toLowerCase(),
@@ -523,25 +531,28 @@ const uploadStudent = asyncHandler(async (req, res) => {
         });
 
         await newUser.save();
+        const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
+          updatedAt: -1,
+        });
 
         const newStudent = new Student({
           authUser: newUser._id,
-          studentId: generateStudentID(student.surname),
+          studentId: generateStudentID(student.entrySession),
           surname: student.surname,
           othername: student.othername,
           entrySession: student.entrySession,
+          classLevels:classLevels,
+          academicYear,
           email: student.email,
           sex: student.sex,
           dateOfBirth: new Date(student.dateOfBirth),
-          dateOfAdmission: new Date(student.dateOfAdmission),
           parentSurname: student.parentSurname,
           parentOthername: student.parentOthername,
           parentOccupation: student.parentOccupation,
           phone: student.phone,
           address: student.address,
           healthStatus: student.healthStatus,
-          religion: student.religion,
-          createdAt: new Date(),
+          religion: student.religion
         });
 
         await newStudent.save();

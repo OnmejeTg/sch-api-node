@@ -45,7 +45,9 @@ const academicYearSchema = new mongoose.Schema(
   }
 );
 
+
 //model
 const AcademicYear = mongoose.model("AcademicYear", academicYearSchema);
 
-export default AcademicYear
+
+export default AcademicYear;
