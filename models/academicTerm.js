@@ -26,6 +26,11 @@ const academicTermSchema = new Schema(
       ref: "Admin",
       required: true,
     },
+    academicYear: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      required: true,
+    },
   },
   { timestamps: true }
 );

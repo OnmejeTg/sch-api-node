@@ -3,13 +3,14 @@ import asyncHandler from "express-async-handler";
 
 const createAcademicTerm = async (req, res) => {
   try {
-    const { name, description, duration } = req.body;
+    const { name, description, duration, academicYear } = req.body;
     const createdBy = req.user.id;
     const newAcademicTerm = new AcademicTerm({
       name,
       description,
       duration,
       createdBy,
+      academicYear
     });
     const savedTerm = await newAcademicTerm.save();
     res.status(201).json(savedTerm);
@@ -23,7 +24,7 @@ const createAcademicTerm = async (req, res) => {
 const getAllTerms = async (req, res) => {
   try {
     // Fetch all term from the database
-    const term = await AcademicTerm.find();
+    const term = await AcademicTerm.find().populate('academicYear');
 
     // Respond with success message and the retrieved teacher data
     res.status(200).json({
@@ -45,7 +46,7 @@ const getAllTerms = async (req, res) => {
 const getTerm = async (req, res) => {
   try {
     const id = req.params.id;
-    const term = await AcademicTerm.findById(id);
+    const term = await AcademicTerm.findById(id).populate('academicYear');;
     if (!term) {
       return res.status(404).json({
         success: false,
@@ -130,7 +131,6 @@ const getCurrentTerm = asyncHandler(async (req, res) => {
     const academicTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
     });
-    console.log(academicTerm)
 
     if (!academicTerm) {
       return res.status(404).json({

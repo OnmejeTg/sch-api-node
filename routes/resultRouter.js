@@ -5,7 +5,8 @@ import {
   uploadScores,
   deleteResult,
   deleteAllResult,
-  getResultById
+  getResultById,
+  generateResultPDFCtrl
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -43,6 +44,11 @@ resultRouter.get(
   "/get-result/:studentId",
   isAdmin,
   getResultById
+);
+resultRouter.get(
+  "/get-result-pdf/:studentId",
+  // isAdmin,
+  generateResultPDFCtrl
 );
 
 export default resultRouter;

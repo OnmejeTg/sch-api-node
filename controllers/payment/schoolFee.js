@@ -73,10 +73,12 @@ const verifyPayment = async (req, res) => {
   try {
     const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
-    })._id;
+    });
     const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
-    })._id;
+    });
+
+    console.log(currentTerm.name, currentTerm.name)
     
     const paymentData = await verifyTransaction(reference);
     // console.log(paymentData);
@@ -122,7 +124,7 @@ const verifyPayment = async (req, res) => {
       const studentObject = await Student.findOne({ _id: user });
       studentObject.paymentStatus = paymentData.data.status;
       // studentObject.currentPayment = `${currentSession} ${currentTerm} term`;
-      studentObject.currentPayment = `${currentSession} ${currentTerm}`;
+      studentObject.currentPayment = currentTerm._id;
       // console.log(studentObject);
       studentObject.save();
     } catch (error) {
