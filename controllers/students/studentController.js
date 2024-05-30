@@ -9,6 +9,7 @@ import {
   generateRefreshToken,
 } from "../../utils/authUtils.js";
 import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
+import mongoose from "mongoose";
 
 //*******************LOGIN*******************
 const login = async (req, res) => {
@@ -77,13 +78,10 @@ const logout = async (req, res) => {
 
 //***********************Create Student*********************
 const registerStudent = async (req, res) => {
-  const imageBuffer = req.file?.buffer;
-  const folder = "test/studentProfile";
-
-  const stdImage = await uploadImage(imageBuffer, folder);
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    // Destructure required fields from request body
     const {
       surname,
       othername,
@@ -91,7 +89,6 @@ const registerStudent = async (req, res) => {
       classLevels,
       dateOfBirth,
       sex,
-      dateOfAdmission,
       entrySession,
       parentSurname,
       parentOthername,
@@ -102,98 +99,59 @@ const registerStudent = async (req, res) => {
       religion,
     } = req.body;
 
-    // Check if required fields are present
-    if (!isValidUserData(req.body)) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Invalid user data. Please provide a surname, othername, and email.",
-      });
-    }
-
-    // Generate admission ID
-    const studentId = generateStudentID(surname);
-
-    // Check if a student with the provided email or admission ID already exists
-    const existingStudent = await Student.findOne({
-      $or: [{ email }, { studentId }],
-    });
-    if (existingStudent) {
-      let errorMessage;
-      if (existingStudent.email === email) {
-        errorMessage = "A student with the same email already exists";
-      } else {
-        errorMessage = "A student with the same admission ID already exists";
-      }
-      return res.status(400).json({
-        success: false,
-        message: errorMessage,
-      });
-    }
-
-    // Create authentication user
-    const authUser = new User({
-      username: studentId,
-      surname: surname,
-      othername: othername,
-      password: surname.toLowerCase(),
-      userType: "student",
-    });
-
-    try {
-      // Save authentication user
-      await authUser.save();
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: "Failed to save authentication user",
-        error: error.message,
-      });
-    }
+    // Generate student ID
+    const studentId = await generateStudentID(entrySession);
+  
     // Create student object
     const student = new Student({
-      authUser,
+      studentId,
       surname,
       othername,
-      entrySession,
       email,
+      classLevels,
       dateOfBirth,
-      studentId,
       sex,
-      dateOfAdmission,
+      entrySession,
       parentSurname,
       parentOthername,
       parentOccupation,
       phone,
       address,
-      classLevels,
       healthStatus,
       religion,
-      image: stdImage,
     });
 
-    try {
-      // Save student to database
-      const savedStudent = await student.save();
+    // Save student to database
+    const savedStudent = await student.save({ session });
 
-      // Respond with success message and the saved student data
-      return res.status(201).json({
-        success: true,
-        message: "Student registered successfully",
-        data: savedStudent,
-      });
-    } catch (error) {
-      // Delete the authentication user created for the new student
-      await User.deleteOne({ username: studentId });
+    // Create auth user object
+    const newUser = await User.create([{
+      username: studentId,
+      surname: surname,
+      othername: othername,
+      password: surname.toLowerCase(), // Consider using a more secure password strategy
+      userType: "student",
+    }], { session });
 
-      console.error("Error saving student:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to save student",
-        error: error.message,
-      });
-    }
+    // Update student with authUser reference
+    savedStudent.authUser = newUser[0]._id;
+    await savedStudent.save({ session });
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    // Respond with success message and the saved student data
+    return res.status(201).json({
+      success: true,
+      message: "Student registered successfully",
+      data: savedStudent,
+    });
   } catch (error) {
+    // If any error occurs, abort the transaction
+    await session.abortTransaction();
+    session.endSession();
+
     console.error("Error registering student:", error);
     return res.status(500).json({
       success: false,
@@ -203,11 +161,17 @@ const registerStudent = async (req, res) => {
   }
 };
 
+
+
 //******************Get all students******************************
 const getStudents = async (req, res) => {
   try {
     // Fetch all students from the database
-    const students = await Student.find().populate(['authUser', 'currentClassLevel', 'currentPayment']);
+    const students = await Student.find().populate([
+      "authUser",
+      "currentClassLevel",
+      "currentPayment",
+    ]);
 
     // Respond with success message and the retrieved student data
     res.status(200).json({

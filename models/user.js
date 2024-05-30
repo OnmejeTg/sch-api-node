@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema({
   },
   userType:{
     type:String,
-    default:"user"
+    enum:['student', 'teacher', 'admin'],
+    default:"student"
   }
 });
 
