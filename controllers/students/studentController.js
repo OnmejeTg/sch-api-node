@@ -23,7 +23,7 @@ const login = async (req, res) => {
 
   try {
     // Step 2: Find the student in the database
-    const student = await Student.findOne({ admissionId: username });
+    const student = await Student.findOne({ studentId: username });
 
     if (!student) {
       return res.status(404).json({
@@ -77,7 +77,7 @@ const logout = async (req, res) => {
 
 //***********************Create Student*********************
 const registerStudent = async (req, res) => {
-  const imageBuffer = req.file.buffer;
+  const imageBuffer = req.file?.buffer;
   const folder = "test/studentProfile";
 
   const stdImage = await uploadImage(imageBuffer, folder);
@@ -112,11 +112,11 @@ const registerStudent = async (req, res) => {
     }
 
     // Generate admission ID
-    const admissionId = generateStudentID(surname);
+    const studentId = generateStudentID(surname);
 
     // Check if a student with the provided email or admission ID already exists
     const existingStudent = await Student.findOne({
-      $or: [{ email }, { admissionId }],
+      $or: [{ email }, { studentId }],
     });
     if (existingStudent) {
       let errorMessage;
@@ -133,7 +133,7 @@ const registerStudent = async (req, res) => {
 
     // Create authentication user
     const authUser = new User({
-      username: admissionId,
+      username: studentId,
       surname: surname,
       othername: othername,
       password: surname.toLowerCase(),
@@ -158,7 +158,7 @@ const registerStudent = async (req, res) => {
       entrySession,
       email,
       dateOfBirth,
-      admissionId,
+      studentId,
       sex,
       dateOfAdmission,
       parentSurname,
@@ -166,6 +166,7 @@ const registerStudent = async (req, res) => {
       parentOccupation,
       phone,
       address,
+      classLevels,
       healthStatus,
       religion,
       image: stdImage,
@@ -183,7 +184,7 @@ const registerStudent = async (req, res) => {
       });
     } catch (error) {
       // Delete the authentication user created for the new student
-      await User.deleteOne({ username: admissionId });
+      await User.deleteOne({ username: studentId });
 
       console.error("Error saving student:", error);
       return res.status(500).json({
@@ -206,7 +207,7 @@ const registerStudent = async (req, res) => {
 const getStudents = async (req, res) => {
   try {
     // Fetch all students from the database
-    const students = await Student.find();
+    const students = await Student.find().populate(['authUser', 'currentClassLevel', 'currentPayment']);
 
     // Respond with success message and the retrieved student data
     res.status(200).json({

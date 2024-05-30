@@ -7,7 +7,7 @@ import {
 import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
 
 import {
-  generateTeacherID,
+  generatestaffId,
   isValidUserData,
 } from "../../utils/teacherUtils.js";
 
@@ -26,11 +26,11 @@ const createTeacher = async (req, res) => {
     }
 
     // Generate teacher ID
-    const teacherId = generateTeacherID(surname);
+    const staffId = generatestaffId(surname);
 
     // Check if a teacher with the provided email or  ID already exists
     const existingTeacher = await Teacher.findOne({
-      $or: [{ email }, { teacherId }],
+      $or: [{ email }, { staffId }],
     });
     if (existingTeacher) {
       let errorMessage;
@@ -47,7 +47,7 @@ const createTeacher = async (req, res) => {
 
     // Create authentication user
     const authUser = new User({
-      username: teacherId,
+      username: staffId,
       surname,
       othername,
       password: surname.toLowerCase(),
@@ -72,7 +72,7 @@ const createTeacher = async (req, res) => {
       email,
       sex,
       dateEmployed,
-      teacherId,
+      staffId,
     });
 
     try {
@@ -87,7 +87,7 @@ const createTeacher = async (req, res) => {
       });
     } catch (error) {
       // Delete the authentication user created for the new teacher
-      await User.deleteOne({ username: teacherId });
+      await User.deleteOne({ username: staffId });
 
       console.error("Error saving teacher:", error);
       return res.status(500).json({
@@ -130,8 +130,8 @@ const allTeachers = async (req, res) => {
 
 const getTeacher = async (req, res) => {
   try {
-    const teacherId = req.params.id;
-    const teacher = await Teacher.findById(teacherId);
+    const staffId = req.params.id;
+    const teacher = await Teacher.findById(staffId);
     if (!teacher) {
       return res.status(404).json({
         success: false,
@@ -154,11 +154,11 @@ const getTeacher = async (req, res) => {
 };
 
 const updateTeacher = async (req, res) => {
-  const teacherId = req?.user?.id;
+  const staffId = req?.user?.id;
   const updateData = req.body;
 
   try {
-    const teacher = await Teacher.findOne({ authUser: teacherId });
+    const teacher = await Teacher.findOne({ authUser: staffId });
     console.log(teacher)
 
     if (!teacher) {
@@ -231,10 +231,10 @@ const updateTeacher = async (req, res) => {
 };
 
 const deleteTeacher = async (req, res) => {
-  const teacherId = req.params.id;
+  const staffId = req.params.id;
 
   try {
-    const teacher = await Teacher.findById(teacherId);
+    const teacher = await Teacher.findById(staffId);
     if (!teacher) {
       return res.status(404).json({
         success: false,
@@ -245,7 +245,7 @@ const deleteTeacher = async (req, res) => {
 
     await Promise.all([
       User.findByIdAndDelete(authUserId),
-      Teacher.deleteOne({ _id: teacherId }),
+      Teacher.deleteOne({ _id: staffId }),
     ]);
 
     res.json({
@@ -273,7 +273,7 @@ const login = async (req, res) => {
 
   try {
     // Step 2: Find the student in the database
-    const teacher = await Teacher.findOne({ teacherId: username });
+    const teacher = await Teacher.findOne({ staffId: username });
 
     if (!teacher) {
       return res.status(404).json({

@@ -27,7 +27,7 @@ const teacherSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    teacherId: {
+    staffId: {
       type: String,
       required: true,
     },

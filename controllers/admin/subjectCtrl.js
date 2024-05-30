@@ -35,7 +35,7 @@ const getSubjects = asyncHandler(async (req, res) => {
 // Update a Subject
 const updateSubject = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, description, teacherId, academicTermId } = req.body;
+  const { name, description, staffId, academicTermId } = req.body;
 
   let subject = await Subject.findById(id);
   if (!subject) {
@@ -45,7 +45,7 @@ const updateSubject = asyncHandler(async (req, res) => {
 
   subject.name = name || subject.name;
   subject.description = description || subject.description;
-  subject.teacher = teacherId || subject.teacher;
+  subject.teacher = staffId || subject.teacher;
   subject.academicTerm = academicTermId || subject.academicTerm;
 
   await subject.save();

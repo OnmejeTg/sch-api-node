@@ -1,5 +1,5 @@
 
-const generateTeacherID = function (surname) {
+const generatestaffId = function (surname) {
     return (
       "TEA" +
       Math.floor(100 + Math.random() * 900) +
@@ -18,6 +18,6 @@ const generateTeacherID = function (surname) {
   
 
   export {
-    generateTeacherID,
+    generatestaffId,
     isValidUserData,
   }

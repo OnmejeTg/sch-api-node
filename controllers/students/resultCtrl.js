@@ -50,7 +50,7 @@ const uploadScores = asyncHandler(async (req, res) => {
     for (const studentData of jsonData) {
       // Check if the student exists
       const student = await Student.findOne({
-        admissionId: studentData.StudentID,
+        studentId: studentData.StudentID,
       });
 
       if (!student) {

@@ -271,12 +271,12 @@ const adminUpdateStudent = async (req, res) => {
 
 //Admin update teacher information
 const adminUpdateTeacher = async (req, res) => {
-  const teacherId = req.params.id;
+  const staffId = req.params.id;
   const updateData = req.body;
 
   try {
     const updatedTeacher = await Teacher.findByIdAndUpdate(
-      teacherId,
+      staffId,
       updateData,
       {
         new: true,
@@ -503,9 +503,9 @@ const uploadStudent = asyncHandler(async (req, res) => {
 
     for (const student of jsonData) {
       try {
-        // Check if student with the same admissionId or email already exists
+        // Check if student with the same studentId or email already exists
         const existingStudent = await Student.findOne({
-          $or: [{ admissionId: student.admissionId }, { email: student.email }],
+          $or: [{ studentId: student.studentId }, { email: student.email }],
         });
 
         if (existingStudent) {
@@ -526,7 +526,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
 
         const newStudent = new Student({
           authUser: newUser._id,
-          admissionId: generateStudentID(student.surname),
+          studentId: generateStudentID(student.surname),
           surname: student.surname,
           othername: student.othername,
           entrySession: student.entrySession,
