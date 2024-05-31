@@ -19,6 +19,7 @@ import bodyParser from "body-parser";
 import announcementRouter from "../routes/announcements.js";
 import inquiresRouter from "../routes/inquiries.js";
 import resultRouter from "../routes/resultRouter.js";
+import feeRouter from "../routes/feeRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -52,6 +53,7 @@ app.use("/api/v2/payment", schoolFeeRouter);
 app.use("/api/v2/announcement", announcementRouter);
 app.use("/api/v2/inquiry", inquiresRouter);
 app.use('/api/v2/result', resultRouter)
+app.use('/api/v2/fee', feeRouter)
 
 // Use error handlers
 app.use(notFoundHandler);
