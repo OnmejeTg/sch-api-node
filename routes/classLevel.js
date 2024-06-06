@@ -5,7 +5,7 @@ import {
   getClassLevelById,
   getClassLevels,
   updateClassLevel,
-  getStudentByClassLevel
+  getStudentsByClassLevel
 } from "../controllers/admin/classLevelCtrl.js";
 import { isAdmin } from "../middleware/auth.js";
 
@@ -27,6 +27,6 @@ classLevelRouter
   .put(isAdmin, updateClassLevel)
   .delete(isAdmin, deleteClassLevel);
 
-classLevelRouter.route("/get-students/:id").get(isAdmin, getStudentByClassLevel)
+classLevelRouter.route("/get-students/:id").get(isAdmin, getStudentsByClassLevel)
 
 export default classLevelRouter;

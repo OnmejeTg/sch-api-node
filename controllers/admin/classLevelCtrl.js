@@ -103,18 +103,29 @@ const getClassLevelById = asyncHandler(async (req, res) => {
   });
 });
 
-const getStudentByClassLevel = asyncHandler(async (req, res) =>{
-  const classLevel = req.params.id;
-  const student = await Student.find({currentClassLevel:classLevel})
-  if(!student){
-    res.status(404);
-    throw new Error("Student not found");
+const getStudentsByClassLevel = asyncHandler(async (req, res) => {
+  try {
+    const classLevel = req.params.id;
+    const students = await Student.find({ currentClassLevel: classLevel });
+
+    if (!students || students.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No students found for the given class level",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: students,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
-  res.status(200).json({
-    status: "success",
-    data: student,
-  });
-})
+});
 
 export {
   createClassLevel,
@@ -122,5 +133,5 @@ export {
   updateClassLevel,
   deleteClassLevel,
   getClassLevelById,
-  getStudentByClassLevel
+  getStudentsByClassLevel
 };
