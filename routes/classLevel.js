@@ -27,6 +27,6 @@ classLevelRouter
   .put(isAdmin, updateClassLevel)
   .delete(isAdmin, deleteClassLevel);
 
-classLevelRouter.route("/get-students:id").get(isAdmin, getStudentByClassLevel)
+classLevelRouter.route("/get-students/:id").get(isAdmin, getStudentByClassLevel)
 
 export default classLevelRouter;
