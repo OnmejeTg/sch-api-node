@@ -10,7 +10,7 @@ import {
   globalErrorHandler,
 } from "../middleware/errorHandler.js";
 import academicYearRouter from "../routes/academicYear.js";
-import claasLevelRouter from "../routes/classLevel.js";
+import classLevelRouter from "../routes/classLevel.js";
 import subjectRouter from "../routes/subjectRouter.js";
 import examRouter from "../routes/examRouter.js";
 import questionRouter from "../routes/questionRouter.js";
@@ -45,7 +45,7 @@ app.use("/api/v2/admin", adminRouter);
 app.use("/api/v2/teacher", teacherRouter);
 app.use("/api/v2/acadmic-term", acadmicTermRouter);
 app.use("/api/v2/acadmic-year", academicYearRouter);
-app.use("/api/v2/class-level", claasLevelRouter);
+app.use("/api/v2/class-level", classLevelRouter);
 app.use("/api/v2/subject", subjectRouter);
 app.use("/api/v2/exam", examRouter);
 app.use("/api/v2/question", questionRouter);

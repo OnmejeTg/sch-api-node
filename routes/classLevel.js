@@ -5,25 +5,28 @@ import {
   getClassLevelById,
   getClassLevels,
   updateClassLevel,
+  getStudentByClassLevel
 } from "../controllers/admin/classLevelCtrl.js";
 import { isAdmin } from "../middleware/auth.js";
 
-const claasLevelRouter = express.Router();
+const classLevelRouter = express.Router();
 
-// claasLevelRouter.post("/", isAdmin, createClassLevel);
-// claasLevelRouter.post("/", isAdmin, getClassLevels);
-// claasLevelRouter.get("/:id", isAdmin, getClassLevelById);
-// claasLevelRouter.update("/:id", isAdmin, updateClassLevel);
-// claasLevelRouter.delete("/:id", isAdmin, deleteClassLevel);
+// classLevelRouter.post("/", isAdmin, createClassLevel);
+// classLevelRouter.post("/", isAdmin, getClassLevels);
+// classLevelRouter.get("/:id", isAdmin, getClassLevelById);
+// classLevelRouter.update("/:id", isAdmin, updateClassLevel);
+// classLevelRouter.delete("/:id", isAdmin, deleteClassLevel);
 
-claasLevelRouter
+classLevelRouter
   .route("/")
   .post(isAdmin, createClassLevel)
   .get(isAdmin, getClassLevels);
-claasLevelRouter
+classLevelRouter
   .route("/:id")
   .get(isAdmin, getClassLevelById)
   .put(isAdmin, updateClassLevel)
   .delete(isAdmin, deleteClassLevel);
 
-export default claasLevelRouter;
+classLevelRouter.route("/get-students:id").get(isAdmin, getStudentByClassLevel)
+
+export default classLevelRouter;

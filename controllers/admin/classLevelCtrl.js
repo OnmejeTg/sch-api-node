@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import ClassLevel from "../../models/classModel.js"; // Assuming the path to your model
+import Student from "../../models/student.js";
 
 // Create a new Class Level
 const createClassLevel = asyncHandler(async (req, res) => {
@@ -102,10 +103,24 @@ const getClassLevelById = asyncHandler(async (req, res) => {
   });
 });
 
+const getStudentByClassLevel = asyncHandler(async (req, res) =>{
+  const classLevel = req.params.id;
+  const student = await Student.find({currentClassLevel:classLevel})
+  if(!student){
+    res.status(404);
+    throw new Error("Student not found");
+  }
+  res.status(200).json({
+    status: "success",
+    data: student,
+  });
+})
+
 export {
   createClassLevel,
   getClassLevels,
   updateClassLevel,
   deleteClassLevel,
   getClassLevelById,
+  getStudentByClassLevel
 };
