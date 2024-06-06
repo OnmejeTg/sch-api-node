@@ -199,7 +199,7 @@ const getStudents = async (req, res) => {
 const getStudent = async (req, res) => {
   try {
     const studentId = req.params.id;
-    const student = await Student.findById(studentId);
+    const student = await Student.findOne({studentId});
     if (!student) {
       return res.status(404).json({
         success: false,

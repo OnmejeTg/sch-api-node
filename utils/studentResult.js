@@ -1,5 +1,8 @@
-import PDFDocument from "pdfkit";
-import StudentResult from "../models/studentResult.js";
+import pdfMake from 'pdfmake/build/pdfmake.js';
+import pdfFonts from 'pdfmake/build/vfs_fonts.js';
+import StudentResult from '../models/studentResult.js';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const generateResultPDF = async (studentId, res) => {
   try {
@@ -16,157 +19,193 @@ const generateResultPDF = async (studentId, res) => {
     const academicYear = result.academicYear;
     const academicTerm = result.academicTerm;
 
-    // Create a new PDF document
-    const doc = new PDFDocument();
+    const documentDefinition = {
+      content: [
+        {
+          text: 'MBAKOR COMM. SEC. SCH, WANNUNE\nMotto: Innovation and Service',
+          style: 'header'
+        },
+        {
+          text: 'Opposite LGA Secretariat, Wannune, Benue State\nTEL: +2347043786532, EMAIL: mcsswannune@gmail.com',
+          style: 'subheader'
+        },
+        {
+          text: "STUDENT'S ACADEMIC REPORT CARD",
+          style: 'title'
+        },
+        {
+          style: 'studentDetails',
+          columns: [
+            [
+              { text: `Name: ${student.fullName()}` },
+              { text: `Admission Number: ${student.studentId}` },
+              { text: `Term: ${academicTerm.name}` },
+              { text: 'Resumption: _________' },
+              { text: 'Student in Class: 53' },
+              { text: 'Total Days in Term: _______' }
+            ],
+            [
+              { text: `Gender: ${student.sex}` },
+              { text: `Age: ${student.age}` },
+              { text: `Session: ${academicYear.name}` },
+              { text: `Class: ${student.classLevel}` },
+              { text: 'Class Teacher: Dooga Esther' },
+              { text: 'Total Days Present: _______' }
+            ]
+          ]
+        },
+        {
+          text: 'SUBJECTS',
+          style: 'sectionHeader'
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: [100, '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'],
+            body: [
+              [
+                'Subject', 'First C.A (10)', 'Second C.A (10)', 'Test (10)', 'Exam (70)', 'Total (100)',
+                'Subject Avg.', 'Subject Highest', 'Subject Lowest', 'Subject Position', 'Subject Grade'
+              ],
+              ...result.subjects.map(subject => [
+                subject.name, subject.assessment1, subject.assessment2, subject.assessment3, subject.exam,
+                subject.total, '', '', '', '', subject.grade
+              ])
+            ]
+          }
+        },
+        {
+          text: 'PSYCHOMOTOR SKILLS',
+          style: 'sectionHeader'
+        },
+        {
+          columns: [
+            [
+              { text: 'Handwriting: nill' },
+              { text: 'Sports: nill' },
+              { text: 'Drawing & Painting: nill' }
+            ],
+            [
+              { text: 'Verbal Fluency: nill' },
+              { text: 'Handling Tools: nill' }
+            ]
+          ]
+        },
+        {
+          text: 'AFFECTIVE SKILLS',
+          style: 'sectionHeader'
+        },
+        {
+          columns: [
+            [
+              { text: 'Punctuality: nill' },
+              { text: 'Neatness: nill' },
+              { text: 'Leadership Skill: nill' },
+              { text: 'Attentiveness: nill' },
+              { text: 'Attitude to Work: nill' }
+            ],
+            [
+              { text: 'Politeness: nill' },
+              { text: 'Honesty: nill' },
+              { text: 'Cooperation: nill' },
+              { text: 'Perseverance: nill' }
+            ]
+          ]
+        },
+        {
+          text: 'GRADING SYSTEM',
+          style: 'sectionHeader'
+        },
+        {
+          columns: [
+            [
+              { text: '70-100: A' },
+              { text: '50-59: C' }
+            ],
+            [
+              { text: '60-69: B' },
+              { text: '40-49: D' }
+            ],
+            { text: '0-39: E' }
+          ]
+        },
+        {
+          text: 'SUMMARY',
+          style: 'sectionHeader'
+        },
+        {
+          columns: [
+            { text: `TOTAL SCORE: ${result.grandScore}` },
+            { text: 'TOTAL OBTAINABLE SCORE: 1000' },
+            { text: `AVG. SCORE: ${result.average}` },
+            { text: `GRADE: ${result.remarks}` },
+            { text: `POSITION: ${result.position}` }
+          ]
+        },
+        {
+          text: "CLASS TEACHER'S REMARKS: Not Impressive, Sit up!"
+        },
+        {
+          text: 'SIGN: ___________________________',
+          alignment: 'right'
+        },
+        {
+          text: "PRINCIPAL'S REMARKS: A poor result, Sit up!"
+        },
+        {
+          text: 'SIGN: ___________________________',
+          alignment: 'right'
+        },
+        {
+          text: 'powered by NobleQuest Innovations  || 07064436807 || tonmeje@gmail.com',
+          style: 'footer'
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 14,
+          bold: true,
+          alignment: 'center'
+        },
+        subheader: {
+          fontSize: 12,
+          alignment: 'center'
+        },
+        title: {
+          fontSize: 13,
+          bold: true,
+          alignment: 'center',
+          decoration: 'underline'
+        },
+        studentDetails: {
+          fontSize: 10,
+          margin: [0, 10, 0, 10]
+        },
+        sectionHeader: {
+          fontSize: 12,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+        footer: {
+          fontSize: 8,
+          italics: true,
+          alignment: 'center',
+          margin: [0, 20, 0, 0]
+        }
+      }
+    };
 
-    // Pipe the document to a buffer
-    const buffers = [];
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {
-      const pdfData = Buffer.concat(buffers);
+    const pdfDoc = pdfMake.createPdf(documentDefinition);
+
+    pdfDoc.getBuffer((buffer) => {
       res.contentType('application/pdf');
-      res.send(pdfData);
+      res.send(buffer);
     });
-
-    // Add content to the PDF
-    doc
-      .fontSize(14)
-      .text('MBAKOR COMM. SEC. SCH, WANNUNE\nMotto: Innovation and Service', { align: 'center' })
-      .moveDown(0.5)
-      .fontSize(12)
-      .text('Opposite LGA Secretariat, Wannune, Benue State\nTEL: +2347043786532, EMAIL: mcsswannune@gmail.com', { align: 'center' })
-      .moveDown(1)
-      .fontSize(13)
-      .text("STUDENT'S ACADEMIC REPORT CARD", { align: 'center', underline: true })
-      .moveDown(1);
-
-    // Student details
-    doc
-      .fontSize(10)
-      .text(`Name: ${student.name}`, { continued: true })
-      .text(`Gender: ${student.gender}`, { align: 'right' })
-      .text(`Admission Number: ${student.admissionNumber}`, { continued: true })
-      .text(`Age: ${student.age}`, { align: 'right' })
-      .text(`Term: ${academicTerm.name}`, { continued: true })
-      .text(`Session: ${academicYear.name}`, { align: 'right' })
-      .text('Resumption: _________', { continued: true })
-      .text(`Class: ${student.classLevel}`, { align: 'right' })
-      .text('Student in Class: 53', { continued: true })
-      .text('Class Teacher: Dooga Esther', { align: 'right' })
-      .text('Total Days in Term: _______', { continued: true })
-      .text('Total Days Present: _______', { align: 'right' })
-      .moveDown(1);
-
-    // Subject scores
-    doc
-      .fontSize(12)
-      .text('SUBJECTS')
-      .moveDown(0.5)
-      .fontSize(10);
-
-    const tableTop = doc.y;
-    const subjectTableHeaders = [
-      'Subject', 'First C.A (10)', 'Second C.A (10)', 'Test (10)', 'Exam (70)', 'Total (100)',
-      'Subject Avg.', 'Subject Highest', 'Subject Lowest', 'Subject Position', 'Subject Grade'
-    ];
-
-    subjectTableHeaders.forEach((header, i) => {
-      doc.text(header, { continued: i !== subjectTableHeaders.length - 1 });
-    });
-
-    doc.moveDown(0.5);
-
-    result.subjects.forEach(subject => {
-      const subjectRow = [
-        subject.name, subject.assessment1, subject.assessment2, subject.assessment3, subject.exam,
-        subject.total, '', '', '', '', subject.grade
-      ];
-
-      subjectRow.forEach((item, i) => {
-        doc.text(item, { continued: i !== subjectRow.length - 1 });
-      });
-
-      doc.moveDown(0.5);
-    });
-
-    doc.moveDown(1);
-
-    // Psychomotor skills
-    doc
-      .fontSize(12)
-      .text('PSYCHOMOTOR SKILLS')
-      .moveDown(0.5)
-      .fontSize(10)
-      .text('Handwriting: nill', { continued: true })
-      .text('Verbal Fluency: nill', { align: 'right' })
-      .text('Sports: nill', { continued: true })
-      .text('Handling Tools: nill', { align: 'right' })
-      .text('Drawing & Painting: nill')
-      .moveDown(1);
-
-    // Affective skills
-    doc
-      .fontSize(12)
-      .text('AFFECTIVE SKILLS')
-      .moveDown(0.5)
-      .fontSize(10)
-      .text('Punctuality: nill', { continued: true })
-      .text('Politeness: nill', { align: 'right' })
-      .text('Neatness: nill', { continued: true })
-      .text('Honesty: nill', { align: 'right' })
-      .text('Leadership Skill: nill', { continued: true })
-      .text('Cooperation: nill', { align: 'right' })
-      .text('Attentiveness: nill', { continued: true })
-      .text('Perseverance: nill', { align: 'right' })
-      .text('Attitude to Work: nill')
-      .moveDown(1);
-
-    // Grading system
-    doc
-      .fontSize(12)
-      .text('GRADING SYSTEM')
-      .moveDown(0.5)
-      .fontSize(10)
-      .text('70-100: A', { continued: true })
-      .text('60-69: B', { align: 'right' })
-      .text('50-59: C', { continued: true })
-      .text('40-49: D', { align: 'right' })
-      .text('0-39: E')
-      .moveDown(1);
-
-    // Summary
-    doc
-      .fontSize(12)
-      .text('SUMMARY')
-      .moveDown(0.5)
-      .fontSize(10)
-      .text(`TOTAL SCORE: ${result.grandScore}`, { continued: true })
-      .text('TOTAL OBTAINABLE SCORE: 1000', { align: 'right' })
-      .text(`AVG. SCORE: ${result.average}`, { continued: true })
-      .text(`GRADE: ${result.remarks}`, { align: 'right' })
-      .text(`POSITION: ${result.position}`)
-      .moveDown(1);
-
-    // Remarks
-    doc
-      .text("CLASS TEACHER'S REMARKS: Not Impressive, Sit up!")
-      .text('SIGN: ___________________________', { align: 'right' })
-      .moveDown(0.5)
-      .text("PRINCIPAL'S REMARKS: A poor result, Sit up!")
-      .text('SIGN: ___________________________', { align: 'right' })
-      .moveDown(1);
-
-    // Footer
-    doc
-      .fontSize(8)
-      .text('powered by NobleQuest Innovations  || 07064436807 || tonmeje@gmail.com', { align: 'center', italics: true });
-
-    // Finalize the PDF and end the stream
-    doc.end();
 
   } catch (error) {
     console.error('Error generating PDF:', error);
     res.status(500).json({ message: 'Failed to generate PDF', error: error.message });
   }
 }
+
 export { generateResultPDF };
