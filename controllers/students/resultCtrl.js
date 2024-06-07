@@ -296,14 +296,15 @@ const getResultById = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
 const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
   try {
     const pdf = await generatePDF(sample);
-    pdf.save("student_report_card.pdf");
+    const pdfData = pdf.output('arraybuffer');
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${sample.name}.pdf"`);
+    res.send(Buffer.from(pdfData));
   } catch (error) {
     console.log(error);
     res.status(error.status || 500).json({

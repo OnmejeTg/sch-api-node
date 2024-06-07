@@ -168,4 +168,4 @@ const result = {
   },
 };
 
-export { generatePDF, sample };
+export { generatePDF, sample, result };
