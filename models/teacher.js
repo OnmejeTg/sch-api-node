@@ -27,9 +27,28 @@ const teacherSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+
     staffId: {
       type: String,
       required: true,
+    },
+    designation: {
+      type: String,
+      default: "teacher",
+      enum: ["principal", "teacher", "accountant", "librarian"],
+    },
+    appointmentType: {
+      type: String,
+      default: "contractual",
+      enum: ["permanent", "contractual"],
+    },
+    classInSchool: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ClassLevel",
+    },
+    classInSchool: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ClassLevel",
     },
     //if witdrawn, the teacher will not be able to login
     isWithdrawn: {
