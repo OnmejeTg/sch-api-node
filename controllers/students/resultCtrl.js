@@ -5,7 +5,7 @@ import Student from "../../models/student.js";
 import { validationResult } from "express-validator";
 import AcademicYear from "../../models/academicYear.js";
 import AcademicTerm from "../../models/academicTerm.js";
-import {generateResultPDF} from  "../../utils/studentResult.js"
+import {generatePDF, sample} from  "../../utils/result/studentResult.js"
 
 const uploadScores = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -302,12 +302,14 @@ const getResultById = asyncHandler(async (req, res) => {
 const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
   try {
-    await generateResultPDF(studentId, res);
+    const pdf = await generatePDF(sample);
+    pdf.save("student_report_card.pdf");
   } catch (error) {
+    console.log(error);
     res.status(error.status || 500).json({
       success: false,
       message: error.message || 'An error occurred while generating the PDF',
-      error: error.error || error,
+      error: error
     });
   }
 });
