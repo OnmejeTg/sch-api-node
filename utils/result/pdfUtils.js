@@ -1,9 +1,7 @@
-// pdfUtils.js
-import { jsPDF } from "jspdf";
 import { CONSTANTS } from "./constants.js";
 
 function drawHeader(doc, pageWidth) {
-  const {HEADER_HEIGHT} = CONSTANTS
+  const { HEADER_HEIGHT } = CONSTANTS;
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
   doc.text("MBAKOR COMM. SEC. SCH, WANNUNE", pageWidth / 2, 10, {
@@ -70,8 +68,6 @@ function drawStudentInfo(doc, student) {
   doc.line(10, 63, 200, 63);
 }
 
-
-
 function drawScoreSheet(doc, result) {
   const { SCORE_SHEET_START_Y, SCORE_SHEET_HEIGHT } = CONSTANTS;
 
@@ -81,11 +77,21 @@ function drawScoreSheet(doc, result) {
   const scoreSheetY = SCORE_SHEET_START_Y;
 
   for (let i = 0; i <= 9; i++) {
-    doc.line(scoreSheetX + 9 * i, scoreSheetY, scoreSheetX + 9 * i, scoreSheetY + SCORE_SHEET_HEIGHT);
+    doc.line(
+      scoreSheetX + 9 * i,
+      scoreSheetY,
+      scoreSheetX + 9 * i,
+      scoreSheetY + SCORE_SHEET_HEIGHT
+    );
   }
 
   for (let i = 0; i <= 10; i++) {
-    doc.line(10, SCORE_SHEET_START_Y + 7 * i + 40, 145, SCORE_SHEET_START_Y + 7 * i + 40);
+    doc.line(
+      10,
+      SCORE_SHEET_START_Y + 7 * i + 40,
+      145,
+      SCORE_SHEET_START_Y + 7 * i + 40
+    );
   }
 
   doc.setFont("helvetica", "bold");
@@ -106,18 +112,50 @@ function drawScoreSheet(doc, result) {
 
   doc.setFontSize(10);
   result.subjects.forEach((subject, index) => {
-    const { name, firstCA, secondCA, test, exam, total, avg, highest, lowest, position, grade } = subject;
+    const {
+      name,
+      firstCA,
+      secondCA,
+      test,
+      exam,
+      total,
+      avg,
+      highest,
+      lowest,
+      position,
+      grade,
+    } = subject;
 
     doc.text(name || "", 11, 110 + 7 * index);
-    doc.text(firstCA !== undefined ? firstCA.toString() : "", 57, 110 + 7 * index);
-    doc.text(secondCA !== undefined ? secondCA.toString() : "", 66, 110 + 7 * index);
+    doc.text(
+      firstCA !== undefined ? firstCA.toString() : "",
+      57,
+      110 + 7 * index
+    );
+    doc.text(
+      secondCA !== undefined ? secondCA.toString() : "",
+      66,
+      110 + 7 * index
+    );
     doc.text(test !== undefined ? test.toString() : "", 74, 110 + 7 * index);
     doc.text(exam !== undefined ? exam.toString() : "", 83, 110 + 7 * index);
     doc.text(total !== undefined ? total.toString() : "", 92, 110 + 7 * index);
     doc.text(avg !== undefined ? avg.toString() : "", 100.8, 110 + 7 * index);
-    doc.text(highest !== undefined ? highest.toString() : "", 110.5, 110 + 7 * index);
-    doc.text(lowest !== undefined ? lowest.toString() : "", 120, 110 + 7 * index);
-    doc.text(position !== undefined ? position.toString() : "", 129, 110 + 7 * index);
+    doc.text(
+      highest !== undefined ? highest.toString() : "",
+      110.5,
+      110 + 7 * index
+    );
+    doc.text(
+      lowest !== undefined ? lowest.toString() : "",
+      120,
+      110 + 7 * index
+    );
+    doc.text(
+      position !== undefined ? position.toString() : "",
+      129,
+      110 + 7 * index
+    );
     doc.text(grade || "", 138, 110 + 7 * index);
   });
 }
@@ -140,23 +178,36 @@ function drawAffirmativeSkills(doc, affirmativeSkills) {
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7);
-  const skills = ["PUNCTUALITY", "POLITENESS", "NEATNESS", "HONESTY", "LEADERSHIP SKILL", "COOPERATION", "ATTENTIVENESS", "PERSEVERANCE", "ATTITUDE TO WORK"];
+  const skills = [
+    "PUNCTUALITY",
+    "POLITENESS",
+    "NEATNESS",
+    "HONESTY",
+    "LEADERSHIP SKILL",
+    "COOPERATION",
+    "ATTENTIVENESS",
+    "PERSEVERANCE",
+    "ATTITUDE TO WORK",
+  ];
 
   skills.forEach((skill, index) => {
     const skillKey = skill.toLowerCase().replace(/ /g, "_");
     const skillValue = affirmativeSkills[skillKey];
 
     doc.text(skill, 151, 81 + 7 * index);
-    doc.text(skillValue !== undefined ? skillValue.toString() : "", 190, 81 + 7 * index);
+    doc.text(
+      skillValue !== undefined ? skillValue.toString() : "",
+      190,
+      81 + 7 * index
+    );
   });
 }
-
 
 function drawPsychomotorSkills(doc, psychomotorSkills) {
   const { PSYCHOMOTOR_START_Y, PSYCHOMOTOR_HEIGHT } = CONSTANTS;
   doc.rect(150, PSYCHOMOTOR_START_Y, 50, PSYCHOMOTOR_HEIGHT);
 
- doc.setFont("helvetica", "bold");
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.text("PSYCHOMOTOR SKILLS", 155, 147);
   doc.line(150, 150, 200, 150);
@@ -190,15 +241,14 @@ function drawPsychomotorSkills(doc, psychomotorSkills) {
   });
 }
 
-
 function drawSummary(doc, summary) {
   const { SUMMARY_START_Y, SUMMARY_HEIGHT } = CONSTANTS;
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
-  doc.text("SUMMARY", 95, SUMMARY_START_Y-3)
+  doc.text("SUMMARY", 95, SUMMARY_START_Y - 3);
   doc.rect(10, SUMMARY_START_Y, 190, SUMMARY_HEIGHT);
 
-  doc.line(10, SUMMARY_START_Y+10, 200, SUMMARY_START_Y+10)
+  doc.line(10, SUMMARY_START_Y + 10, 200, SUMMARY_START_Y + 10);
 
   doc.line(45, SUMMARY_START_Y, 45, SUMMARY_START_Y + SUMMARY_HEIGHT);
   doc.line(75, SUMMARY_START_Y, 75, SUMMARY_START_Y + SUMMARY_HEIGHT);
@@ -241,35 +291,42 @@ function drawSummary(doc, summary) {
 }
 
 function drawFooter(doc, pageWidth, remarks) {
-  const { KEY_BOX_HEIGHT,POWERED_BY_Y, KEY_LINE_HEIGHT,  REMARKS_Y, NEXT_TERM_Y, FOOTER_HEIGHT } = CONSTANTS;
+  const {
+    KEY_BOX_HEIGHT,
+    POWERED_BY_Y,
+    KEY_LINE_HEIGHT,
+    REMARKS_Y,
+    NEXT_TERM_Y,
+    FOOTER_HEIGHT,
+  } = CONSTANTS;
   doc.setFontSize(9);
   doc.text(
     "Class Teacher's Remark:_________________________________________________________________",
     10,
     REMARKS_Y
   );
-  doc.setFont('helvetica', 'normal');
-  doc.text(remarks.classTeacher || "", 49, REMARKS_Y );
+  doc.setFont("helvetica", "normal");
+  doc.text(remarks.classTeacher || "", 49, REMARKS_Y);
   doc.text("Sign___________________", 163, REMARKS_Y);
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.text(
     "Head Teacher's Remark:_________________________________________________________________",
     10,
     REMARKS_Y + 16
   );
-  doc.setFont('helvetica', 'normal');
-  doc.text(remarks.headTeacher || "", 49, REMARKS_Y+16);
+  doc.setFont("helvetica", "normal");
+  doc.text(remarks.headTeacher || "", 49, REMARKS_Y + 16);
   doc.text("Sign___________________", 163, REMARKS_Y + 16);
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.text("Next Term Begins:_______________", 10, NEXT_TERM_Y);
 
-  doc.setFont('helvetica', 'normal');
-  doc.text("05-09-2024", 41, NEXT_TERM_Y)
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "normal");
+  doc.text("05-09-2024", 41, NEXT_TERM_Y);
+  doc.setFont("helvetica", "bold");
   doc.text("Next Term School Fee:________________", 140, NEXT_TERM_Y);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.text("15,000", 178, NEXT_TERM_Y);
 
   doc.rect(65, FOOTER_HEIGHT, 70, KEY_BOX_HEIGHT);
@@ -318,13 +375,12 @@ function drawFooter(doc, pageWidth, remarks) {
   );
 }
 
-
 export {
-    drawHeader,
-    drawStudentInfo,
-    drawScoreSheet,
-    drawAffirmativeSkills,
-    drawPsychomotorSkills,
-    drawSummary,
-    drawFooter
-}
+  drawHeader,
+  drawStudentInfo,
+  drawScoreSheet,
+  drawAffirmativeSkills,
+  drawPsychomotorSkills,
+  drawSummary,
+  drawFooter,
+};
