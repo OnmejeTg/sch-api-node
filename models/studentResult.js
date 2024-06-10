@@ -27,6 +27,22 @@ const subjectSchema = new Schema({
     type: Number,
     default: 0,
   },
+  average: {
+    type: Number,
+    default: 0,
+  },
+  highest: {
+    type: Number,
+    default: 0,
+  },
+  lowest: {
+    type: Number,
+    default: 0,
+  },
+  position: {
+    type: Number,
+    default: 0,
+  },
   grade: {
     type: String,
     default: "F",
@@ -53,6 +69,26 @@ subjectSchema.pre("save", function (next) {
   next();
 });
 
+
+const affirmativeSkillsSchema = new Schema({
+  punctuality:{
+    type:String,
+    default:'F'
+  },
+  attendance:{
+    type:String,
+     default:'F'
+  },
+  discipline:{
+    type:String,
+     default:'F'
+  },
+  politeness:{
+    type:String,
+     default:'F'
+  },
+})
+
 const studentResultSchema = new Schema(
   {
     studentId: {
@@ -65,6 +101,7 @@ const studentResultSchema = new Schema(
       type: Number,
       default: 0,
     },
+    affirmativeSkills:[affirmativeSkillsSchema],
     grandScore: {
       type: Number,
       default: 0,
@@ -91,7 +128,8 @@ const studentResultSchema = new Schema(
       default: 0,
     },
     classLevel: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"ClassLevel",
     },
     academicTerm: {
       type: mongoose.Schema.Types.ObjectId,

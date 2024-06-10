@@ -272,6 +272,7 @@ const getResultById = asyncHandler(async (req, res) => {
       "studentId",
       "academicYear",
       "academicTerm",
+      "classLevel"
     ]);
 
     if (!result) {

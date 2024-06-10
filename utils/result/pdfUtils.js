@@ -37,32 +37,26 @@ function drawHeader(doc, pageWidth) {
 
 function drawStudentInfo(doc, student) {
   const {
-    name,
-    admissionId,
-    class: studentClass,
-    session,
-    term,
-    numberInClass,
-    classTeacher,
-    totalDaysInTerm,
     totalDaysPresent,
   } = student;
 
+  const {DAYS_IN_TERM} = CONSTANTS
+
   doc.setFontSize(15);
   doc.setFont("helvetica", "bold");
-  doc.text(name || "", doc.internal.pageSize.width / 2, 43, {
+  doc.text(`${student.data.studentId.surname} ${student.data.studentId.othername}`|| "", doc.internal.pageSize.width / 2, 43, {
     align: "center",
   });
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(`Admission ID: ${admissionId || ""}`, 20, 47);
-  doc.text(`Class: ${studentClass || ""}`, 160, 47);
-  doc.text(`Session: ${session || ""}`, 20, 54);
-  doc.text(`Term: ${term || ""}`, 20, 59);
-  doc.text(`Number in Class: ${numberInClass || ""}`, 85, 54);
-  doc.text(`Class Teacher: ${classTeacher || ""}`, 85, 59);
-  doc.text(`Total Days in Term: ${totalDaysInTerm || ""}`, 160, 54);
+  doc.text(`Admission ID: ${student.data.studentId.studentId || ""}`, 20, 47);
+  doc.text(`Class: ${student.data.classLevel.name || ""}`, 160, 47);
+  doc.text(`Session: ${student.data.academicYear.name || ""}`, 20, 54);
+  doc.text(`Term: ${student.data.academicTerm.name || ""}`, 20, 59);
+  doc.text(`Number in Class: ${String(student.data.classLevel.students.length) || ""}`, 85, 54);
+  doc.text(`Class Teacher: ${student.data.classLevel.formTeacher || ""}`, 85, 59);
+  doc.text(`Total Days in Term: ${DAYS_IN_TERM || ""}`, 160, 54);
   doc.text(`Total Days Present: ${totalDaysPresent || ""}`, 160, 59);
 
   doc.line(10, 63, 200, 63);
@@ -114,12 +108,12 @@ function drawScoreSheet(doc, result) {
   result.subjects.forEach((subject, index) => {
     const {
       name,
-      firstCA,
-      secondCA,
-      test,
+      assessment1,
+      assessment2,
+      assessment3,
       exam,
       total,
-      avg,
+      average,
       highest,
       lowest,
       position,
@@ -128,19 +122,19 @@ function drawScoreSheet(doc, result) {
 
     doc.text(name || "", 11, 110 + 7 * index);
     doc.text(
-      firstCA !== undefined ? firstCA.toString() : "",
+      assessment1 !== undefined ? assessment1.toString() : "",
       57,
       110 + 7 * index
     );
     doc.text(
-      secondCA !== undefined ? secondCA.toString() : "",
+      assessment2 !== undefined ? assessment2.toString() : "",
       66,
       110 + 7 * index
     );
-    doc.text(test !== undefined ? test.toString() : "", 74, 110 + 7 * index);
+    doc.text(assessment3 !== undefined ? assessment3.toString() : "", 74, 110 + 7 * index);
     doc.text(exam !== undefined ? exam.toString() : "", 83, 110 + 7 * index);
     doc.text(total !== undefined ? total.toString() : "", 92, 110 + 7 * index);
-    doc.text(avg !== undefined ? avg.toString() : "", 100.8, 110 + 7 * index);
+    doc.text(average !== undefined ? average.toString() : "", 100.8, 110 + 7 * index);
     doc.text(
       highest !== undefined ? highest.toString() : "",
       110.5,

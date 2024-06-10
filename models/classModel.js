@@ -17,6 +17,11 @@ const ClassLevelSchema = new Schema(
       ref: "Admin",
       required: true,
     },
+    formTeacher: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Teacher"
+      
+    },
     //students will be added to the class level when they are registered
     students: [
       {

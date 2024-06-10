@@ -20,4 +20,6 @@ export const CONSTANTS = {
   REMARKS_Y: 229,
   NEXT_TERM_Y: 260,
   POWERED_BY_Y: 292,
+
+  DAYS_IN_TERM:125
 };
