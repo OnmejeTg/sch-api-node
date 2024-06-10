@@ -47,10 +47,10 @@ async function generatePDF(student) {
   drawHeader(doc, pageWidth);
   drawStudentInfo(doc, student);
   drawScoreSheet(doc, student.data);
-  drawAffirmativeSkills(doc, student.affirmativeSkills);
-  // drawPsychomotorSkills(doc, student.psychomotorSkills);
-  // drawSummary(doc, student.summary);
-  // drawFooter(doc, pageWidth, result.remarks);
+  drawAffirmativeSkills(doc, student.data);
+  drawPsychomotorSkills(doc, student.data);
+  drawSummary(doc, student.data);
+  drawFooter(doc, pageWidth, result.remarks);
 
   return doc;
 }

@@ -184,17 +184,17 @@ function drawAffirmativeSkills(doc, affirmativeSkills) {
     "ATTITUDE TO WORK",
   ];
 
-  skills.forEach((skill, index) => {
-    const skillKey = skill.toLowerCase().replace(/ /g, "_");
-    const skillValue = affirmativeSkills[skillKey];
+  // skills.forEach((skill, index) => {
+  //   const skillKey = skill.toLowerCase().replace(/ /g, "_");
+  //   const skillValue = affirmativeSkills[skillKey];
 
-    doc.text(skill, 151, 81 + 7 * index);
-    doc.text(
-      skillValue !== undefined ? skillValue.toString() : "",
-      190,
-      81 + 7 * index
-    );
-  });
+  //   doc.text(skill, 151, 81 + 7 * index);
+  //   doc.text(
+  //     skillValue !== undefined ? skillValue.toString() : "",
+  //     190,
+  //     81 + 7 * index
+  //   );
+  // });
 }
 
 function drawPsychomotorSkills(doc, psychomotorSkills) {
@@ -222,17 +222,17 @@ function drawPsychomotorSkills(doc, psychomotorSkills) {
     "DRAWING",
   ];
 
-  skills.forEach((skill, index) => {
-    const skillKey = skill.toLowerCase().replace(" ", "_");
-    const skillValue = psychomotorSkills[skillKey];
+  // skills.forEach((skill, index) => {
+  //   const skillKey = skill.toLowerCase().replace(" ", "_");
+  //   const skillValue = psychomotorSkills[skillKey];
 
-    doc.text(skill, 151, 155 + 7 * index);
-    doc.text(
-      skillValue !== undefined ? skillValue.toString() : "",
-      190,
-      155 + 7 * index
-    );
-  });
+  //   doc.text(skill, 151, 155 + 7 * index);
+  //   doc.text(
+  //     skillValue !== undefined ? skillValue.toString() : "",
+  //     190,
+  //     155 + 7 * index
+  //   );
+  // });
 }
 
 function drawSummary(doc, summary) {
@@ -262,13 +262,13 @@ function drawSummary(doc, summary) {
   );
   doc.text("Marks Obtained", 46.5, 202);
   doc.text(
-    summary.marksObtained !== undefined ? summary.marksObtained.toString() : "",
+    summary.grandScore !== undefined ? summary.grandScore.toString() : "",
     56,
     213
   );
   doc.text("Average", 82, 202);
   doc.text(
-    summary.percentage !== undefined ? summary.percentage.toString() : "",
+    summary.average !== undefined ? summary.average.toString() : "",
     87,
     213
   );
