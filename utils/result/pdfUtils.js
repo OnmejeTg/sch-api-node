@@ -36,17 +36,21 @@ function drawHeader(doc, pageWidth) {
 }
 
 function drawStudentInfo(doc, student) {
-  const {
-    totalDaysPresent,
-  } = student;
+  const { totalDaysPresent } = student;
 
-  const {DAYS_IN_TERM} = CONSTANTS
+  const { DAYS_IN_TERM } = CONSTANTS;
 
   doc.setFontSize(15);
   doc.setFont("helvetica", "bold");
-  doc.text(`${student.data.studentId.surname} ${student.data.studentId.othername}`|| "", doc.internal.pageSize.width / 2, 43, {
-    align: "center",
-  });
+  doc.text(
+    `${student.data.studentId.surname} ${student.data.studentId.othername}` ||
+      "",
+    doc.internal.pageSize.width / 2,
+    43,
+    {
+      align: "center",
+    }
+  );
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
@@ -54,8 +58,16 @@ function drawStudentInfo(doc, student) {
   doc.text(`Class: ${student.data.classLevel.name || ""}`, 160, 47);
   doc.text(`Session: ${student.data.academicYear.name || ""}`, 20, 54);
   doc.text(`Term: ${student.data.academicTerm.name || ""}`, 20, 59);
-  doc.text(`Number in Class: ${String(student.data.classLevel.students.length) || ""}`, 85, 54);
-  doc.text(`Class Teacher: ${student.data.classLevel.formTeacher || ""}`, 85, 59);
+  doc.text(
+    `Number in Class: ${String(student.data.classLevel.students.length) || ""}`,
+    85,
+    54
+  );
+  doc.text(
+    `Class Teacher: ${student.data.classLevel.formTeacher || ""}`,
+    85,
+    59
+  );
   doc.text(`Total Days in Term: ${DAYS_IN_TERM || ""}`, 160, 54);
   doc.text(`Total Days Present: ${totalDaysPresent || ""}`, 160, 59);
 
@@ -131,10 +143,18 @@ function drawScoreSheet(doc, result) {
       66,
       110 + 7 * index
     );
-    doc.text(assessment3 !== undefined ? assessment3.toString() : "", 74, 110 + 7 * index);
+    doc.text(
+      assessment3 !== undefined ? assessment3.toString() : "",
+      74,
+      110 + 7 * index
+    );
     doc.text(exam !== undefined ? exam.toString() : "", 83, 110 + 7 * index);
     doc.text(total !== undefined ? total.toString() : "", 92, 110 + 7 * index);
-    doc.text(average !== undefined ? average.toString() : "", 100.8, 110 + 7 * index);
+    doc.text(
+      average !== undefined ? average.toString() : "",
+      100.8,
+      110 + 7 * index
+    );
     doc.text(
       highest !== undefined ? highest.toString() : "",
       110.5,
@@ -184,17 +204,17 @@ function drawAffirmativeSkills(doc, affirmativeSkills) {
     "ATTITUDE TO WORK",
   ];
 
-  // skills.forEach((skill, index) => {
-  //   const skillKey = skill.toLowerCase().replace(/ /g, "_");
-  //   const skillValue = affirmativeSkills[skillKey];
+  skills.forEach((skill, index) => {
+    const skillKey = skill.toLowerCase().replace(/ /g, "_");
+    const skillValue = affirmativeSkills?.affirmativeSkills?.[skillKey];
 
-  //   doc.text(skill, 151, 81 + 7 * index);
-  //   doc.text(
-  //     skillValue !== undefined ? skillValue.toString() : "",
-  //     190,
-  //     81 + 7 * index
-  //   );
-  // });
+    doc.text(skill, 151, 81 + 7 * index);
+    doc.text(
+      skillValue !== undefined ? skillValue.toString() : "",
+      190,
+      81 + 7 * index
+    );
+  });
 }
 
 function drawPsychomotorSkills(doc, psychomotorSkills) {
@@ -222,17 +242,17 @@ function drawPsychomotorSkills(doc, psychomotorSkills) {
     "DRAWING",
   ];
 
-  // skills.forEach((skill, index) => {
-  //   const skillKey = skill.toLowerCase().replace(" ", "_");
-  //   const skillValue = psychomotorSkills[skillKey];
+  skills.forEach((skill, index) => {
+    const skillKey = skill.toLowerCase().replace(" ", "_");
+    const skillValue = psychomotorSkills?.psychomotorSkills?.[skillKey];
 
-  //   doc.text(skill, 151, 155 + 7 * index);
-  //   doc.text(
-  //     skillValue !== undefined ? skillValue.toString() : "",
-  //     190,
-  //     155 + 7 * index
-  //   );
-  // });
+    doc.text(skill, 151, 155 + 7 * index);
+    doc.text(
+      skillValue !== undefined ? skillValue.toString() : "",
+      190,
+      155 + 7 * index
+    );
+  });
 }
 
 function drawSummary(doc, summary) {
@@ -249,13 +269,14 @@ function drawSummary(doc, summary) {
   doc.line(104, SUMMARY_START_Y, 104, SUMMARY_START_Y + SUMMARY_HEIGHT);
   doc.line(136, SUMMARY_START_Y, 136, SUMMARY_START_Y + SUMMARY_HEIGHT);
   doc.line(167, SUMMARY_START_Y, 167, SUMMARY_START_Y + SUMMARY_HEIGHT);
-
+  const marksObtainable = summary.subjects?.length *100
+  
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("Marks Obtainable", 12, 202);
   doc.text(
-    summary.marksObtainable !== undefined
-      ? summary.marksObtainable.toString()
+    marksObtainable !== undefined
+      ? marksObtainable.toString()
       : "",
     23,
     213
@@ -274,8 +295,8 @@ function drawSummary(doc, summary) {
   );
   doc.text("Class Average", 107, 202);
   doc.text(summary.grade || "", 117, 213);
-  doc.text("Grade", 144, 202);
-  doc.text(summary.grade || "", 149, 213);
+  doc.text("Average", 144, 202);
+  doc.text(summary.average.toString() || "", 149, 213);
   doc.text("Position", 175, 202);
   doc.text(
     summary.position !== undefined ? summary.position.toString() : "",

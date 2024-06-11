@@ -75,15 +75,58 @@ const affirmativeSkillsSchema = new Schema({
     type:String,
     default:'F'
   },
-  attendance:{
-    type:String,
-     default:'F'
-  },
-  discipline:{
-    type:String,
-     default:'F'
-  },
   politeness:{
+    type:String,
+     default:'F'
+  },
+  neatness:{
+    type:String,
+     default:'F'
+  },
+  honesty:{
+    type:String,
+     default:'F'
+  },
+  leadership_skill:{
+    type:String,
+     default:'F'
+  },
+  cooperation:{
+    type:String,
+     default:'F'
+  },
+  attentiveness:{
+    type:String,
+     default:'F'
+  },
+  perseverance:{
+    type:String,
+     default:'F'
+  },
+  attitude_to_work:{
+    type:String,
+     default:'F'
+  },
+})
+
+const psychomotorSkillsSchema = new Schema({
+  handwriting:{
+    type:String,
+    default:'F'
+  },
+  verbal_fluency:{
+    type:String,
+     default:'F'
+  },
+  sports:{
+    type:String,
+     default:'F'
+  },
+  handling_tools:{
+    type:String,
+     default:'F'
+  },
+  drawing:{
     type:String,
      default:'F'
   },
@@ -102,6 +145,7 @@ const studentResultSchema = new Schema(
       default: 0,
     },
     affirmativeSkills:[affirmativeSkillsSchema],
+    psychomotorSkills:[psychomotorSkillsSchema],
     grandScore: {
       type: Number,
       default: 0,
