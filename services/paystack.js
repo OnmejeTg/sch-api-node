@@ -10,7 +10,7 @@ async function initializePayment(email, amount, user) {
     amount: amount * 100, // Convert to kobo
     currency: "NGN",
     // callback_url: `http://localhost:${port}/api/v2/payment/verify?user=${user}&email=${email}&amount=${amount}`,
-    callback_url: `https://sch-api-node.onrender.com/api/v1/payment/verify?user=${user}&email=${email}&amount=${amount}`,
+    callback_url: `https://sch-api-node.onrender.com/api/v2/payment/verify?user=${user}&email=${email}&amount=${amount}`,
     metadata: { user, email, amount: amount * 100 },
     label: "EDUCATION",
   };
