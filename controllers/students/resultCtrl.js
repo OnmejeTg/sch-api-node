@@ -2,10 +2,11 @@ import StudentResult from "../../models/studentResult.js";
 import asyncHandler from "express-async-handler";
 import xlsx from "xlsx";
 import Student from "../../models/student.js";
-import { validationResult } from "express-validator";
+import { Result, validationResult } from "express-validator";
 import AcademicYear from "../../models/academicYear.js";
 import AcademicTerm from "../../models/academicTerm.js";
-import {generatePDF, sample} from  "../../utils/result/studentResult.js"
+import { generatePDF, sample } from "../../utils/result/studentResult.js";
+import axios from "axios";
 
 const uploadScores = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -272,7 +273,7 @@ const getResultById = asyncHandler(async (req, res) => {
       "studentId",
       "academicYear",
       "academicTerm",
-      "classLevel"
+      "classLevel",
     ]);
 
     if (!result) {
@@ -299,24 +300,146 @@ const getResultById = asyncHandler(async (req, res) => {
 
 const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
-  try {
-    const pdf = await generatePDF(sample);
-    const pdfData = pdf.output('arraybuffer');
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${sample.name}.pdf"`);
+  const result = await StudentResult.findOne({ studentId }).populate([
+    "studentId",
+    "academicYear",
+    "academicTerm",
+    "classLevel",
+  ]);
+
+  let studentRes = {"data": result}
+
+  try {
+    const pdf = await generatePDF(studentRes);
+    const pdfData = pdf.output("arraybuffer");
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sample.name}.pdf"`
+    );
     res.send(Buffer.from(pdfData));
   } catch (error) {
     console.log(error);
     res.status(error.status || 500).json({
       success: false,
-      message: error.message || 'An error occurred while generating the PDF',
-      error: error
+      message: error.message || "An error occurred while generating the PDF",
+      error: error,
     });
   }
 });
 
+const calResult = asyncHandler(async (req, res) => {
+  const { classId } = req.body;
+  const results = await StudentResult.find({ classLevel: classId });
 
+  // Initialize a dictionary to hold scores by subject
+  const subjectScores = {};
+
+  // Collect scores for each subject
+  results.forEach((result) => {
+    result.subjects.forEach((subject) => {
+      if (!subjectScores[subject.name]) {
+        subjectScores[subject.name] = [];
+      }
+      subjectScores[subject.name].push({
+        total: subject.total,
+        studentId: result.studentId,
+      });
+    });
+  });
+
+  // Calculate average, highest, lowest, and rank for each subject
+  Object.keys(subjectScores).forEach((subjectName) => {
+    const scores = subjectScores[subjectName];
+
+    // Calculate average
+    const totalScore = scores.reduce((sum, score) => sum + score.total, 0);
+    const average = totalScore / scores.length;
+
+    // Sort scores to determine highest, lowest, and rank
+    scores.sort((a, b) => b.total - a.total);
+
+    const highest = scores[0].total;
+    const lowest = scores[scores.length - 1].total;
+
+    // Assign ranks
+    let currentRank = 1;
+    scores.forEach((score, index) => {
+      if (index > 0 && scores[index - 1].total !== score.total) {
+        currentRank = index + 1;
+      }
+      score.rank = currentRank;
+    });
+
+    // Update results with calculated values
+    results.forEach((result) => {
+      result.subjects.forEach((subject) => {
+        if (subject.name === subjectName) {
+          const studentScore = scores.find(
+            (score) => score.studentId === result.studentId
+          );
+          subject.average = average;
+          subject.highest = highest;
+          subject.lowest = lowest;
+          subject.position = studentScore.rank;
+        }
+      });
+    });
+  });
+
+  // Save updated results to the database
+  await Promise.all(results.map((result) => result.save()));
+
+  // const total = results.map((student) => ({
+  //   score: student.grandScore,
+  //   id: student._id,
+  // }));
+
+  // // Create an array of objects where each object contains the score, id, and the original index
+  // const indexedTotal = total.map((student, index) => ({
+  //   score: student.score,
+  //   id: student.id,
+  //   index: index,
+  // }));
+
+  // // Sort the array in descending order based on the score
+  // indexedTotal.sort((a, b) => b.score - a.score);
+
+  // let currentRank = 1;
+  // const ranksMap = new Map();
+
+  // for (let i = 0; i < indexedTotal.length; i++) {
+  //   // Assign the current rank to the original index
+  //   ranksMap.set(indexedTotal[i].id.toString(), currentRank);
+
+  //   // If the next element has a different score, update the rank
+  //   if (
+  //     i < indexedTotal.length - 1 &&
+  //     indexedTotal[i].score !== indexedTotal[i + 1].score
+  //   ) {
+  //     currentRank = i + 2;
+  //   }
+  // }
+
+  // // Bulk update to save ranks to the database
+  // const bulkOps = results.map((result) => ({
+  //   updateOne: {
+  //     filter: { _id: result._id },
+  //     update: { $set: { position: ranksMap.get(result._id.toString()) } }
+  //   }
+  // }));
+
+  // await StudentResult.bulkWrite(bulkOps);
+
+  res.json({
+    status: "success",
+    message: "Results were successfully calculated",
+    count: results.length,
+    data: results,
+  });
+});
 
 export {
   uploadScores,
@@ -325,5 +448,6 @@ export {
   deleteResult,
   deleteAllResult,
   getResultById,
-  generateResultPDFCtrl
+  generateResultPDFCtrl,
+  calResult,
 };
