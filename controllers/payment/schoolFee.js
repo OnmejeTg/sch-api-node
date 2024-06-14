@@ -38,6 +38,7 @@ const makeSchoolFeePayment = async (req, res) => {
 
     // Initialize new payment request
     const paystackResponse = await initializePayment(email, amount, user);
+      console.log(paystackResponse)
     if (!paystackResponse.ok) {
       throw new Error("Failed to initialize transaction with Paystack");
     }
