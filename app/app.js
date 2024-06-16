@@ -25,7 +25,7 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: ['https://new-project-35520.web.app', 'https://new-project-35520.web.app', 'http://localhost:5173', 'https://sch-api-node.onrender.com/api/v2/payment'],
+  origin: ['https://new-project-35520.web.app', 'https://new-project-35520.web.app', 'http://localhost:5173'],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   allowedHeaders: 'Authorization,Origin,X-Requested-With,Content-Type,Accept',
   credentials: true // Allow credentials

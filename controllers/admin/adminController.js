@@ -245,7 +245,6 @@ const adminUpdateStudent = async (req, res) => {
 
   try {
     // Find the student associated with the authenticated user
-    console.log(studentId)
     const student = await Student.findOne({ studentId: studentId });
 
     if (!student) {
