@@ -7,7 +7,8 @@ import {
   deleteAllResult,
   getResultById,
   generateResultPDFCtrl,
-  calResult
+  calResult,
+  getResultByClassId
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -53,5 +54,6 @@ resultRouter.get(
 );
 
 resultRouter.post("/cal-result", calResult)
+resultRouter.get("/results/class/:classId", getResultByClassId)
 
 export default resultRouter;

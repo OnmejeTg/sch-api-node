@@ -441,6 +441,35 @@ const calResult = asyncHandler(async (req, res) => {
   });
 });
 
+
+const getResultByClassId = asyncHandler(async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const results = await StudentResult.find({ classLevel: classId });
+
+    if (!results.length) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No results found for this class ID",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Results were successfully found",
+      count: results.length,
+      data: results,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message: "An error occurred while fetching the results",
+      error: error.message,
+    });
+  }
+});
+
+
 export {
   uploadScores,
   allResults,
@@ -450,4 +479,5 @@ export {
   getResultById,
   generateResultPDFCtrl,
   calResult,
+  getResultByClassId
 };

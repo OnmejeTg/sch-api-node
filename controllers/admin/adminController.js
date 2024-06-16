@@ -14,6 +14,7 @@ import Exam from "../../models/exam.js";
 import SchoolFeeInvoice from "../../models/schoolFeeeInvoice.js";
 import ClassLevel from "../../models/classModel.js";
 import AcademicYear from "../../models/academicYear.js";
+import { uploadImage } from "../../utils/cloudinary.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -243,19 +244,56 @@ const adminUpdateStudent = async (req, res) => {
   const updateData = req.body;
 
   try {
-    const updatedStudent = await Student.findByIdAndUpdate(
-      studentId,
-      updateData,
-      {
-        new: true,
-      }
-    );
-    if (!updatedStudent) {
+    // Find the student associated with the authenticated user
+    console.log(studentId)
+    const student = await Student.findOne({ studentId: studentId });
+
+    if (!student) {
       return res.status(404).json({
         success: false,
         message: "Student not found",
       });
     }
+
+    const imageBuffer = req.file?.buffer;
+    if (imageBuffer) {
+      // Check if user already has a photo that's not default
+      if (
+        student.image &&
+        student.image !== process.env.DEFAULT_PROFILE_PHOTO_URL
+      ) {
+        const url = student.image;
+
+        // Regular expression to match the desired part of the URL
+        const regex = /\/upload\/v\d+\/(.+)\.jpg$/;
+        // Execute the regex on the URL
+        const match = url.match(regex);
+
+        const extractedPath = match[1];
+
+        // Delete the existing photo from Cloudinary
+        const deletedImg = await cloudinary.api.delete_resources(
+          [extractedPath],
+          { type: "upload", resource_type: "image" }
+        );
+      }
+
+      // Define the folder where the new image will be uploaded
+      const folder = "test/studentProfile";
+
+      // Upload the new image
+      const stdImage = await uploadImage(imageBuffer, folder);
+
+      // Update the student's data with the new image URL
+      updateData.image = stdImage;
+    }
+
+    // Update the student data in the database
+    const updatedStudent = await Student.findByIdAndUpdate(
+      student._id,
+      updateData,
+      { new: true }
+    );
 
     res.json({
       success: true,
