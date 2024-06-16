@@ -15,6 +15,7 @@ import SchoolFeeInvoice from "../../models/schoolFeeeInvoice.js";
 import ClassLevel from "../../models/classModel.js";
 import AcademicYear from "../../models/academicYear.js";
 import { uploadImage } from "../../utils/cloudinary.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const createAdmin = async (req, res) => {
   try {
