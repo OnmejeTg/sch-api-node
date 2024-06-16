@@ -16,6 +16,7 @@ import ClassLevel from "../../models/classModel.js";
 import AcademicYear from "../../models/academicYear.js";
 import { uploadImage } from "../../utils/cloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
+import Audit from "../../models/audit.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -111,6 +112,13 @@ const deleteAdmin = async (req, res) => {
       User.findByIdAndDelete(authUserId),
       Admin.deleteOne({ _id: adminId }),
     ]);
+    // create audit log
+     new Audit({
+      action: "delete",
+      model: "Admin",
+      description: ``,
+      userId: req.user._id,
+    })
 
     res.json({
       success: true,
