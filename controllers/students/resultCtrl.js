@@ -445,7 +445,12 @@ const calResult = asyncHandler(async (req, res) => {
 const getResultByClassId = asyncHandler(async (req, res) => {
   try {
     const { classId } = req.params;
-    const results = await StudentResult.find({ classLevel: classId });
+    const results = await StudentResult.find({ classLevel: classId }).populate([
+      "studentId",
+      "academicYear",
+      "academicTerm",
+      "classLevel",
+    ]);
 
     if (!results.length) {
       return res.status(404).json({
