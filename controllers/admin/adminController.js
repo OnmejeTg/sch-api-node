@@ -16,7 +16,8 @@ import ClassLevel from "../../models/classModel.js";
 import AcademicYear from "../../models/academicYear.js";
 import { uploadImage } from "../../utils/cloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
-import Audit from "../../models/audit.js";
+import mongoose from "mongoose";
+import createAuditLog from "../../utils/audit.js";
 
 const createAdmin = async (req, res) => {
   try {
@@ -112,23 +113,27 @@ const deleteAdmin = async (req, res) => {
       User.findByIdAndDelete(authUserId),
       Admin.deleteOne({ _id: adminId }),
     ]);
-    // create audit log
-     new Audit({
-      action: "delete",
-      model: "Admin",
-      description: ``,
-      userId: req.user._id,
-    })
+
+    // Create and save audit log
+    const userId = req.user.id;
+    const authenticatedUser = await User.findById(userId);
+    createAuditLog(userId, "delete", "Admin", `deleted admin user with id ${admin.username}`);
 
     res.json({
       success: true,
       message: "Admin deleted successfully",
     });
   } catch (error) {
-    console.error("Failed to delete admin:", error);
+    console.error("Failed to delete admin:", error.message);
+
+    let errorMessage = "Server error";
+    if (error instanceof mongoose.Error.CastError) {
+      errorMessage = "Invalid admin ID format";
+    }
+
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: errorMessage,
     });
   }
 };
@@ -561,7 +566,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
           failedRecords.push(student);
           continue;
         }
-        const classLevels = await ClassLevel.findOne({"name":student.class})
+        const classLevels = await ClassLevel.findOne({ name: student.class });
         if (!classLevels) {
           failureCount++;
           failedRecords.push(student);
@@ -577,7 +582,9 @@ const uploadStudent = asyncHandler(async (req, res) => {
         });
 
         await newUser.save();
-        const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
+        const academicYear = await AcademicYear.findOne({
+          isCurrent: true,
+        }).sort({
           updatedAt: -1,
         });
 
@@ -587,7 +594,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
           surname: student.surname,
           othername: student.othername,
           entrySession: student.entrySession,
-          classLevels:classLevels,
+          classLevels: classLevels,
           academicYear,
           email: student.email,
           sex: student.sex,
@@ -598,7 +605,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
           phone: student.phone,
           address: student.address,
           healthStatus: student.healthStatus,
-          religion: student.religion
+          religion: student.religion,
         });
 
         await newStudent.save();
@@ -703,7 +710,7 @@ const portalAnalytics = asyncHandler(async (req, res) => {
       studentCount,
       examCount,
       invoiceCount,
-      totalAmount
+      totalAmount,
     ] = await Promise.all([
       Admin.countDocuments(),
       Teacher.countDocuments(),
@@ -712,8 +719,8 @@ const portalAnalytics = asyncHandler(async (req, res) => {
       SchoolFeeInvoice.countDocuments({ paymentStatus: "success" }),
       SchoolFeeInvoice.aggregate([
         { $match: { paymentStatus: "success" } },
-        { $group: { _id: null, totalAmount: { $sum: "$amount" } } }
-      ])
+        { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
+      ]),
     ]);
 
     // Extract the total amount from the aggregation result
@@ -727,23 +734,23 @@ const portalAnalytics = asyncHandler(async (req, res) => {
       examCount,
       invoiceCount,
       amount,
-      message: "Portal analytics retrieved successfully"
+      message: "Portal analytics retrieved successfully",
     });
   } catch (error) {
     console.error("Something went wrong", error);
-    res.status(500).json({ success: false, message: "Error getting portal analytics" });
+    res
+      .status(500)
+      .json({ success: false, message: "Error getting portal analytics" });
   }
 });
 
 // Done
 //TODO: Portal anayltics
-//TODO: payment 
+//TODO: payment
 //TODO: Announcement
-
 
 //TODO: Result
 //TODO: profile pictures for users
-
 
 export {
   createAdmin,
