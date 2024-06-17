@@ -20,6 +20,7 @@ import announcementRouter from "../routes/announcements.js";
 import inquiresRouter from "../routes/inquiries.js";
 import resultRouter from "../routes/resultRouter.js";
 import feeRouter from "../routes/feeRouter.js";
+import  auditRouter  from "../routes/auditRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -54,6 +55,7 @@ app.use("/api/v2/announcement", announcementRouter);
 app.use("/api/v2/inquiry", inquiresRouter);
 app.use('/api/v2/result', resultRouter)
 app.use('/api/v2/fee', feeRouter)
+app.use('/api/v2/audit', auditRouter)
 
 // Use error handlers
 app.use(notFoundHandler);
