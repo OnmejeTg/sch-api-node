@@ -20,11 +20,10 @@ const startServer = async () => {
             console.log(`Server listening on port ${port}`);
         });
     } catch (error) {
-        // Handle any errors that occur during initialization
+       
         console.error('Server initialization error:', error);
         process.exit(1); // Exit the process with a non-zero code
     }
 };
 
-// Call the async function to start the server
 startServer();
