@@ -103,10 +103,9 @@ const studentSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      lowercase: true, // Ensures email is stored in lowercase
-      match: /^\S+@\S+\.\S+$/,
-      minLength: 3,
-      unique: true,
+      // lowercase: true, // Ensures email is stored in lowercase
+      // match: /^\S+@\S+\.\S+$/,
+      // unique: true,
     },
     healthStatus: {
       type: String,

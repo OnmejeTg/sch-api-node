@@ -6,7 +6,8 @@ import {
   logout,
   getStudent,
   updateStudent,
-  deleteStudent
+  deleteStudent,
+  uploadPicture,
 } from "../controllers/students/studentController.js";
 import { isAdmin, isLoggedin, isStudent } from "../middleware/auth.js";
 import { memoryupload, upload } from "../utils/multer.js";
@@ -22,5 +23,6 @@ studentRouter.get("/all", isAdmin, getStudents);
 studentRouter.get("/get/:id", isAdmin, getStudent);
 studentRouter.put("/update", memoryupload.single("file"), isLoggedin, isStudent, updateStudent);
 studentRouter.delete("/delete/:id", isAdmin, deleteStudent);
+studentRouter.post("/upload-pics/", uploadPicture);
 
 export default studentRouter;

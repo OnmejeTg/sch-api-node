@@ -12,7 +12,6 @@ import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
 import mongoose from "mongoose";
 import AcademicYear from "../../models/academicYear.js";
 
-
 //*******************LOGIN*******************
 const login = async (req, res) => {
   // Step 1: Data Validation
@@ -106,7 +105,7 @@ const registerStudent = async (req, res) => {
     const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
     });
-  
+
     // Create student object
     const student = new Student({
       studentId,
@@ -131,13 +130,18 @@ const registerStudent = async (req, res) => {
     const savedStudent = await student.save({ session });
 
     // Create auth user object
-    const newUser = await User.create([{
-      username: studentId,
-      surname: surname,
-      othername: othername,
-      password: surname.toLowerCase(), // Consider using a more secure password strategy
-      userType: "student",
-    }], { session });
+    const newUser = await User.create(
+      [
+        {
+          username: studentId,
+          surname: surname,
+          othername: othername,
+          password: surname.toLowerCase(), // Consider using a more secure password strategy
+          userType: "student",
+        },
+      ],
+      { session }
+    );
 
     // Update student with authUser reference
     savedStudent.authUser = newUser[0]._id;
@@ -166,8 +170,6 @@ const registerStudent = async (req, res) => {
     });
   }
 };
-
-
 
 //******************Get all students******************************
 const getStudents = async (req, res) => {
@@ -199,7 +201,7 @@ const getStudents = async (req, res) => {
 const getStudent = async (req, res) => {
   try {
     const studentId = req.params.id;
-    const student = await Student.findOne({studentId});
+    const student = await Student.findOne({ studentId });
     if (!student) {
       return res.status(404).json({
         success: false,
@@ -291,6 +293,7 @@ const updateStudent = async (req, res) => {
 };
 
 const deleteStudent = async (req, res) => {
+  await Student.deleteMany();
   const studentId = req.params.id;
 
   try {
@@ -321,6 +324,48 @@ const deleteStudent = async (req, res) => {
   }
 };
 
+import fs from "fs";
+import path from "path";
+
+const uploadPicture = async (req, res) => {
+  const directoryPath = path.join(process.cwd(), "pics");
+
+  try {
+    const files = await fs.promises.readdir(directoryPath);
+
+    for (const file of files) {
+      const filePath = path.join(directoryPath, file);
+      const stats = await fs.promises.stat(filePath);
+      
+      if (stats.isFile()) {
+        const studentId = file.split(".")[0];
+        const student = await Student.findOne({ studentId: new RegExp(`^${studentId}$`, 'i') });
+        console.log(student);
+
+        if (student) {
+          const data = await fs.promises.readFile(filePath);
+          const folder = "test/studentProfile";
+          const stdImage = await uploadImage(data, folder);
+
+          student.image = stdImage;
+          await student.save(); // Save the updated student document
+          console.log(`Uploaded ${file} to ${folder}: ${stdImage}`);
+        } else {
+          console.log(`No student found with surname: ${surname}, skipping file: ${file}`);
+        }
+      } else if (stats.isDirectory()) {
+        console.log("Directory:", file);
+        // Recursively list files in subdirectory
+        // await uploadPicture({ directory: filePath }, res); // If you want to recurse
+      }
+    }
+    res.status(200).send("Files uploaded successfully");
+  } catch (err) {
+    console.error("Error processing files:", err);
+    res.status(500).send("Error uploading files");
+  }
+};
+
 export {
   registerStudent,
   getStudents,
@@ -329,4 +374,5 @@ export {
   getStudent,
   updateStudent,
   deleteStudent,
+  uploadPicture
 };

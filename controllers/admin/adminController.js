@@ -572,14 +572,24 @@ const uploadStudent = asyncHandler(async (req, res) => {
           failedRecords.push(student);
           continue;
         }
+        // const studentID = await generateStudentID(student.entrySession)
 
+        // const newUser = new User({
+        //   username: studentID,
+        //   surname: student.surname,
+        //   othername: student.othername,
+        //   password: student.surname.toLowerCase(),
+        //   userType: "student",
+        // });
         const newUser = new User({
-          username: generateStudentID(student.entrySession),
+          username: student.studentId,
           surname: student.surname,
           othername: student.othername,
           password: student.surname.toLowerCase(),
           userType: "student",
         });
+
+        // const newUser =  User.findOne({ username: student.studentId})
 
         await newUser.save();
         const academicYear = await AcademicYear.findOne({
@@ -590,7 +600,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
 
         const newStudent = new Student({
           authUser: newUser._id,
-          studentId: generateStudentID(student.entrySession),
+          studentId: student.studentId,
           surname: student.surname,
           othername: student.othername,
           entrySession: student.entrySession,

@@ -39,7 +39,7 @@ adminRouter.get("/me", isLoggedin, getLoggdInUser);
 adminRouter.post("/login", login);
 adminRouter.post(
   "/upload-students",
-  isAdmin,
+  
   memoryupload.single("file"),
   uploadStudent
 );
