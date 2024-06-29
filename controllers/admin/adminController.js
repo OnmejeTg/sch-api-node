@@ -527,7 +527,7 @@ const getLoggdInUser = async (req, res) => {
   if (authUser.userType === "admin") {
     user = await Admin.findOne({ authUser: authUser.id });
   } else if (authUser.userType === "student") {
-    user = await Student.findOne({ authUser: authUser.id });
+    user = await Student.findOne({ authUser: authUser.id }).populate(['currentClassLevel']);
   } else if (authUser.userType === "teacher") {
     user = await Teacher.findOne({ authUser: authUser.id });
   }
