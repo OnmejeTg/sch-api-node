@@ -35,7 +35,7 @@ async function generatePDF(student) {
   );
   doc.addImage(
     logoData,
-    "JPEG",
+    "jpg",
     PAGE_PADDING,
     PAGE_PADDING,
     LOGO_SIZE,
