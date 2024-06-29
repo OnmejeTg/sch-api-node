@@ -10,6 +10,12 @@ const announcementSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    to: {
+      type: String,
+      enum: ["all", "students", "teachers", "parents"],
+      default: "all",
+      required: true,
+    },
   },
   { timestamps: true }
 );
