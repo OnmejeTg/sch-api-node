@@ -8,7 +8,7 @@ import {
   getStudentsByClassLevel,
   addStudentToClass
 } from "../controllers/admin/classLevelCtrl.js";
-import { isAdmin } from "../middleware/auth.js";
+import { isAdmin, isLoggedin } from "../middleware/auth.js";
 
 const classLevelRouter = express.Router();
 
@@ -24,7 +24,7 @@ classLevelRouter
   .get(isAdmin, getClassLevels);
 classLevelRouter
   .route("/:id")
-  .get(isAdmin, getClassLevelById)
+  .get(isLoggedin, getClassLevelById)
   .put(isAdmin, updateClassLevel)
   .delete(isAdmin, deleteClassLevel);
 
