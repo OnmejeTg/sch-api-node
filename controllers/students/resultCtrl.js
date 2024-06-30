@@ -308,10 +308,11 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
     "classLevel",
   ]);
 
-  let studentRes = {"data": result}
+  let studentRes = { data: result };
+  const stdImg = studentRes.data.studentId.image;
 
   try {
-    const pdf = await generatePDF(studentRes);
+    const pdf = await generatePDF(studentRes, stdImg);
     const pdfData = pdf.output("arraybuffer");
 
     res.setHeader("Content-Type", "application/pdf");
@@ -441,7 +442,6 @@ const calResult = asyncHandler(async (req, res) => {
   });
 });
 
-
 const getResultByClassId = asyncHandler(async (req, res) => {
   try {
     const { classId } = req.params;
@@ -474,7 +474,6 @@ const getResultByClassId = asyncHandler(async (req, res) => {
   }
 });
 
-
 export {
   uploadScores,
   allResults,
@@ -484,5 +483,5 @@ export {
   getResultById,
   generateResultPDFCtrl,
   calResult,
-  getResultByClassId
+  getResultByClassId,
 };

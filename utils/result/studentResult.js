@@ -12,7 +12,7 @@ import {
 } from "./pdfUtils.js";
 import { CONSTANTS } from "./constants.js";
 
-async function generatePDF(student) {
+async function generatePDF(student, studentPhotoUrl) {
   const { PAGE_PADDING, LOGO_SIZE } = CONSTANTS;
   const doc = new jsPDF("p", "mm", "a4");
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -20,15 +20,16 @@ async function generatePDF(student) {
   // const studentPhotoData = await getImageBase64(
   //   "https://res.cloudinary.com/tgod/image/upload/v1716675830/test/studentProfile/ouxtqdcjjynbgvewx2oj.jpg"
   // );
+  const studentPhotoData = await getImageBase64(studentPhotoUrl);
 
-  // doc.addImage(
-  //   studentPhotoData,
-  //   "JPEG",
-  //   pageWidth - LOGO_SIZE - PAGE_PADDING,
-  //   PAGE_PADDING,
-  //   LOGO_SIZE,
-  //   LOGO_SIZE
-  // );
+  doc.addImage(
+    studentPhotoData,
+    "JPEG",
+    pageWidth - LOGO_SIZE - PAGE_PADDING,
+    PAGE_PADDING,
+    LOGO_SIZE,
+    LOGO_SIZE
+  );
 
   const logoData = await getImageBase64(
     "https://res.cloudinary.com/tgod/image/upload/v1717765917/test/h9pcydfkzalhz6lw6qhj.jpg"
