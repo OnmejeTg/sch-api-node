@@ -19,6 +19,9 @@ const teacherSchema = new mongoose.Schema(
       default:
         "https://res.cloudinary.com/tgod/image/upload/v1716561104/test/swpzzvle2je29zkbyldz.png",
     },
+    signature: {
+      type: String
+    },
     email: {
       type: String,
       required: true,

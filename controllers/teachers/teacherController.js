@@ -5,11 +5,8 @@ import {
   generateRefreshToken,
 } from "../../utils/authUtils.js";
 import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
-
-import {
-  generatestaffId,
-  isValidUserData,
-} from "../../utils/teacherUtils.js";
+import { generatestaffId, isValidUserData } from "../../utils/teacherUtils.js";
+import asyncHandler from "express-async-handler";
 
 const createTeacher = async (req, res) => {
   try {
@@ -159,7 +156,7 @@ const updateTeacher = async (req, res) => {
 
   try {
     const teacher = await Teacher.findOne({ authUser: staffId });
-    console.log(teacher)
+    console.log(teacher);
 
     if (!teacher) {
       return res.status(404).json({
@@ -296,7 +293,7 @@ const login = async (req, res) => {
       id: authUser._id,
       username: authUser.username,
       surname: authUser.surname,
-      othername:authUser.othername,
+      othername: authUser.othername,
       userType: authUser.userType,
     };
 
@@ -321,6 +318,61 @@ const login = async (req, res) => {
   }
 };
 
+const uploadSignature = asyncHandler(async (req, res) => {
+  // Validate staff ID presence (optional)
+  if (!req.params.id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing staff ID" });
+  }
+
+  try {
+    // Check for uploaded signature image
+    if (!req.file?.buffer) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No signature image provided" });
+    }
+
+    const staffId = req.params.id;
+    const signatureBuffer = req.file.buffer;
+
+    // Upload image with proper error handling
+    const signatureImage = await uploadImage(
+      signatureBuffer,
+      "test/signature"
+    ).catch((error) => {
+      console.error("Error uploading signature:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to upload signature" });
+    });
+
+    // Find and update teacher with signature (ensure new document is returned)
+    const teacher = await Teacher.findByIdAndUpdate(
+      staffId,
+      { signature: signatureImage },
+      { new: true }
+    );
+
+    if (!teacher) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Teacher not found" });
+    }
+
+    // Respond with success message (optional)
+    res
+      .status(200)
+      .json({ success: true, message: "Signature uploaded successfully" });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
+
 export {
   createTeacher,
   allTeachers,
@@ -328,4 +380,5 @@ export {
   updateTeacher,
   deleteTeacher,
   login,
+  uploadSignature,
 };
