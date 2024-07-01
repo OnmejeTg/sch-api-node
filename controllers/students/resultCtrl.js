@@ -5,7 +5,7 @@ import Student from "../../models/student.js";
 import { Result, validationResult } from "express-validator";
 import AcademicYear from "../../models/academicYear.js";
 import AcademicTerm from "../../models/academicTerm.js";
-import { generatePDF, sample } from "../../utils/result/studentResult.js";
+import { generatePDF,  } from "../../utils/result/studentResult.js";
 import axios from "axios";
 
 const uploadScores = asyncHandler(async (req, res) => {
@@ -310,6 +310,7 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
 
   let studentRes = { data: result };
   const stdImg = studentRes.data.studentId.image;
+  
 
   try {
     const pdf = await generatePDF(studentRes, stdImg);
@@ -318,7 +319,7 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${sample.name}.pdf"`
+      `attachment; filename="${studentRes.data.studentId.studentId}.pdf"`
     );
     res.send(Buffer.from(pdfData));
   } catch (error) {

@@ -305,7 +305,7 @@ function drawSummary(doc, summary) {
   );
 }
 
-function drawFooter(doc, pageWidth, remarks) {
+function drawFooter(doc, pageWidth, remarks, signature) {
   const {
     KEY_BOX_HEIGHT,
     POWERED_BY_Y,
