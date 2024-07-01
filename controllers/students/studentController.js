@@ -11,6 +11,11 @@ import {
 import { cloudinary, uploadImage } from "../../utils/cloudinary.js";
 import mongoose from "mongoose";
 import AcademicYear from "../../models/academicYear.js";
+// import fs from "fs";
+import path from "path";
+import * as fs from "fs/promises";
+// import path from 'path';
+import * as XLSX from "xlsx";
 
 //*******************LOGIN*******************
 const login = async (req, res) => {
@@ -324,45 +329,110 @@ const deleteStudent = async (req, res) => {
   }
 };
 
-import fs from "fs";
-import path from "path";
-
 const uploadPicture = async (req, res) => {
-  const directoryPath = path.join(process.cwd(), "pics");
+  const directoryPath = path.join(process.cwd(), "MCSSW STUDENTS/SSS 2B");
+  let studentCount = 0;
+  const invalidFiles = [];
 
   try {
-    const files = await fs.promises.readdir(directoryPath);
+    const files = await fs.readdir(directoryPath);
 
     for (const file of files) {
       const filePath = path.join(directoryPath, file);
-      const stats = await fs.promises.stat(filePath);
-      
+      const stats = await fs.stat(filePath);
+
       if (stats.isFile()) {
-        const studentId = file.split(".")[0];
-        const student = await Student.findOne({ studentId: new RegExp(`^${studentId}$`, 'i') });
-        console.log(student);
+        const surname = file.split(".")[0];
+        const student = await Student.findOne({
+          surname: new RegExp(`^${surname}$`, "i"),
+          currentClassLevel: "667581be7f256b0f92d042f1",
+        });
 
         if (student) {
-          const data = await fs.promises.readFile(filePath);
+          studentCount++;
+          const data = await fs.readFile(filePath);
           const folder = "test/studentProfile";
           const stdImage = await uploadImage(data, folder);
 
           student.image = stdImage;
-          await student.save(); // Save the updated student document
+          await student.save();
           console.log(`Uploaded ${file} to ${folder}: ${stdImage}`);
         } else {
-          console.log(`No student found with surname: ${surname}, skipping file: ${file}`);
+          invalidFiles.push({
+            fileName: file,
+            message: "No matching student found",
+          });
+          console.log(
+            `No student found with surname: ${surname}, skipping file: ${file}`
+          );
         }
       } else if (stats.isDirectory()) {
         console.log("Directory:", file);
-        // Recursively list files in subdirectory
-        // await uploadPicture({ directory: filePath }, res); // If you want to recurse
+        // You can choose to handle subdirectories here, but be cautious about recursion
       }
     }
+
+    if (invalidFiles.length > 0) {
+      await createInvalidFilesReport(invalidFiles);
+    }
+
+    console.log(
+      `Uploaded ${studentCount} students pictures, skipped ${invalidFiles.length} invalid files`
+    );
     res.status(200).send("Files uploaded successfully");
   } catch (err) {
     console.error("Error processing files:", err);
     res.status(500).send("Error uploading files");
+  }
+};
+
+async function createInvalidFilesReport(invalidFiles) {
+  const worksheet = XLSX.utils.json_to_sheet(invalidFiles);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Invalid Files");
+
+  await XLSX.writeFile(workbook, "invalid_files_report.xlsx");
+  console.log("Invalid files report saved to invalid_files_report.xlsx");
+}
+
+// ... rest of your code (assuming it's also written in ESM syntax)
+
+const createStudentAuthUser = async (req, res) => {
+  try {
+    const students = await Student.find({});
+
+    const createdUsers = await Promise.all(
+      students.map(async (student) => {
+        const username = student.studentId; // Assuming studentId is unique
+
+        const authUser = new User({
+          firstName: student.firstName,
+          othername: student.othername,
+          surname: student.surname,
+          username,
+          password: student.surname.toLowerCase().trim(),
+        });
+
+        await authUser.save();
+
+        student.authUser = authUser._id;
+        await student.save();
+
+        return { student, authUser }; // Return both student and authUser for potential use
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Student and authUser created successfully",
+      data: createdUsers, // Return all created user data
+    });
+  } catch (err) {
+    console.error("Error creating student auth users:", err);
+    res.status(500).json({
+      success: false,
+      message: "Error creating student and authUser",
+    });
   }
 };
 
@@ -374,5 +444,6 @@ export {
   getStudent,
   updateStudent,
   deleteStudent,
-  uploadPicture
+  uploadPicture,
+  createStudentAuthUser,
 };
