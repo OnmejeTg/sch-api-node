@@ -98,7 +98,7 @@ const getAllAdmins = async (req, res) => {
 const deleteAdmin = async (req, res) => {
   const { adminId } = req.params;
 
-  try {
+  try {    
     const admin = await Admin.findById(adminId);
     if (!admin) {
       return res.status(404).json({
@@ -117,7 +117,12 @@ const deleteAdmin = async (req, res) => {
     // Create and save audit log
     const userId = req.user.id;
     const authenticatedUser = await User.findById(userId);
-    createAuditLog(userId, "delete", "Admin", `deleted admin user with id ${admin.username}`);
+    createAuditLog(
+      userId,
+      "delete",
+      "Admin",
+      `deleted admin user with id ${admin.username}`
+    );
 
     res.json({
       success: true,
@@ -527,7 +532,9 @@ const getLoggdInUser = async (req, res) => {
   if (authUser.userType === "admin") {
     user = await Admin.findOne({ authUser: authUser.id });
   } else if (authUser.userType === "student") {
-    user = await Student.findOne({ authUser: authUser.id }).populate(['currentClassLevel']);
+    user = await Student.findOne({ authUser: authUser.id }).populate([
+      "currentClassLevel",
+    ]);
   } else if (authUser.userType === "teacher") {
     user = await Teacher.findOne({ authUser: authUser.id });
   }
@@ -754,6 +761,60 @@ const portalAnalytics = asyncHandler(async (req, res) => {
   }
 });
 
+// const assignClassTeacher = asyncHandler(async (req, res) => {
+//   try {
+//     const { teacherId, classId } = req.body;
+//     const teacher = await Teacher.findById(teacherId);
+//     const classLevel = await ClassLevel.findById(classId);
+//     if (!teacher || !classLevel) {
+//       return res
+//         .status(400)
+//         .json({ message: "Invalid teacher or class level ID" });
+//     }
+//     classLevel.teachers.push(teacher._id);
+//     await classLevel.save();
+//     return res
+//       .status(200)
+//       .json({ message: "Class teacher assigned successfully" });
+//   } catch (error) {
+//     console.error("Error assigning class teacher:", error);
+//     return res.status(500).json({ message: "Error assigning class teacher" });
+//   }
+// });
+
+const assignClassTeacher = asyncHandler(async (req, res) => {
+  try {
+    // Deconstruct request body for clarity and potential validation
+    const { teacherId, classId } = req.body;
+
+    // Fetch teacher and class level in a single operation (if supported by database)
+    const [teacher, classLevel] = await Promise.all([
+      Teacher.findById(teacherId),
+      ClassLevel.findById(classId),
+    ]);
+
+    // Validate existence of both teacher and class level (potentially with a custom error class)
+    if (!teacher || !classLevel) {
+      throw new BadRequestError('Invalid teacher or class level ID');
+    }
+
+    // Update classLevel.teachers atomically (if database supports)
+    classLevel.teachers.push(teacher._id);
+    await classLevel.save();
+
+    return res.status(200).json({ message: 'Class teacher assigned successfully' });
+  } catch (error) {
+    // Handle specific errors (e.g., BadRequestError) and log others
+    if (error instanceof BadRequestError) {
+      return res.status(400).json({ message: error.message });
+    } else {
+      console.error('Error assigning class teacher:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+});
+
+
 // Done
 //TODO: Portal anayltics
 //TODO: payment
@@ -778,4 +839,5 @@ export {
   uploadStudent,
   uploadQuestion,
   portalAnalytics,
+  assignClassTeacher
 };

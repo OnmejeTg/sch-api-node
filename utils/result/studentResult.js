@@ -51,7 +51,10 @@ async function generatePDF(student, studentPhotoUrl) {
   drawAffirmativeSkills(doc, student.data);
   drawPsychomotorSkills(doc, student.data);
   drawSummary(doc, student.data);
-  drawFooter(doc, pageWidth, result.remarks);
+  //TODO:get result signature
+  // const signatureUrl = student.data.
+  const signature = await getImageBase64(signatureUrl);
+  drawFooter(doc, pageWidth, result.remarks, signature);
 
   return doc;
 }

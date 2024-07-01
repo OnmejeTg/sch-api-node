@@ -293,7 +293,7 @@ const updateStudent = async (req, res) => {
 };
 
 const deleteStudent = async (req, res) => {
-  await Student.deleteMany();
+  // await Student.deleteMany();
   const studentId = req.params.id;
 
   try {

@@ -116,10 +116,10 @@ const deleteUser = async (req, res) => {
   try {
     // Use Promise.all to perform parallel deletion of related documents
     const [user] = await Promise.all([
-      User.deleteMany(),
-      // Admin.deleteMany({ authUser: userId }),
-      // Student.deleteMany({ authUser: userId }),
-      // Teacher.deleteMany({ authUser: userId }),
+      // User.deleteMany(),
+      Admin.deleteMany({ authUser: userId }),
+      Student.deleteMany({ authUser: userId }),
+      Teacher.deleteMany({ authUser: userId }),
       // Add more delete operations for other related models if needed
     ]);
 

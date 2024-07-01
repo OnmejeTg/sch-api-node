@@ -22,9 +22,12 @@ const teacherSchema = new mongoose.Schema(
     signature: {
       type: String
     },
+    qualification: {
+      type: String
+    },
     email: {
       type: String,
-      required: true,
+      // required: true,
     },
     dateEmployed: {
       type: Date,
@@ -35,19 +38,19 @@ const teacherSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    phone: {
+      type: String,
+      // required: true,
+    },
     designation: {
       type: String,
       default: "teacher",
-      enum: ["principal", "teacher", "accountant", "librarian"],
+      enum: ["principal", "teacher", "accountant", "librarian", "admin"],
     },
     appointmentType: {
       type: String,
       default: "contractual",
-      enum: ["permanent", "contractual"],
-    },
-    classInSchool: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ClassLevel",
+      enum: ["permanent", "contractual", "temporal"],
     },
     classInSchool: {
       type: mongoose.Schema.Types.ObjectId,

@@ -13,7 +13,7 @@ const generatestaffId = function (surname) {
   };
   
   const isValidUserData = (userData) => {
-    return userData && userData.surname && userData.othername && userData.email;
+    return userData && userData.surname && userData.othername;
   };
   
 

@@ -11,7 +11,17 @@ import asyncHandler from "express-async-handler";
 const createTeacher = async (req, res) => {
   try {
     // Destructure required fields from request body
-    const { surname, othername, email, sex, dateEmployed } = req.body;
+    const {
+      surname,
+      othername,
+      email,
+      sex,
+      dateEmployed,
+      qualification,
+      designation,
+      phone,
+      appointmentType,
+    } = req.body;
 
     // Check if required fields are present
     if (!isValidUserData(req.body)) {
@@ -29,7 +39,7 @@ const createTeacher = async (req, res) => {
     const existingTeacher = await Teacher.findOne({
       $or: [{ email }, { staffId }],
     });
-    if (existingTeacher) {
+    if (existingTeacher && email !== undefined ) {
       let errorMessage;
       if (existingTeacher.email === email) {
         errorMessage = "A teacher with the same email already exists";
@@ -48,7 +58,7 @@ const createTeacher = async (req, res) => {
       surname,
       othername,
       password: surname.toLowerCase(),
-      userType: "teacher",
+      userType: designation,
     });
 
     try {
@@ -70,6 +80,10 @@ const createTeacher = async (req, res) => {
       sex,
       dateEmployed,
       staffId,
+      qualification,
+      designation,
+      phone,
+      appointmentType,
     });
 
     try {
@@ -228,6 +242,7 @@ const updateTeacher = async (req, res) => {
 };
 
 const deleteTeacher = async (req, res) => {
+  
   const staffId = req.params.id;
 
   try {
