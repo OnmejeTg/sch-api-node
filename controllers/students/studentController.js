@@ -180,6 +180,7 @@ const registerStudent = async (req, res) => {
 const getStudents = async (req, res) => {
   try {
     // Fetch all students from the database
+    // const students = await Student.find()
     const students = await Student.find().populate([
       "authUser",
       "currentClassLevel",
