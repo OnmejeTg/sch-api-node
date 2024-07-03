@@ -782,10 +782,22 @@ const portalAnalytics = asyncHandler(async (req, res) => {
 //   }
 // });
 
+class BadRequestError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "BadRequestError";
+    this.statusCode = 400;
+  }
+}
+
+
+
+
 const assignClassTeacher = asyncHandler(async (req, res) => {
   try {
     // Deconstruct request body for clarity and potential validation
     const { teacherId, classId } = req.body;
+    // console.log(teacherId);
 
     // Fetch teacher and class level in a single operation (if supported by database)
     const [teacher, classLevel] = await Promise.all([
@@ -799,7 +811,7 @@ const assignClassTeacher = asyncHandler(async (req, res) => {
     }
 
     // Update classLevel.teachers atomically (if database supports)
-    classLevel.teachers.push(teacher._id);
+    classLevel.teachers = teacher._id;
     await classLevel.save();
 
     return res.status(200).json({ message: 'Class teacher assigned successfully' });

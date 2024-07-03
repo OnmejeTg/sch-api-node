@@ -322,6 +322,14 @@ function drawFooter(doc, pageWidth, remarks, signature) {
   );
   doc.setFont("helvetica", "normal");
   doc.text(remarks.classTeacher || "", 49, REMARKS_Y);
+  doc.addImage(
+    signature,
+    "JPEG",
+    170,
+    REMARKS_Y-15,
+    20,
+    20
+  );
   doc.text("Sign___________________", 163, REMARKS_Y);
 
   doc.setFont("helvetica", "bold");

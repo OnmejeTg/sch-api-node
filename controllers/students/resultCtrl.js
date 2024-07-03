@@ -7,6 +7,7 @@ import AcademicYear from "../../models/academicYear.js";
 import AcademicTerm from "../../models/academicTerm.js";
 import { generatePDF,  } from "../../utils/result/studentResult.js";
 import axios from "axios";
+import Teacher from "../../models/teacher.js";
 
 const uploadScores = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -307,13 +308,16 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
     "academicTerm",
     "classLevel",
   ]);
-
+  const teacherId = result.classLevel.teachers;
+  const teacher = await Teacher.findById(teacherId);
+  const teacherSignature = teacher.signature
+  
   let studentRes = { data: result };
   const stdImg = studentRes.data.studentId.image;
   
 
   try {
-    const pdf = await generatePDF(studentRes, stdImg);
+    const pdf = await generatePDF(studentRes, stdImg, teacherSignature);
     const pdfData = pdf.output("arraybuffer");
 
     res.setHeader("Content-Type", "application/pdf");
