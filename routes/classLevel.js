@@ -21,7 +21,7 @@ const classLevelRouter = express.Router();
 classLevelRouter
   .route("/")
   .post(isAdmin, createClassLevel)
-  .get(isAdmin, getClassLevels);
+  .get(isTeacherOrAdmin, getClassLevels);
 classLevelRouter
   .route("/:id")
   .get(isLoggedin, getClassLevelById)
