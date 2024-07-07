@@ -811,8 +811,12 @@ const assignClassTeacher = asyncHandler(async (req, res) => {
     }
 
     // Update classLevel.teachers atomically (if database supports)
+    console.log(teacher, classLevel);
     classLevel.teachers = teacher._id;
+    teacher.classInSchool = classLevel._id
+    teacher.classLevel = classLevel._id
     await classLevel.save();
+    await teacher.save();
 
     return res.status(200).json({ message: 'Class teacher assigned successfully' });
   } catch (error) {
