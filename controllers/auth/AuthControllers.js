@@ -190,23 +190,44 @@ const refreshToken = (req, res) => {
 };
 
 const changePassword = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  try {
+    const userId = req.user.id;
+    const { newPassword, oldPassword } = req.body;
 
-  const { newPassword } = req.body;
-  const user = await User.findById(userId);
-  if (!user) {
-    return res.status(404).json({
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    // console.log(user)
+
+    const isPasswordValid = await user.verifyPassword(oldPassword);
+    console.log(!isPasswordValid);
+
+    if (isPasswordValid) {
+      user.password = newPassword;
+      await user.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Password changed successfully",
+        data: user,
+      });
+    }
+    return res.status(401).json({
       success: false,
-      message: "User not found",
+      message: "Old password is incorrect",
+    });
+  } catch (err) {
+    console.error("Error changing password:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to change password",
+      error: err.message,
     });
   }
-  user.password = newPassword;
-  await user.save();
-  return res.status(200).json({
-    success: true,
-    message: "Password changed successfully",
-    data: user,
-  });
 });
 
 const adminChangePassword = asyncHandler(async (req, res) => {
