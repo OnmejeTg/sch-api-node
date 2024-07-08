@@ -145,9 +145,9 @@ const testPayment = (req, res) => {
 // Get all invoices
 const allSchoolFeeinvoices = async (req, res) => {
   try {
-    const invoices = await SchoolFeeInvoice.find().populate("user");
+    const invoices = await SchoolFeeInvoice.find().populate(["user", "academicYear", "academicTerm"]);
     return res.status(200).json({
-      success: true,
+      success: "Success",
       data: invoices,
     });
   } catch (err) {
@@ -159,7 +159,7 @@ const allSchoolFeeinvoices = async (req, res) => {
 const invoiceByLoggedInStudent = async (req, res) => {
   try {
     const student = await Student.find({ authUser: req.user.id });
-    const invoices = await SchoolFeeInvoice.find({ user: student });
+    const invoices = await SchoolFeeInvoice.find({ user: student }).populate(["user", "academicYear", "academicTerm"]);
 
     const responseData =
       invoices.length > 0
