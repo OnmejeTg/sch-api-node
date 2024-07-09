@@ -42,9 +42,11 @@ const makeSchoolFeePayment = [
         existingInvoice &&
         !["failed", "abandoned"].includes(existingInvoice.paymentStatus)
       ) {
-        return res.redirect(
-          `/api/v2/payment/verify?reference=${existingInvoice.paystackReference}&email=${existingInvoice.email}&user=${existingInvoice.user}`
-        );
+        return res
+          .status(200)
+          .json({
+            verify: `/api/v2/payment/verify?reference=${existingInvoice.paystackReference}&email=${existingInvoice.email}&user=${existingInvoice.user}`,
+          });
       }
 
       // Initialize new payment request
@@ -71,7 +73,7 @@ const makeSchoolFeePayment = [
       });
       await newInvoice.save();
 
-      res.status(200).send({ checkout_url: authorizationUrl });
+      res.status(201).send({ checkout_url: authorizationUrl });
     } catch (error) {
       console.error("Something went wrong:", error);
       res.status(500).send("Server error");
