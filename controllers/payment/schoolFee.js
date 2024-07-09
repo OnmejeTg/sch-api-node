@@ -37,16 +37,19 @@ const makeSchoolFeePayment = [
 
       // Check if invoice already exists
       //TODO: this is not efficient, also check payment type
-      const existingInvoice = await SchoolFeeInvoice.findOne({ user, email });
+      const existingInvoice = await SchoolFeeInvoice.findOne({
+        user,
+        email,
+        academicTerm: currentTerm,
+        academicTerm: currentTerm,
+      });
       if (
         existingInvoice &&
         !["failed", "abandoned"].includes(existingInvoice.paymentStatus)
       ) {
-        return res
-          .status(200)
-          .json({
-            verify: `/api/v2/payment/verify?reference=${existingInvoice.paystackReference}&email=${existingInvoice.email}&user=${existingInvoice.user}`,
-          });
+        return res.status(200).json({
+          verify: `/api/v2/payment/verify?reference=${existingInvoice.paystackReference}&email=${existingInvoice.email}&user=${existingInvoice.user}`,
+        });
       }
 
       // Initialize new payment request
