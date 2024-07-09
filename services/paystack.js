@@ -19,6 +19,12 @@ async function initializePayment(email, amount, user) {
     Authorization: `Bearer ${process.env.paystackSecretKey}`,
     "Content-Type": "application/json",
   };
+  // return {
+  //   checkout_url: `"https://api.paystack.co/transaction/initialize"`,
+  //   data: JSON.stringify(paystackData),
+  //   headers: headers,
+  //   method: "POST",
+  // }
 
   return await fetch("https://api.paystack.co/transaction/initialize", {
     method: "POST",

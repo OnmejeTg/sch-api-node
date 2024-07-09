@@ -9,87 +9,92 @@ import {
 import dotenv from "dotenv";
 import AcademicTerm from "../../models/academicTerm.js";
 import AcademicYear from "../../models/academicYear.js";
-import {paymentDataValidationRules} from "../../validators/paymentValidators.js";
+import { paymentDataValidationRules } from "../../validators/paymentValidators.js";
 
 dotenv.config();
 
 // Make Payment
-const makeSchoolFeePayment = [async (req, res) => {
-  try {
-    const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort({
-      updatedAt: -1,
-    });
-    const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
-      updatedAt: -1,
-    });
+const makeSchoolFeePayment = [
+  async (req, res) => {
+    try {
+      const currentSession = await AcademicYear.findOne({
+        isCurrent: true,
+      }).sort({
+        updatedAt: -1,
+      });
+      const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
+        updatedAt: -1,
+      });
 
-    
-    let { user, email, amount } = req.body;
+      let { user, email, amount } = req.body;
 
-    if (!email){
+      if (!email) {
+        //TODO: supply the school support email here instead
+        email = "email@example.com";
+      }
 
-      //TODO: supply the school support email here instead
-      email = "email@example.com";
+      paymentDataValidationRules;
+
+      // Check if invoice already exists
+      //TODO: this is not efficient, also check payment type
+      const existingInvoice = await SchoolFeeInvoice.findOne({ user, email });
+      if (
+        existingInvoice &&
+        !["failed", "abandoned"].includes(existingInvoice.paymentStatus)
+      ) {
+        return res.redirect(
+          `/api/v2/payment/verify?reference=${existingInvoice.paystackReference}&email=${existingInvoice.email}&user=${existingInvoice.user}`
+        );
+      }
+
+      // Initialize new payment request
+      const paystackResponse = await initializePayment(email, amount, user);
+      // console.log(paystackResponse)
+      if (!paystackResponse.ok) {
+        throw new Error("Failed to initialize transaction with Paystack");
+      }
+
+      const paystackJson = await paystackResponse.json();
+      const { authorization_url: authorizationUrl } = paystackJson.data;
+      const paymentReference = generateRandomString(10);
+      amount = amount / 100;
+      // Create new invoice
+      const newInvoice = new SchoolFeeInvoice({
+        user,
+        email,
+        amount,
+        paymentReference,
+        url: authorizationUrl,
+        paystackReference: paystackJson.data.reference,
+        academicTerm: currentTerm,
+        academicYear: currentSession,
+      });
+      await newInvoice.save();
+
+      res.status(200).send({ checkout_url: authorizationUrl });
+    } catch (error) {
+      console.error("Something went wrong:", error);
+      res.status(500).send("Server error");
     }
-
-    paymentDataValidationRules
-
-    // Check if invoice already exists
-    const existingInvoice = await SchoolFeeInvoice.findOne({ user, email });
-    if (
-      existingInvoice &&
-      !["failed", "abandoned"].includes(existingInvoice.paymentStatus)
-    ) {
-      return res.redirect(
-        `/api/v2/payment/verify?reference=${existingInvoice.paystackReference}&email=${existingInvoice.email}&user=${existingInvoice.user}`
-      );
-    }
-
-    // Initialize new payment request
-    const paystackResponse = await initializePayment(email, amount, user);
-      console.log(paystackResponse)
-    if (!paystackResponse.ok) {
-      throw new Error("Failed to initialize transaction with Paystack");
-    }
-
-    const paystackJson = await paystackResponse.json();
-    const { authorization_url: authorizationUrl } = paystackJson.data;
-    const paymentReference = generateRandomString(10);
-    amount = amount / 100;
-    // Create new invoice
-    const newInvoice = new SchoolFeeInvoice({
-      user,
-      email,
-      amount,
-      paymentReference,
-      url: authorizationUrl,
-      paystackReference: paystackJson.data.reference,
-      academicTerm: currentTerm,
-      academicYear: currentSession,
-    });
-    await newInvoice.save();
-
-    res.redirect(authorizationUrl);
-  } catch (error) {
-    console.error("Something went wrong:", error);
-    res.status(500).send("Server error");
-  }
-}]
+  },
+];
 
 // Verify Payment
 const verifyPayment = async (req, res) => {
   const { reference, user, email } = req.query;
 
   try {
-    const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort({
-      updatedAt: -1,
-    });
+    const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort(
+      {
+        updatedAt: -1,
+      }
+    );
     const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
     });
 
-    console.log(currentTerm.name, currentTerm.name)
-    
+    console.log(currentTerm.name, currentTerm.name);
+
     const paymentData = await verifyTransaction(reference);
     // console.log(paymentData);
     if (paymentData.data.status !== "success") {
@@ -154,7 +159,11 @@ const testPayment = (req, res) => {
 // Get all invoices
 const allSchoolFeeinvoices = async (req, res) => {
   try {
-    const invoices = await SchoolFeeInvoice.find().populate(["user", "academicYear", "academicTerm"]);
+    const invoices = await SchoolFeeInvoice.find().populate([
+      "user",
+      "academicYear",
+      "academicTerm",
+    ]);
     return res.status(200).json({
       success: "Success",
       data: invoices,
@@ -168,7 +177,11 @@ const allSchoolFeeinvoices = async (req, res) => {
 const invoiceByLoggedInStudent = async (req, res) => {
   try {
     const student = await Student.find({ authUser: req.user.id });
-    const invoices = await SchoolFeeInvoice.find({ user: student }).populate(["user", "academicYear", "academicTerm"]);
+    const invoices = await SchoolFeeInvoice.find({ user: student }).populate([
+      "user",
+      "academicYear",
+      "academicTerm",
+    ]);
 
     const responseData =
       invoices.length > 0
