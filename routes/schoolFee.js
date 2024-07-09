@@ -13,7 +13,7 @@ import { paymentDataValidationRules } from "../validators/paymentValidators.js";
 
 const schoolFeeRouter = express.Router();
 
-schoolFeeRouter.post("/", paymentDataValidationRules, makeSchoolFeePayment);
+schoolFeeRouter.post("/",  makeSchoolFeePayment);
 schoolFeeRouter.get("/verify", verifyPayment);
 schoolFeeRouter.get("/test", testPayment);
 schoolFeeRouter.get("/all-invoices",isLoggedin, isAdmin, allSchoolFeeinvoices);

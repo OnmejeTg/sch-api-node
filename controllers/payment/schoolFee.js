@@ -9,11 +9,12 @@ import {
 import dotenv from "dotenv";
 import AcademicTerm from "../../models/academicTerm.js";
 import AcademicYear from "../../models/academicYear.js";
+import {paymentDataValidationRules} from "../../validators/paymentValidators.js";
 
 dotenv.config();
 
 // Make Payment
-const makeSchoolFeePayment = async (req, res) => {
+const makeSchoolFeePayment = [async (req, res) => {
   try {
     const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
@@ -24,7 +25,15 @@ const makeSchoolFeePayment = async (req, res) => {
 
     
     let { user, email, amount } = req.body;
-    
+
+    if (!email){
+
+      //TODO: supply the school support email here instead
+      email = "email@example.com";
+    }
+
+    paymentDataValidationRules
+
     // Check if invoice already exists
     const existingInvoice = await SchoolFeeInvoice.findOne({ user, email });
     if (
@@ -65,7 +74,7 @@ const makeSchoolFeePayment = async (req, res) => {
     console.error("Something went wrong:", error);
     res.status(500).send("Server error");
   }
-};
+}]
 
 // Verify Payment
 const verifyPayment = async (req, res) => {
