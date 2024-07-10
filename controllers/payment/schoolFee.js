@@ -11,6 +11,7 @@ import AcademicTerm from "../../models/academicTerm.js";
 import AcademicYear from "../../models/academicYear.js";
 import { paymentDataValidationRules } from "../../validators/paymentValidators.js";
 
+
 dotenv.config();
 
 // Make Payment
@@ -98,12 +99,16 @@ const verifyPayment = async (req, res) => {
       updatedAt: -1,
     });
 
-    console.log(currentTerm.name, currentTerm.name);
+    // console.log(currentTerm.name, currentTerm.name);
 
-    const paymentData = await verifyTransaction(reference);
-    // console.log(paymentData);
+    const paymentData = await verifyTransaction("hsymv2rc62");
+    console.log(paymentData);
     if (paymentData.data.status !== "success") {
       console.log("Transaction failed:", paymentData.data.status);
+      let invoice = await SchoolFeeInvoice.findOne({ paystackReference:'hsymv2rc62' });
+      invoice.paymentStatus = 'failed';
+      await invoice.save();
+      
       return res.status(400).send("Transaction failed");
     }
 
