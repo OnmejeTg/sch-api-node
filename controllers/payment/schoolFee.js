@@ -107,6 +107,7 @@ const verifyPayment = async (req, res) => {
       console.log("Transaction failed:", paymentData.data.status);
       let invoice = await SchoolFeeInvoice.findOne({ paystackReference:'hsymv2rc62' });
       invoice.paymentStatus = 'failed';
+      console.log('Invoice',invoice);
       await invoice.save();
       
       return res.status(400).send("Transaction failed");
