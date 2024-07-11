@@ -45,7 +45,7 @@ const teacherSchema = new mongoose.Schema(
     designation: {
       type: String,
       default: "teacher",
-      enum: ["principal", "teacher", "accountant", "librarian", "admin"],
+      enum: ["principal", "teacher", "accountant", "librarian", "admin", "bursar"],
     },
     appointmentType: {
       type: String,
@@ -73,7 +73,7 @@ const teacherSchema = new mongoose.Schema(
     },
     applicationStatus: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "approved", "rejected", 'accepted'],
       default: "pending",
     },
 

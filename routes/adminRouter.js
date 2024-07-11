@@ -15,7 +15,8 @@ import {
   uploadStudent,
   uploadQuestion,
   portalAnalytics,
-  assignClassTeacher
+  assignClassTeacher,
+  assignBursar
 } from "../controllers/admin/adminController.js";
 import { isAdmin, isLoggedin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -52,5 +53,6 @@ adminRouter.post(
 );
 adminRouter.get("/analytics", isAdmin, portalAnalytics);
 adminRouter.post("/assign-class-teacher", isAdmin, assignClassTeacher);
+adminRouter.put("/assign-bursar/:id", isAdmin, assignBursar);
 
 export default adminRouter;

@@ -830,6 +830,41 @@ const assignClassTeacher = asyncHandler(async (req, res) => {
   }
 });
 
+const assignBursar = asyncHandler(async (req, res) => {
+  try {
+    // Destructure id from request parameters
+    const { id } = req.params;
+    const {designation } = req.body;
+
+    // Find the teacher by id
+    const teacher = await Teacher.findById(id);
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    // Find the associated user by teacher's authUser field
+    const user = await User.findById(teacher.authUser);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update user type and teacher designation
+    user.userType = designation;
+    teacher.designation = designation;
+
+    // Save the changes
+    await Promise.all([user.save(), teacher.save()]);
+
+    // Respond with success message
+    return res.status(200).json({ message: `${designation} assigned successfully` });
+  } catch (error) {
+    // Handle any other errors
+    return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+});
+
+
+
 
 // Done
 //TODO: Portal anayltics
@@ -855,5 +890,6 @@ export {
   uploadStudent,
   uploadQuestion,
   portalAnalytics,
-  assignClassTeacher
+  assignClassTeacher,
+  assignBursar
 };
