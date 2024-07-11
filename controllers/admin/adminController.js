@@ -466,12 +466,13 @@ const generalLogin = async (req, res) => {
     }
 
     // Step 3: Check user type and find corresponding user
+    console.log(authUser)
     let user;
     if (authUser.userType === "admin") {
       user = await Admin.findOne({ authUser: authUser.id });
     } else if (authUser.userType === "student") {
       user = await Student.findOne({ authUser: authUser.id });
-    } else if (authUser.userType === "teacher") {
+    } else if (authUser.userType === "teacher" || authUser.userType === "bursar") {
       user = await Teacher.findOne({ authUser: authUser.id });
     }
 
@@ -481,7 +482,7 @@ const generalLogin = async (req, res) => {
         success: false,
         message: `${
           authUser.userType.charAt(0).toUpperCase() + authUser.userType.slice(1)
-        } not found`,
+        } not found o`,
       });
     }
 
