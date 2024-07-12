@@ -11,7 +11,6 @@ import AcademicTerm from "../../models/academicTerm.js";
 import AcademicYear from "../../models/academicYear.js";
 import { paymentDataValidationRules } from "../../validators/paymentValidators.js";
 
-
 dotenv.config();
 
 // Make Payment
@@ -105,12 +104,15 @@ const verifyPayment = async (req, res) => {
     console.log(paymentData);
     if (paymentData.data.status !== "success") {
       console.log("Transaction failed:", paymentData.data.status);
-      let invoice = await SchoolFeeInvoice.findOne({ paystackReference:reference });
-      invoice.paymentStatus = 'failed';
-      console.log('Invoice',invoice);
-      await invoice.save();
-      
-      return res.status(400).send("Transaction failed");
+      let invoice = await SchoolFeeInvoice.findOne({
+        paystackReference: reference,
+      });
+      if (invoice) {
+        invoice.paymentStatus = "failed";
+        console.log("Invoice", invoice);
+        await invoice.save();
+      }
+      return res.status(400).send("Verification failed");
     }
 
     const paymentReference = generateRandomString(10);
@@ -143,7 +145,7 @@ const verifyPayment = async (req, res) => {
 
     res.status(200).send({
       status: true,
-      message: "Payment successful",
+      message: "Payment verification successful",
       data: invoice,
     });
     try {
