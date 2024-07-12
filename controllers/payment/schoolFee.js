@@ -101,11 +101,11 @@ const verifyPayment = async (req, res) => {
 
     // console.log(currentTerm.name, currentTerm.name);
 
-    const paymentData = await verifyTransaction("hsymv2rc62");
+    const paymentData = await verifyTransaction(reference);
     console.log(paymentData);
     if (paymentData.data.status !== "success") {
       console.log("Transaction failed:", paymentData.data.status);
-      let invoice = await SchoolFeeInvoice.findOne({ paystackReference:'hsymv2rc62' });
+      let invoice = await SchoolFeeInvoice.findOne({ paystackReference:reference });
       invoice.paymentStatus = 'failed';
       console.log('Invoice',invoice);
       await invoice.save();
