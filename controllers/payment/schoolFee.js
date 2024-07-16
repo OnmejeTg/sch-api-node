@@ -101,7 +101,7 @@ const verifyPayment = async (req, res) => {
     // console.log(currentTerm.name, currentTerm.name);
 
     const paymentData = await verifyTransaction(reference);
-    console.log(paymentData);
+    // console.log(paymentData);
     if (paymentData.data.status !== "success") {
       console.log("Transaction failed:", paymentData.data.status);
       let invoice = await SchoolFeeInvoice.findOne({
@@ -109,7 +109,7 @@ const verifyPayment = async (req, res) => {
       });
       if (invoice) {
         invoice.paymentStatus = "failed";
-        console.log("Invoice", invoice);
+        // console.log("Invoice", invoice);
         await invoice.save();
       }
       return res.status(400).send("Verification failed");
