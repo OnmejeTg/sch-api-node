@@ -8,7 +8,8 @@ import {
   getResultById,
   generateResultPDFCtrl,
   calResult,
-  getResultByClassId
+  getResultByClassId,
+  getMasterSheet
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -52,6 +53,7 @@ resultRouter.get(
   // isAdmin,
   generateResultPDFCtrl
 );
+resultRouter.get("/get-mastersheet/:id", getMasterSheet)
 
 resultRouter.post("/cal-result", calResult)
 resultRouter.get("/results/class/:classId", getResultByClassId)

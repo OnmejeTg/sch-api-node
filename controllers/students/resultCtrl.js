@@ -5,7 +5,7 @@ import Student from "../../models/student.js";
 import { Result, validationResult } from "express-validator";
 import AcademicYear from "../../models/academicYear.js";
 import AcademicTerm from "../../models/academicTerm.js";
-import { generatePDF,  } from "../../utils/result/studentResult.js";
+import { generatePDF } from "../../utils/result/studentResult.js";
 import axios from "axios";
 import Teacher from "../../models/teacher.js";
 
@@ -310,11 +310,10 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   ]);
   const teacherId = result.classLevel.teachers;
   const teacher = await Teacher.findById(teacherId);
-  const teacherSignature = teacher.signature
-  
+  const teacherSignature = teacher.signature;
+
   let studentRes = { data: result };
   const stdImg = studentRes.data.studentId.image;
-  
 
   try {
     const pdf = await generatePDF(studentRes, stdImg, teacherSignature);
@@ -479,6 +478,69 @@ const getResultByClassId = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+const getMasterSheet = asyncHandler(async (req, res) => {
+  const {id} = req.params.id;
+  const results = await StudentResult.find({'studentId.currentClassLevel':id}).populate(['studentId']);
+
+  const formattedData = results.map((item) => {
+    const scores = item.subjects.reduce((acc, subject) => {
+      acc[`${subject.name}_1stCA`] = subject.assessment1;
+      acc[`${subject.name}_2ndCA`] = subject.assessment2;
+      acc[`${subject.name}_Test`] = subject.assessment3;
+      acc[`${subject.name}_Exam`] = subject.exam;
+      acc[`${subject.name}_Total`] = subject.total;
+      return acc;
+    }, {});
+
+    return {
+      studentName: `${item.studentId.surname} ${item.studentId.othername}`,
+      studentID: item.studentId.studentId,
+      ...scores,
+      Total: item.grandScore,
+      Average: item.average,
+      Position: item.position,
+      Remarks: item.remarks,
+      Status: item.status
+    };
+  });
+
+  // Headers should include 'Student Name' and 'Student ID'
+  const headers = [
+    'studentName', 
+    'studentID', 
+    ...new Set(results.flatMap(item => item.subjects.flatMap(subject => [
+      `${subject.name}_1stCA`,
+      `${subject.name}_2ndCA`,
+      `${subject.name}_Test`,
+      `${subject.name}_Exam`,
+      `${subject.name}_Total`
+    ]))), 
+    'Total', 
+    'Average', 
+    'Position', 
+    'Remarks', 
+    'Status'
+  ];
+
+  const data = [headers, ...formattedData.map(item => headers.map(header => item[header] || ''))];
+
+  const workbook = xlsx.utils.book_new();
+  const worksheet = xlsx.utils.aoa_to_sheet(data);
+
+  xlsx.utils.book_append_sheet(workbook, worksheet, "Data");
+
+  const filePath = "output.xlsx";
+  xlsx.writeFile(workbook, filePath);
+
+  console.log(`Data written to ${filePath}`)
+  res.json(formattedData);
+});
+
+
+
+
 export {
   uploadScores,
   allResults,
@@ -489,4 +551,5 @@ export {
   generateResultPDFCtrl,
   calResult,
   getResultByClassId,
+  getMasterSheet,
 };
