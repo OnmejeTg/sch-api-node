@@ -143,11 +143,14 @@ const verifyPayment = async (req, res) => {
       await invoice.save();
     }
 
-    res.status(200).send({
-      status: true,
-      message: "Payment verification successful",
-      data: invoice,
-    });
+    // res.redirect('https://new-project-3552/0.web.app/student/fee/invoice')
+    res.render("success.ejs")
+
+    // res.status(200).send({
+    //   status: true,
+    //   message: "Payment verification successful",
+    //   data: invoice,
+    // });
     try {
       const studentObject = await Student.findOne({ _id: user });
       studentObject.paymentStatus = paymentData.data.status;
