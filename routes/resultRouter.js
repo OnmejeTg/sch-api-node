@@ -53,7 +53,7 @@ resultRouter.get(
   // isAdmin,
   generateResultPDFCtrl
 );
-resultRouter.get("/get-mastersheet/:id", isAdmin, getMasterSheet)
+resultRouter.get("/get-mastersheet/:id", getMasterSheet)
 
 resultRouter.post("/cal-result", calResult)
 resultRouter.get("/results/class/:classId", getResultByClassId)
