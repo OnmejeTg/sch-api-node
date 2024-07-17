@@ -534,11 +534,15 @@ const getMasterSheet = asyncHandler(async (req, res) => {
   const filePath = "output.xlsx";
   xlsx.writeFile(workbook, filePath);
 
-  console.log(`Data written to ${filePath}`)
-  res.json(formattedData);
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error("Error downloading file:", err);
+      res.status(500).send("Error downloading file.");
+    } else {
+      console.log("File downloaded successfully.");
+    }
+  });
 });
-
-
 
 
 export {
