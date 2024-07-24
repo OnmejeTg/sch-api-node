@@ -255,6 +255,39 @@ const sendEmail = asyncHandler(async (req, res) => {
   sendOtp(email, otp);
 });
 
+
+const deleteInvalidUsers = asyncHandler(async (req, res) => {
+  try {
+    const users = await User.find();
+    const deletionPromises = users.map(async (user) => {
+      const isValidUser = await Student.findOne({ authUser: user._id }) ||
+                          await Teacher.findOne({ authUser: user._id }) ||
+                          await Admin.findOne({ authUser: user._id });
+
+      if (!isValidUser) {
+        await User.findByIdAndDelete(user._id);
+        console.log(`User with id ${user._id} has been deleted`);
+      }
+    });
+
+    await Promise.all(deletionPromises);
+
+    return res.status(200).json({
+      success: true,
+      message: "All invalid users have been deleted",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting invalid users",
+      error: error.message,
+    });
+  }
+});
+
+
+
+
 export {
   createUser,
   getUser,
@@ -265,4 +298,5 @@ export {
   changePassword,
   adminChangePassword,
   sendEmail,
+  deleteInvalidUsers
 };

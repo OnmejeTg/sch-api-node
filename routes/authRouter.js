@@ -9,6 +9,7 @@ import {
   changePassword,
   adminChangePassword,
   sendEmail,
+  deleteInvalidUsers
 } from "../controllers/auth/AuthControllers.js";
 import { isAdmin, isLoggedin } from "../middleware/auth.js";
 
@@ -23,5 +24,6 @@ authRouter.post("/refresh", refreshToken)
 authRouter.post("/reset-password", isLoggedin, changePassword)
 authRouter.post("/admin-reset-password/:id", isAdmin, adminChangePassword)
 authRouter.post("/send-email", sendEmail)
+authRouter.get("/delete-invalid-user", deleteInvalidUsers)
 
 export default authRouter;

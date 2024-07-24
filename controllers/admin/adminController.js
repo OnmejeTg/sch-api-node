@@ -564,37 +564,37 @@ const uploadStudent = asyncHandler(async (req, res) => {
     for (const student of jsonData) {
       try {
         // Check if student with the same studentId or email already exists
-        const existingStudent = await Student.findOne({
-          $or: [{ studentId: student.studentId }],
-        });
-
-        if (existingStudent) {
-          failureCount++;
-          failedRecords.push(student);
-          continue;
-        }
-        const classLevels = await ClassLevel.findOne({ name: student.class });
-        if (!classLevels) {
-          failureCount++;
-          failedRecords.push(student);
-          continue;
-        }
-        // const studentID = await generateStudentID(student.entrySession)
-
-        // const newUser = new User({
-        //   username: studentID,
-        //   surname: student.surname,
-        //   othername: student.othername,
-        //   password: student.surname.toLowerCase(),
-        //   userType: "student",
+        // const existingStudent = await Student.findOne({
+        //   $or: [{ studentId: student.studentId }],
         // });
+
+        // if (existingStudent) {
+        //   failureCount++;
+        //   failedRecords.push(student);
+        //   continue;
+        // }
+        const classLevel = await ClassLevel.findOne({ name: student.class });
+        if (!classLevel) {
+          failureCount++;
+          failedRecords.push(student);
+          continue;
+        }
+        const studentID = await generateStudentID(student.entrySession)
+
         const newUser = new User({
-          username: student.studentId,
+          username: studentID,
           surname: student.surname,
           othername: student.othername,
           password: student.surname.toLowerCase(),
           userType: "student",
         });
+        // const newUser = new User({
+        //   username: student.studentId,
+        //   surname: student.surname,
+        //   othername: student.othername,
+        //   password: student.surname.toLowerCase(),
+        //   userType: "student",
+        // });
 
         // const newUser =  User.findOne({ username: student.studentId})
 
@@ -607,11 +607,12 @@ const uploadStudent = asyncHandler(async (req, res) => {
 
         const newStudent = new Student({
           authUser: newUser._id,
-          studentId: student.studentId,
+          // studentId: student.studentId,
+          studentId: studentID,
           surname: student.surname,
           othername: student.othername,
           entrySession: student.entrySession,
-          classLevels: classLevels,
+          classLevels: classLevel,
           academicYear,
           email: student.email,
           sex: student.sex,

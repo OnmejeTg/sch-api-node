@@ -8,6 +8,7 @@ import AcademicTerm from "../../models/academicTerm.js";
 import { generatePDF } from "../../utils/result/studentResult.js";
 import axios from "axios";
 import Teacher from "../../models/teacher.js";
+import studentAnnualResult from "../../models/studentAnnualResult.js";
 
 const uploadScores = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -63,13 +64,14 @@ const uploadScores = asyncHandler(async (req, res) => {
         failedRecords.push(studentData.StudentID);
         continue;
       }
-
       // Check if the student result already exists for the current term and year
       let studentResult = await StudentResult.findOne({
-        studentId: student._id,
-        academicTerm: currentSession, // Replace with actual ObjectId
-        academicYear: currentTerm, // Replace with actual ObjectId
+        studentId: student._id.toString(),
+        academicYear: currentSession._id.toString(), // Replace with actual ObjectId
+        academicTerm: currentTerm._id.toString(), // Replace with actual ObjectId
       });
+
+      
 
       if (studentResult) {
         // Update existing student result
@@ -478,11 +480,11 @@ const getResultByClassId = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 const getMasterSheet = asyncHandler(async (req, res) => {
-  const {id} = req.params.id;
-  const results = await StudentResult.find({'studentId.currentClassLevel':id}).populate(['studentId']);
+  const { id } = req.params.id;
+  const results = await StudentResult.find({
+    "studentId.currentClassLevel": id,
+  }).populate(["studentId"]);
 
   const formattedData = results.map((item) => {
     const scores = item.subjects.reduce((acc, subject) => {
@@ -502,29 +504,36 @@ const getMasterSheet = asyncHandler(async (req, res) => {
       Average: item.average,
       Position: item.position,
       Remarks: item.remarks,
-      Status: item.status
+      Status: item.status,
     };
   });
 
   // Headers should include 'Student Name' and 'Student ID'
   const headers = [
-    'studentName', 
-    'studentID', 
-    ...new Set(results.flatMap(item => item.subjects.flatMap(subject => [
-      `${subject.name}_1stCA`,
-      `${subject.name}_2ndCA`,
-      `${subject.name}_Test`,
-      `${subject.name}_Exam`,
-      `${subject.name}_Total`
-    ]))), 
-    'Total', 
-    'Average', 
-    'Position', 
-    'Remarks', 
-    'Status'
+    "studentName",
+    "studentID",
+    ...new Set(
+      results.flatMap((item) =>
+        item.subjects.flatMap((subject) => [
+          `${subject.name}_1stCA`,
+          `${subject.name}_2ndCA`,
+          `${subject.name}_Test`,
+          `${subject.name}_Exam`,
+          `${subject.name}_Total`,
+        ])
+      )
+    ),
+    "Total",
+    "Average",
+    "Position",
+    "Remarks",
+    "Status",
   ];
 
-  const data = [headers, ...formattedData.map(item => headers.map(header => item[header] || ''))];
+  const data = [
+    headers,
+    ...formattedData.map((item) => headers.map((header) => item[header] || "")),
+  ];
 
   const workbook = xlsx.utils.book_new();
   const worksheet = xlsx.utils.aoa_to_sheet(data);
@@ -544,6 +553,131 @@ const getMasterSheet = asyncHandler(async (req, res) => {
   });
 });
 
+const uploadAnnualResult = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: "No file uploaded",
+    });
+  }
+  try {
+    const currentSession = await AcademicYear.findOne({ isCurrent: true }).sort(
+      {
+        updatedAt: -1,
+      }
+    );
+    const currentTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    });
+    const { assessmentType } = req.body;
+    if (
+      assessmentType !== "firstTerm" &&
+      assessmentType !== "secondTerm" &&
+      assessmentType !== "thridTerm"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Assessment type should be one of the following: firstTerm, secondTerm, thridTerm",
+      });
+    }
+
+    const { buffer } = req.file;
+    const workbook = xlsx.read(buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    let successCount = 0;
+    let failureCount = 0;
+    const failedRecords = [];
+
+    for (const studentData of jsonData) {
+      // Check if the student exists
+      const student = await Student.findOne({
+        studentId: studentData.StudentID,
+      });
+
+      if (!student) {
+        console.log(
+          `Student ${studentData.StudentID} does not exist, skipping.`
+        );
+        failureCount++;
+        failedRecords.push(studentData.StudentID);
+        continue;
+      }
+
+      // Check if the student result already exists for the current term and year
+      let studentResult = await StudentResult.findOne({
+        studentId: student._id,
+        academicTerm: currentSession, // Replace with actual ObjectId
+        academicYear: currentTerm, // Replace with actual ObjectId
+      });
+
+      if (studentResult) {
+        // Update existing student result
+        for (const [key, value] of Object.entries(studentData)) {
+          if (key !== "StudentID") {
+            const subject = studentResult.subjects.find(
+              (sub) => sub.name === key
+            );
+            if (subject) {
+              subject[assessmentType] = value;
+            } else {
+              studentResult.subjects.push({
+                name: key,
+                [assessmentType]: value,
+              });
+            }
+          }
+        }
+      } else {
+        // Create a new student result instance
+        const subjects = [];
+        for (const [key, value] of Object.entries(studentData)) {
+          if (key !== "StudentID") {
+            subjects.push({ name: key, [assessmentType]: value });
+          }
+        }
+
+        studentResult = new studentAnnualResult({
+          studentId: student._id,
+          subjects,
+          passMark: 50,
+          classLevel: student.currentClassLevel, // Replace with actual ObjectId
+          academicTerm: currentTerm, // Replace with actual ObjectId
+          academicYear: currentSession, // Replace with actual ObjectId
+        });
+      }
+
+      // Save the instance to the database
+      try {
+        await studentResult.save();
+        // console.log(`Student result for ${studentData.StudentID} ${studentResult ? 'updated' : 'created'} successfully`);
+        successCount++;
+      } catch (saveError) {
+        console.error(
+          `Error saving student result for ${studentData.StudentID}:`,
+          saveError
+        );
+        failureCount++;
+        failedRecords.push(studentData.StudentID);
+      }
+    }
+
+    res.status(200).json({
+      message: "Upload completed",
+      successCount,
+      failureCount,
+      failedRecords,
+    });
+  } catch (error) {
+    console.error("Error creating student results:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while processing the upload" });
+  }
+});
 
 export {
   uploadScores,
@@ -556,4 +690,5 @@ export {
   calResult,
   getResultByClassId,
   getMasterSheet,
+  uploadAnnualResult,
 };
