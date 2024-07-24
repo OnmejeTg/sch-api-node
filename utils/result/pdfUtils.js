@@ -151,7 +151,7 @@ function drawScoreSheet(doc, result) {
     doc.text(exam !== undefined ? exam.toString() : "", 83, 110 + 7 * index);
     doc.text(total !== undefined ? total.toString() : "", 92, 110 + 7 * index);
     doc.text(
-      average !== undefined ? average.toString() : "",
+      average !== undefined ? average.toFixed(1).toString() : "",
       100.8,
       110 + 7 * index
     );
@@ -294,9 +294,9 @@ function drawSummary(doc, summary) {
     213
   );
   doc.text("Class Average", 107, 202);
-  doc.text(summary.grade || "", 117, 213);
-  doc.text("Average", 144, 202);
-  doc.text(summary.average.toString() || "", 149, 213);
+  doc.text(summary.classAverage.toFixed(1).toString() || "", 117, 213);
+  doc.text("Grade", 144, 202);
+  doc.text(summary.remarks.toString() || "", 149, 213);
   doc.text("Position", 175, 202);
   doc.text(
     summary.position !== undefined ? summary.position.toString() : "",
@@ -316,7 +316,7 @@ function drawFooter(doc, pageWidth, remarks, signature) {
   } = CONSTANTS;
   doc.setFontSize(9);
   doc.text(
-    "Class Teacher's Remark:_________________________________________________________________",
+    "Form Master's Remark:_________________________________________________________________",
     10,
     REMARKS_Y
   );
@@ -333,8 +333,7 @@ function drawFooter(doc, pageWidth, remarks, signature) {
   doc.text("Sign___________________", 163, REMARKS_Y);
 
   doc.setFont("helvetica", "bold");
-  doc.text(
-    "Head Teacher's Remark:_________________________________________________________________",
+  doc.text("Principal's, Remark:_________________________________________________________________",
     10,
     REMARKS_Y + 16
   );

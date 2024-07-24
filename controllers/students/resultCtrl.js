@@ -71,8 +71,6 @@ const uploadScores = asyncHandler(async (req, res) => {
         academicTerm: currentTerm._id.toString(), // Replace with actual ObjectId
       });
 
-      
-
       if (studentResult) {
         // Update existing student result
         for (const [key, value] of Object.entries(studentData)) {
@@ -80,12 +78,13 @@ const uploadScores = asyncHandler(async (req, res) => {
             const subject = studentResult.subjects.find(
               (sub) => sub.name === key
             );
+            const integerValue = parseInt(value, 10); // Convert value to integer
             if (subject) {
-              subject[assessmentType] = value;
+              subject[assessmentType] = integerValue;
             } else {
               studentResult.subjects.push({
                 name: key,
-                [assessmentType]: value,
+                [assessmentType]: integerValue,
               });
             }
           }
@@ -94,8 +93,9 @@ const uploadScores = asyncHandler(async (req, res) => {
         // Create a new student result instance
         const subjects = [];
         for (const [key, value] of Object.entries(studentData)) {
+          const integerValue = parseInt(value, 10); // Convert value to integer
           if (key !== "StudentID") {
-            subjects.push({ name: key, [assessmentType]: value });
+            subjects.push({ name: key, [assessmentType]: integerValue });
           }
         }
 
@@ -399,47 +399,6 @@ const calResult = asyncHandler(async (req, res) => {
   // Save updated results to the database
   await Promise.all(results.map((result) => result.save()));
 
-  // const total = results.map((student) => ({
-  //   score: student.grandScore,
-  //   id: student._id,
-  // }));
-
-  // // Create an array of objects where each object contains the score, id, and the original index
-  // const indexedTotal = total.map((student, index) => ({
-  //   score: student.score,
-  //   id: student.id,
-  //   index: index,
-  // }));
-
-  // // Sort the array in descending order based on the score
-  // indexedTotal.sort((a, b) => b.score - a.score);
-
-  // let currentRank = 1;
-  // const ranksMap = new Map();
-
-  // for (let i = 0; i < indexedTotal.length; i++) {
-  //   // Assign the current rank to the original index
-  //   ranksMap.set(indexedTotal[i].id.toString(), currentRank);
-
-  //   // If the next element has a different score, update the rank
-  //   if (
-  //     i < indexedTotal.length - 1 &&
-  //     indexedTotal[i].score !== indexedTotal[i + 1].score
-  //   ) {
-  //     currentRank = i + 2;
-  //   }
-  // }
-
-  // // Bulk update to save ranks to the database
-  // const bulkOps = results.map((result) => ({
-  //   updateOne: {
-  //     filter: { _id: result._id },
-  //     update: { $set: { position: ranksMap.get(result._id.toString()) } }
-  //   }
-  // }));
-
-  // await StudentResult.bulkWrite(bulkOps);
-
   res.json({
     status: "success",
     message: "Results were successfully calculated",
@@ -447,6 +406,70 @@ const calResult = asyncHandler(async (req, res) => {
     data: results,
   });
 });
+
+
+const calClassPosition = asyncHandler(async (req, res) => {
+  const { classId } = req.body;
+  const results = await StudentResult.find({ classLevel: classId });
+
+  // Extract scores
+  const scores = results.map(result => ({
+    studentId: result.studentId,
+    grandScore: result.grandScore
+  }));
+
+  // Calculate total score and average
+  const totalScore = scores.reduce((sum, score) => sum + score.grandScore, 0);
+  const classAverage = totalScore / (scores.length * 10);
+
+  // Sort scores in descending order
+  scores.sort((a, b) => b.grandScore - a.grandScore);
+
+  // Assign ranks and calculate grades
+  let currentRank = 1;
+  let previousScore = scores[0]?.grandScore || 0;
+  const bulkOps = [];
+
+  scores.forEach((score, index) => {
+    if (index > 0 && previousScore !== score.grandScore) {
+      currentRank = index + 1;
+    }
+    previousScore = score.grandScore;
+    score.rank = currentRank;
+
+    let remarks = '';
+    if (score.grandScore >= 750) {
+      remarks = "A";
+    } else if (score.grandScore >= 650) {
+      remarks = "B";
+    } else if (score.grandScore >= 550) {
+      remarks = "C";
+    } else if (score.grandScore >= 400) {
+      remarks = "D";
+    } else {
+      remarks = "F";
+    }
+
+    bulkOps.push({
+      updateOne: {
+        filter: { studentId: score.studentId, classLevel: classId },
+        update: { $set: { position: score.rank, classAverage, remarks } }
+      }
+    });
+  });
+
+  // Perform bulk update
+  if (bulkOps.length > 0) {
+    await StudentResult.bulkWrite(bulkOps);
+  }
+
+  res.status(200).json({
+    message: 'Class positions calculated successfully',
+    scores: scores
+  });
+});
+
+
 
 const getResultByClassId = asyncHandler(async (req, res) => {
   try {
@@ -691,4 +714,5 @@ export {
   getResultByClassId,
   getMasterSheet,
   uploadAnnualResult,
+  calClassPosition
 };

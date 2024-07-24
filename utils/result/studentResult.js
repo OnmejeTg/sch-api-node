@@ -60,6 +60,8 @@ async function generatePDF(student, studentPhotoUrl, teacherSignature) {
   return doc;
 }
 
+
+//TODO: remove this result and Add proper remarks
 const result = {
   subjects: [
     {

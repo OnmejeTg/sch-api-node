@@ -54,17 +54,17 @@ subjectSchema.pre("save", function (next) {
   this.total =
     this.assessment1 + this.assessment2 + this.assessment3 + this.exam;
 
-  if (this.total >= 90) {
-    this.grade = "A";
-  } else if (this.total >= 80) {
-    this.grade = "B";
-  } else if (this.total >= 70) {
-    this.grade = "C";
-  } else if (this.total >= 60) {
-    this.grade = "D";
-  } else {
-    this.grade = "F";
-  }
+    if (this.total >= 75) {
+      this.grade = "A";
+    } else if (this.total >= 65) {
+      this.grade = "B";
+    } else if (this.total >= 55) {
+      this.grade = "C";
+    } else if (this.total >= 40) {
+      this.grade = "D";
+    } else {
+      this.grade="F";
+}
 
   next();
 });
@@ -164,10 +164,14 @@ const studentResultSchema = new Schema(
     remarks: {
       type: String,
       required: true,
-      enum: ["Excellent", "Good", "Poor"],
-      default: "Poor",
+      enum: ["A", "B", "C", 'D', 'E', 'F'],
+      default: "F",
     },
     position: {
+      type: Number,
+      default: 0,
+    },
+    classAverage: {
       type: Number,
       default: 0,
     },

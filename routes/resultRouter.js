@@ -10,7 +10,8 @@ import {
   calResult,
   getResultByClassId,
   getMasterSheet,
-  uploadAnnualResult
+  uploadAnnualResult,
+  calClassPosition
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -59,5 +60,6 @@ resultRouter.get("/get-mastersheet/:id", getMasterSheet)  //TODO: should only be
 resultRouter.post("/cal-result", calResult)
 resultRouter.get("/results/class/:classId", getResultByClassId)
 resultRouter.post("/upload-annual-result", memoryupload.single("file"), uploadAnnualResult)
+resultRouter.post("/cal-class-pos",  calClassPosition)
 
 export default resultRouter;
