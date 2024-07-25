@@ -353,11 +353,11 @@ function drawFooter(doc, pageWidth, remarks, teacherSignature, principalSignatur
   doc.text("Next Term Begins:_______________", 10, NEXT_TERM_Y);
 
   doc.setFont("helvetica", "normal");
-  doc.text("05-09-2024", 41, NEXT_TERM_Y);
+  // doc.text("05-09-2024", 41, NEXT_TERM_Y);
   doc.setFont("helvetica", "bold");
   doc.text("Next Term School Fee:________________", 140, NEXT_TERM_Y);
   doc.setFont("helvetica", "normal");
-  doc.text("15,000", 178, NEXT_TERM_Y);
+  // doc.text("15,000", 178, NEXT_TERM_Y);
 
   doc.rect(65, FOOTER_HEIGHT, 70, KEY_BOX_HEIGHT);
   doc.setFont("helvetica", "bold");

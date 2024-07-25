@@ -12,7 +12,13 @@ import {
 } from "./pdfUtils.js";
 import { CONSTANTS } from "./constants.js";
 
-async function generatePDF(student, teacher, studentPhotoUrl, teacherSignatureUrl, principalSignatureUrl) {
+async function generatePDF(
+  student,
+  teacher,
+  studentPhotoUrl,
+  teacherSignatureUrl,
+  principalSignatureUrl
+) {
   const { PAGE_PADDING, LOGO_SIZE } = CONSTANTS;
   const doc = new jsPDF("p", "mm", "a4");
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -56,76 +62,46 @@ async function generatePDF(student, teacher, studentPhotoUrl, teacherSignatureUr
 
   const teacherSignature = await getImageBase64(teacherSignatureUrl);
   const principalSignature = await getImageBase64(principalSignatureUrl);
+  const remarks = getRemarks(student.data.grandScore);
 
-  drawFooter(doc, pageWidth, result.remarks, teacherSignature, principalSignature);
+  drawFooter(
+    doc,
+    pageWidth,
+    remarks,
+    teacherSignature,
+    principalSignature
+  );
 
   return doc;
 }
 
 
-//TODO: remove this result and Add proper remarks
-const result = {
-  subjects: [
-    {
-      name: "Mathematics",
-      firstCA: 8,
-      secondCA: 7,
-      test: 9,
-      exam: 65,
-      total: 89,
-      avg: 85,
-      highest: 95,
-      lowest: 60,
-      position: 2,
-      grade: "A",
-    },
-    {
-      name: "English",
-      firstCA: 9,
-      secondCA: 8,
-      test: 7,
-      exam: 60,
-      total: 84,
-      avg: 80,
-      highest: 90,
-      lowest: 55,
-      position: 3,
-      grade: "A",
-    },
-    // Add more subjects as needed
-  ],
-  affirmativeSkills: {
-    punctuality: 4,
-    politeness: 5,
-    neatness: 4,
-    honesty: 5,
-    leadership_skill: 3,
-    cooperation: 4,
-    attentiveness: 5,
-    perseverance: 4,
-    attitude_to_work: 5,
-  },
-  psychomotorSkills: {
-    handwriting: 4,
-    verbal_fluency: 4,
-    sports: 5,
-    handling_tools: 3,
-    drawing: 4,
-  },
-  summary: {
-    marksObtainable: 500,
-    marksObtained: 450,
-    percentage: 90,
-    grade: "A",
-    position: 1,
-  },
-  remarks: {
-    classTeacher: "Good performance.",
-    headTeacher: "Keep up the good work.",
-  },
+
+const getRemarks = (total) => {
+  let remarks = {
+    classTeacher: "",
+    headTeacher: "",
+  };
+
+  if (total >= 900) {
+    remarks.classTeacher = "Excellent performance.";
+    remarks.headTeacher = "Outstanding work! Keep it up.";
+  } else if (total >= 800) {
+    remarks.classTeacher = "Very good performance.";
+    remarks.headTeacher = "Great job! Continue the hard work.";
+  } else if (total >= 700) {
+    remarks.classTeacher = "Good performance.";
+    remarks.headTeacher = "Well done! Aim for even higher.";
+  } else if (total >= 600) {
+    remarks.classTeacher = "Satisfactory performance.";
+    remarks.headTeacher = "Good effort. Try to improve further.";
+  } else {
+    remarks.classTeacher = "Needs improvement.";
+    remarks.headTeacher = "Work harder and you can achieve better results.";
+  }
+
+  return remarks;
 };
-
-
 
 
 export { generatePDF };
