@@ -304,12 +304,14 @@ const getResultById = asyncHandler(async (req, res) => {
 const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
 
+
   const result = await StudentResult.findOne({ studentId }).populate([
     "studentId",
     "academicYear",
     "academicTerm",
     "classLevel",
   ]);
+
   const teacherId = result.classLevel.teachers;
   const teacher = await Teacher.findById(teacherId);
   const teacherSignature = teacher.signature;

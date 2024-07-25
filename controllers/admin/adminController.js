@@ -573,13 +573,15 @@ const uploadStudent = asyncHandler(async (req, res) => {
         //   failedRecords.push(student);
         //   continue;
         // }
+
         const classLevel = await ClassLevel.findOne({ name: student.class });
         if (!classLevel) {
           failureCount++;
           failedRecords.push(student);
           continue;
         }
-        const studentID = await generateStudentID(student.entrySession)
+
+        const studentID = await generateStudentID(student.entrySession);
 
         const newUser = new User({
           username: studentID,
@@ -588,17 +590,9 @@ const uploadStudent = asyncHandler(async (req, res) => {
           password: student.surname.toLowerCase(),
           userType: "student",
         });
-        // const newUser = new User({
-        //   username: student.studentId,
-        //   surname: student.surname,
-        //   othername: student.othername,
-        //   password: student.surname.toLowerCase(),
-        //   userType: "student",
-        // });
-
-        // const newUser =  User.findOne({ username: student.studentId})
 
         await newUser.save();
+
         const academicYear = await AcademicYear.findOne({
           isCurrent: true,
         }).sort({
@@ -607,7 +601,6 @@ const uploadStudent = asyncHandler(async (req, res) => {
 
         const newStudent = new Student({
           authUser: newUser._id,
-          // studentId: student.studentId,
           studentId: studentID,
           surname: student.surname,
           othername: student.othername,
@@ -632,6 +625,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
         console.error("Error adding student:", student, error);
         failureCount++;
         failedRecords.push(student);
+        if (newUser) await newUser.deleteOne(); // Ensure newUser is defined before calling deleteOne
       }
     }
 
@@ -646,6 +640,7 @@ const uploadStudent = asyncHandler(async (req, res) => {
     res.status(500).json({ success: false, message: "Error processing file" });
   }
 });
+
 
 // Endpoint to handle file upload and question creation
 const uploadQuestion = asyncHandler(async (req, res) => {

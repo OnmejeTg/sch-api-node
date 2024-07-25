@@ -21,5 +21,5 @@ export const CONSTANTS = {
   NEXT_TERM_Y: 260,
   POWERED_BY_Y: 292,
 
-  DAYS_IN_TERM:125
+  DAYS_IN_TERM:""
 };

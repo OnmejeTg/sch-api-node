@@ -59,7 +59,7 @@ function drawStudentInfo(doc, student, teacher) {
   doc.text(`Session: ${student.data.academicYear.name || ""}`, 20, 54);
   doc.text(`Term: ${student.data.academicTerm.name || ""}`, 20, 59);
   doc.text(
-    `Number in Class: ${String(student.data.classLevel.students.length) || ""}`,
+    `Number in Class: ${String(student.data.classLevel.numOfStudents) || ""}`,
     85,
     54
   );

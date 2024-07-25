@@ -163,9 +163,10 @@ const studentResultSchema = new Schema(
     },
     remarks: {
       type: String,
-      required: true,
-      enum: ["A", "B", "C", 'D', 'E', 'F'],
-      default: "F",
+      
+      // required: true,
+      // enum: ["A", "B", "C", 'D', 'E', 'F'],
+      // default: "F",
     },
     position: {
       type: Number,
