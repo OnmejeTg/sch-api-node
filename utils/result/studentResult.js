@@ -12,7 +12,7 @@ import {
 } from "./pdfUtils.js";
 import { CONSTANTS } from "./constants.js";
 
-async function generatePDF(student, studentPhotoUrl, teacherSignature) {
+async function generatePDF(student, teacher, studentPhotoUrl, teacherSignatureUrl, principalSignatureUrl) {
   const { PAGE_PADDING, LOGO_SIZE } = CONSTANTS;
   const doc = new jsPDF("p", "mm", "a4");
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -46,7 +46,7 @@ async function generatePDF(student, studentPhotoUrl, teacherSignature) {
   // const { width: pageWidth } = doc.internal.pageSize;
 
   drawHeader(doc, pageWidth);
-  drawStudentInfo(doc, student);
+  drawStudentInfo(doc, student, teacher);
   drawScoreSheet(doc, student.data);
   drawAffirmativeSkills(doc, student.data);
   drawPsychomotorSkills(doc, student.data);
@@ -54,8 +54,10 @@ async function generatePDF(student, studentPhotoUrl, teacherSignature) {
   //TODO:get result signature
   // const signatureUrl = student.data.
 
-  const signature = await getImageBase64(teacherSignature);
-  drawFooter(doc, pageWidth, result.remarks, signature);
+  const teacherSignature = await getImageBase64(teacherSignatureUrl);
+  const principalSignature = await getImageBase64(principalSignatureUrl);
+
+  drawFooter(doc, pageWidth, result.remarks, teacherSignature, principalSignature);
 
   return doc;
 }

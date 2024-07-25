@@ -313,12 +313,14 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   const teacherId = result.classLevel.teachers;
   const teacher = await Teacher.findById(teacherId);
   const teacherSignature = teacher.signature;
-
+  const principal  =  await Teacher.findOne({'designation': 'principal'})
+  const principalSignature = principal.signature;
+  
   let studentRes = { data: result };
   const stdImg = studentRes.data.studentId.image;
 
   try {
-    const pdf = await generatePDF(studentRes, stdImg, teacherSignature);
+    const pdf = await generatePDF(studentRes, teacher, stdImg, teacherSignature, principalSignature);
     const pdfData = pdf.output("arraybuffer");
 
     res.setHeader("Content-Type", "application/pdf");

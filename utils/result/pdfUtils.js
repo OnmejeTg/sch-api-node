@@ -35,7 +35,7 @@ function drawHeader(doc, pageWidth) {
   doc.line(10, 36, 200, 36);
 }
 
-function drawStudentInfo(doc, student) {
+function drawStudentInfo(doc, student, teacher) {
   const { totalDaysPresent } = student;
 
   const { DAYS_IN_TERM } = CONSTANTS;
@@ -64,7 +64,7 @@ function drawStudentInfo(doc, student) {
     54
   );
   doc.text(
-    `Class Teacher: ${student.data.classLevel.formTeacher || ""}`,
+    `Class Teacher: ${teacher.surname || ""} ${teacher.othername || ""}`,
     85,
     59
   );
@@ -305,7 +305,7 @@ function drawSummary(doc, summary) {
   );
 }
 
-function drawFooter(doc, pageWidth, remarks, signature) {
+function drawFooter(doc, pageWidth, remarks, teacherSignature, principalSignature) {
   const {
     KEY_BOX_HEIGHT,
     POWERED_BY_Y,
@@ -323,10 +323,18 @@ function drawFooter(doc, pageWidth, remarks, signature) {
   doc.setFont("helvetica", "normal");
   doc.text(remarks.classTeacher || "", 49, REMARKS_Y);
   doc.addImage(
-    signature,
+    teacherSignature,
     "JPEG",
     170,
-    REMARKS_Y-15,
+    REMARKS_Y-13,
+    20,
+    20
+  );
+  doc.addImage(
+    principalSignature,
+    "JPEG",
+    170,
+    REMARKS_Y+3,
     20,
     20
   );
