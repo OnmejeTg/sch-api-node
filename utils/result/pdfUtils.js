@@ -289,7 +289,7 @@ function drawSummary(doc, summary) {
   );
   doc.text("Average", 82, 202);
   doc.text(
-    summary.average !== undefined ? summary.average.toString() : "",
+    summary.average !== undefined ? summary.average.toFixed(1).toString() : "",
     87,
     213
   );
