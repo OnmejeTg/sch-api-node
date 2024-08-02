@@ -62,9 +62,9 @@ const uploadScores = asyncHandler(async (req, res) => {
       });
 
       if (!student) {
-        console.log(
-          `Student ${studentData.StudentID} does not exist, skipping.`
-        );
+        // console.log(
+        //   `Student ${studentData.StudentID} does not exist, skipping.`
+        // );
         failureCount++;
         failedRecords.push(studentData.StudentID);
         continue;
@@ -317,7 +317,7 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   ]);
 
   const teacherId = result.classLevel.teachers;
-  console.log(result.classLevel)
+  // console.log(result.classLevel)
   const teacher = await Teacher.findById(teacherId);
   const teacherSignature = teacher.signature;
   const principal = await Teacher.findOne({ designation: "principal" });
@@ -434,7 +434,7 @@ const calResult = asyncHandler(async (req, res) => {
     const model = resultType === 'annual' ? studentAnnualResult : StudentResult;
     
     const results = await model.find({ classLevel: classId });
-    console.log(results[0].subjects);
+    // console.log(results[0].subjects);
 
     const subjectScores = {};
 
@@ -645,7 +645,7 @@ const getMasterSheet = asyncHandler(async (req, res) => {
       console.error("Error downloading file:", err);
       res.status(500).send("Error downloading file.");
     } else {
-      console.log("File downloaded successfully.");
+      // console.log("File downloaded successfully.");
     }
   });
 });
@@ -696,9 +696,9 @@ const uploadAnnualResult = asyncHandler(async (req, res) => {
       });
 
       if (!student) {
-        console.log(
-          `Student ${studentData.StudentID} does not exist, skipping.`
-        );
+        // console.log(
+        //   `Student ${studentData.StudentID} does not exist, skipping.`
+        // );
         failureCount++;
         failedRecords.push(studentData.StudentID);
         continue;
