@@ -48,7 +48,7 @@ const subjectSchema = new Schema({
 // Calculate total and grade before saving
 subjectSchema.pre("save", function (next) {
   this.total =
-    this.assessment1 + this.assessment2 + this.assessment3 + this.exam;
+    this.firstTerm + this.secondTerm + this.thirdTerm;
 
   if (this.total >= 90) {
     this.grade = "A";
@@ -163,6 +163,10 @@ const studentAnnualResultSchema = new Schema(
       default: "Poor",
     },
     position: {
+      type: Number,
+      default: 0,
+    },
+    classAverage: {
       type: Number,
       default: 0,
     },
