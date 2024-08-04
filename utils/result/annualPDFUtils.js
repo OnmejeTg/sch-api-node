@@ -134,17 +134,17 @@ function drawAnnualScoreSheet(doc, result) {
 
     doc.text(name || "", 11, 110 + 7 * index);
     doc.text(
-      firstTerm !== undefined ? firstTerm.toString() : "",
+      firstTerm !== undefined ? firstTerm?.toString() : "0",
       57,
       110 + 7 * index
     );
     doc.text(
-      secondTerm !== undefined ? secondTerm.toString() : "",
+      secondTerm !== undefined ? secondTerm?.toString() : "0",
       66,
       110 + 7 * index
     );
     doc.text(
-      thirdTerm !== undefined ? thirdTerm.toString() : "",
+      thirdTerm !== null ? thirdTerm?.toString() : "0",
       74,
       110 + 7 * index
     );

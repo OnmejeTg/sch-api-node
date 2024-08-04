@@ -207,7 +207,13 @@ const getStudents = async (req, res) => {
 const getStudent = async (req, res) => {
   try {
     const studentId = req.params.id;
-    const student = await Student.findOne({ studentId }).populate('currentClassLevel');
+    let student
+    try {
+       student = await Student.findOne({ _id:studentId }).populate('currentClassLevel');
+    } catch (error) {
+      student = await Student.findOne({studentId }).populate('currentClassLevel');
+    }
+    
     if (!student) {
       return res.status(404).json({
         success: false,

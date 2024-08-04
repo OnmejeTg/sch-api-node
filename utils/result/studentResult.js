@@ -133,7 +133,7 @@ async function generateAnnualPDF(
 
   const teacherSignature = await getImageBase64(teacherSignatureUrl);
   const principalSignature = await getImageBase64(principalSignatureUrl);
-  const remarks = getRemarks(student.data.grandScore);
+  const remarks = AnnualRemarks(student.data.grandScore);
 
   drawAnnualFooter(
     doc,
@@ -147,7 +147,7 @@ async function generateAnnualPDF(
 }
 
 
-
+//TODO: refine this function taking into account the fact that total number obtainable are not same for all classes 
 const getRemarks = (total) => {
   let remarks = {
     classTeacher: "",
@@ -174,5 +174,61 @@ const getRemarks = (total) => {
   return remarks;
 };
 
+const AnnualRemarks = (total) => {
+  let remarks = {
+    classTeacher: "",
+    headTeacher: "",
+  };
 
-export { generatePDF, generateAnnualPDF };
+  if (total >= 2700) { // 90% of 3000
+    remarks.classTeacher = "Excellent performance.";
+    remarks.headTeacher = "Outstanding work! Keep it up.";
+  } else if (total >= 2400) { // 80% of 3000
+    remarks.classTeacher = "Very good performance.";
+    remarks.headTeacher = "Great job! Continue the hard work.";
+  } else if (total >= 2100) { // 70% of 3000
+    remarks.classTeacher = "Good performance.";
+    remarks.headTeacher = "Well done! Aim for even higher.";
+  } else if (total >= 1800) { // 60% of 3000
+    remarks.classTeacher = "Satisfactory performance.";
+    remarks.headTeacher = "Good effort. Try to improve further.";
+  } else {
+    remarks.classTeacher = "Needs improvement.";
+    remarks.headTeacher = "Work harder and you can achieve better results.";
+  }
+
+  return remarks;
+};
+
+
+
+function createGradingFunction(maxScore) {
+  // Calculate the thresholds based on the max score
+  const thresholds = {
+    A: maxScore * 0.75, // 75% of maxScore
+    B: maxScore * 0.65, // 65% of maxScore
+    C: maxScore * 0.55, // 55% of maxScore
+    D: maxScore * 0.40  // 40% of maxScore
+  };
+
+  // Return a function that calculates the grade based on the score
+  return function(score) {
+    let remarks = "";
+    if (score >= thresholds.A) {
+      remarks = "A";
+    } else if (score >= thresholds.B) {
+      remarks = "B";
+    } else if (score >= thresholds.C) {
+      remarks = "C";
+    } else if (score >= thresholds.D) {
+      remarks = "D";
+    } else {
+      remarks = "F";
+    }
+    return remarks;
+  };
+}
+
+
+
+export { generatePDF, generateAnnualPDF, createGradingFunction, AnnualRemarks };

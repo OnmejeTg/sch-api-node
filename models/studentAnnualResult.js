@@ -50,17 +50,18 @@ subjectSchema.pre("save", function (next) {
   this.total =
     this.firstTerm + this.secondTerm + this.thirdTerm;
 
-  if (this.total >= 90) {
-    this.grade = "A";
-  } else if (this.total >= 80) {
-    this.grade = "B";
-  } else if (this.total >= 70) {
-    this.grade = "C";
-  } else if (this.total >= 60) {
-    this.grade = "D";
-  } else {
-    this.grade = "F";
-  }
+    if (this.total >= 270) {
+      this.grade = "A";
+    } else if (this.total >= 240) {
+      this.grade = "B";
+    } else if (this.total >= 210) {
+      this.grade = "C";
+    } else if (this.total >= 180) {
+      this.grade = "D";
+    } else {
+      this.grade = "F";
+    }
+    
   next();
 });
 
@@ -159,7 +160,7 @@ const studentAnnualResultSchema = new Schema(
     remarks: {
       type: String,
       required: true,
-      enum: ["Excellent", "Good", "Poor"],
+      // enum: ["Excellent", "Good", "Poor"],
       default: "Poor",
     },
     position: {
@@ -201,13 +202,13 @@ studentAnnualResultSchema.pre("save", function (next) {
       (acc, subject) => acc + subject.total,
       0
     );
-    this.average = this.grandScore / this.subjects.length;
+    this.average = this.grandScore / (this.subjects.length  * 3);
 
     if (this.average >= this.passMark) {
       this.status = "passed";
       if (this.average >= 90) {
         this.remarks = "Excellent";
-      } else if (this.average >= 75) {
+      } else if (this.average >= 65) {
         this.remarks = "Good";
       } else {
         this.remarks = "Poor";

@@ -8,6 +8,7 @@ import AcademicTerm from "../../models/academicTerm.js";
 import {
   generatePDF,
   generateAnnualPDF,
+  createGradingFunction,
 } from "../../utils/result/studentResult.js";
 import axios from "axios";
 import Teacher from "../../models/teacher.js";
@@ -352,95 +353,41 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   }
 });
 
-// const calResult = asyncHandler(async (req, res) => {
-//   const { classId, resultType } = req.body;
-//   if (resultType==='annual') {
-//     model = studentAnnualResult
-//   }else{
-//     model = StudentResult
-//   }
-//   const results = await model.find({ classLevel: classId });
-
-//   // Initialize a dictionary to hold scores by subject
-//   const subjectScores = {};
-
-//   // Collect scores for each subject
-//   results.forEach((result) => {
-//     result.subjects.forEach((subject) => {
-//       if (!subjectScores[subject.name]) {
-//         subjectScores[subject.name] = [];
-//       }
-//       subjectScores[subject.name].push({
-//         total: subject.total,
-//         studentId: result.studentId,
-//       });
-//     });
-//   });
-
-//   // Calculate average, highest, lowest, and rank for each subject
-//   Object.keys(subjectScores).forEach((subjectName) => {
-//     const scores = subjectScores[subjectName];
-
-//     // Calculate average
-//     const totalScore = scores.reduce((sum, score) => sum + score.total, 0);
-//     const average = totalScore / scores.length;
-
-//     // Sort scores to determine highest, lowest, and rank
-//     scores.sort((a, b) => b.total - a.total);
-
-//     const highest = scores[0].total;
-//     const lowest = scores[scores.length - 1].total;
-
-//     // Assign ranks
-//     let currentRank = 1;
-//     scores.forEach((score, index) => {
-//       if (index > 0 && scores[index - 1].total !== score.total) {
-//         currentRank = index + 1;
-//       }
-//       score.rank = currentRank;
-//     });
-
-//     // Update results with calculated values
-//     results.forEach((result) => {
-//       result.subjects.forEach((subject) => {
-//         if (subject.name === subjectName) {
-//           const studentScore = scores.find(
-//             (score) => score.studentId === result.studentId
-//           );
-//           subject.average = average;
-//           subject.highest = highest;
-//           subject.lowest = lowest;
-//           subject.position = studentScore.rank;
-//         }
-//       });
-//     });
-//   });
-
-//   // Save updated results to the database
-//   await Promise.all(results.map((result) => result.save()));
-
-//   res.json({
-//     status: "success",
-//     message: "Results were successfully calculated",
-//     count: results.length,
-//     data: results,
-//   });
-// });
 
 
 const calResult = asyncHandler(async (req, res) => {
   try {
     const { classId, resultType } = req.body;
-    const model = resultType === 'annual' ? studentAnnualResult : StudentResult;
-    
+    const model = resultType === "annual" ? studentAnnualResult : StudentResult;
+    const classLevel = await ClassLevel.findById(classId);
+    if (!classLevel) {
+      return res
+        .status(404)
+        .send({ message: "Class not found", classId: classId });
+    }
+
+    let numberOfTerms = 1;
+
+    if (resultType === "annual") {
+      if (
+        classLevel.name === "JSS3A" ||
+        classLevel.name === "SS2A" ||
+        classLevel.name === "SS2B"
+      ) {
+        numberOfTerms = 2;
+      } else {
+        numberOfTerms = 3;
+      }
+    }
+
     const results = await model.find({ classLevel: classId });
     // console.log(results[0].subjects);
 
     const subjectScores = {};
 
     // Collect scores for each subject
-    results.forEach(result => {
-      result.subjects.forEach(subject => {
+    results.forEach((result) => {
+      result.subjects.forEach((subject) => {
         if (!subjectScores[subject.name]) {
           subjectScores[subject.name] = [];
         }
@@ -454,7 +401,7 @@ const calResult = asyncHandler(async (req, res) => {
     // Calculate average, highest, lowest, and rank for each subject
     for (const [subjectName, scores] of Object.entries(subjectScores)) {
       const totalScore = scores.reduce((sum, score) => sum + score.total, 0);
-      const average = totalScore / scores.length;
+      const average = totalScore / (scores.length * numberOfTerms);
 
       // Sort scores to determine highest, lowest, and rank
       scores.sort((a, b) => b.total - a.total);
@@ -472,10 +419,12 @@ const calResult = asyncHandler(async (req, res) => {
       });
 
       // Update results with calculated values
-      results.forEach(result => {
-        result.subjects.forEach(subject => {
+      results.forEach((result) => {
+        result.subjects.forEach((subject) => {
           if (subject.name === subjectName) {
-            const studentScore = scores.find(score => score.studentId === result.studentId);
+            const studentScore = scores.find(
+              (score) => score.studentId === result.studentId
+            );
             subject.average = average;
             subject.highest = highest;
             subject.lowest = lowest;
@@ -486,7 +435,7 @@ const calResult = asyncHandler(async (req, res) => {
     }
 
     // Save updated results to the database
-    await Promise.all(results.map(result => result.save()));
+    await Promise.all(results.map((result) => result.save()));
 
     res.json({
       status: "success",
@@ -496,75 +445,85 @@ const calResult = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
-
 const calClassPosition = asyncHandler(async (req, res) => {
-
   const { classId, resultType } = req.body;
-  const model = resultType === 'annual' ? studentAnnualResult : StudentResult;
+  const model = resultType === "annual" ? studentAnnualResult : StudentResult;
 
+  // Fetch class level information
+  const classLevel = await ClassLevel.findById(classId);
+  if (!classLevel) {
+    return res.status(404).json({ message: "Class not found", classId });
+  }
 
+  // Determine number of terms
+  const numberOfTerms = resultType === "annual" && ["JSS3A", "SS2A", "SS2B"].includes(classLevel.name) ? 2 : 3;
+
+  // Retrieve results for the class
   const results = await model.find({ classLevel: classId });
 
-  // Extract scores
-  const scores = results.map((result) => ({
+  // Ensure all results have the same number of subjects
+  const numSubsArray = results.map(result => result.subjects.length);
+  const numSubs = numSubsArray[0];
+  const allSubjectsEqual = numSubsArray.every(num => num === numSubs);
+
+  // if (!allSubjectsEqual) {
+  //   return res.status(400).json({ message: "All students must have the same number of subjects" });
+  // }
+
+  // Calculate total score and class average
+  const totalStudents = results.length;
+  const totalScore = results.reduce((sum, result) => sum + result.grandScore, 0);
+  const classAverage = totalScore / (numSubs * numberOfTerms * totalStudents);
+
+  // Extract scores and sort
+  const scores = results.map(result => ({
     studentId: result.studentId,
-    grandScore: result.grandScore,
+    grandScore: result.grandScore
   }));
-
-  // Calculate total score and average
-  const totalScore = scores.reduce((sum, score) => sum + score.grandScore, 0);
-  const classAverage = totalScore / (scores.length * 10);
-
-  // Sort scores in descending order
   scores.sort((a, b) => b.grandScore - a.grandScore);
 
-  // Assign ranks and calculate grades
+  // Assign ranks and prepare bulk operations
   let currentRank = 1;
   let previousScore = scores[0]?.grandScore || 0;
-  const bulkOps = [];
-
-  scores.forEach((score, index) => {
+  const bulkOps = scores.map((score, index) => {
     if (index > 0 && previousScore !== score.grandScore) {
       currentRank = index + 1;
     }
     previousScore = score.grandScore;
     score.rank = currentRank;
 
-    let remarks = "";
-    if (score.grandScore >= 750) {
-      remarks = "A";
-    } else if (score.grandScore >= 650) {
-      remarks = "B";
-    } else if (score.grandScore >= 550) {
-      remarks = "C";
-    } else if (score.grandScore >= 400) {
-      remarks = "D";
-    } else {
-      remarks = "F";
-    }
+    // let remarks = createGradingFunction(2000);
+    //  remarks  = remarks(score.grandScore)
 
-    bulkOps.push({
+    return {
       updateOne: {
         filter: { studentId: score.studentId, classLevel: classId },
-        update: { $set: { position: score.rank, classAverage, remarks } },
-      },
-    });
+        update: {
+          $set: {
+            position: score.rank,
+            classAverage: classAverage,
+            // remarks: remarks
+          }
+        }
+      }
+    };
   });
 
   // Perform bulk update
   if (bulkOps.length > 0) {
-    await StudentResult.bulkWrite(bulkOps);
+    await model.bulkWrite(bulkOps);
   }
 
   res.status(200).json({
     message: "Class positions calculated successfully",
-    scores: scores,
+    scores
   });
 });
+
 
 const getResultByClassId = asyncHandler(async (req, res) => {
   try {
@@ -670,12 +629,12 @@ const uploadAnnualResult = asyncHandler(async (req, res) => {
     if (
       assessmentType !== "firstTerm" &&
       assessmentType !== "secondTerm" &&
-      assessmentType !== "thridTerm"
+      assessmentType !== "thirdTerm"
     ) {
       return res.status(400).json({
         success: false,
         message:
-          "Assessment type should be one of the following: firstTerm, secondTerm, thridTerm",
+          "Assessment type should be one of the following: firstTerm, secondTerm, thirdTerm",
       });
     }
 
@@ -777,25 +736,28 @@ const uploadAnnualResult = asyncHandler(async (req, res) => {
 });
 
 const getResIds = async (req, res) => {
+  const { resultType } = req.query;
+
+  const model = resultType === "annual" ? studentAnnualResult : StudentResult;
+
   try {
-    const results = await StudentResult.find().populate([
-      "studentId",
-      "classLevel",
-    ]); // Assuming studentId is a reference
+    const results = await model.find().populate("studentId classLevel");
+    console.log(results);
 
     const data = results.map((result) => ({
       resId: result._id,
       studentId: result.studentId._id,
       classLevel: result.studentId.currentClassLevel,
-      classLevelName: result.classLevel.name,
+      classLevelName: result?.classLevel?.name || undefined,
     }));
 
     res.status(200).json(data);
   } catch (error) {
     console.error("Error fetching student results:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Error fetching student results" });
+    res.status(500).json({
+      success: false,
+      message: "Error fetching student results",
+    });
   }
 };
 
@@ -828,13 +790,9 @@ const retrieveStudentClass = async (req, res) => {
 const printAnnualResult = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
 
-  const result = await studentAnnualResult.findOne({ studentId }).populate([
-    "studentId",
-    "academicYear",
-    "academicTerm",
-    "classLevel",
-  ]);
-
+  const result = await studentAnnualResult
+    .findOne({ studentId })
+    .populate(["studentId", "academicYear", "academicTerm", "classLevel"]);
 
   const teacherId = result.classLevel.teachers;
   const teacher = await Teacher.findById(teacherId);
@@ -873,11 +831,9 @@ const printAnnualResult = asyncHandler(async (req, res) => {
 
 const allAnnualResults = asyncHandler(async (req, res) => {
   try {
-    const results = await studentAnnualResult.find().populate([
-      "studentId",
-      "academicYear",
-      "academicTerm",
-    ]);
+    const results = await studentAnnualResult
+      .find()
+      .populate(["studentId", "academicYear", "academicTerm"]);
     if (!results) {
       return res.status(404).json({ message: "No results found" });
     } else {
@@ -898,7 +854,6 @@ const allAnnualResults = asyncHandler(async (req, res) => {
   }
 });
 
-
 const assignResultClassLevel = asyncHandler(async (req, res) => {
   try {
     const results = await StudentResult.find();
@@ -916,10 +871,9 @@ const assignResultClassLevel = asyncHandler(async (req, res) => {
     res.send("Class Level Assigned Successfully");
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 export {
   uploadScores,
@@ -938,5 +892,5 @@ export {
   retrieveStudentClass,
   printAnnualResult,
   allAnnualResults,
-  assignResultClassLevel
+  assignResultClassLevel,
 };
