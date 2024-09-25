@@ -9,6 +9,7 @@ import {
   deleteStudent,
   uploadPicture,
   createStudentAuthUser,
+  seedStudents,
 } from "../controllers/students/studentController.js";
 import {
   isAdmin,
@@ -36,5 +37,6 @@ studentRouter.put(
 studentRouter.delete("/delete/:id", isAdmin, deleteStudent);
 studentRouter.post("/upload-pics/", uploadPicture);
 studentRouter.get("/createAuthUser/:id", createStudentAuthUser);
+studentRouter.post("/seed", seedStudents);
 
 export default studentRouter;

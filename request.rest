@@ -95,6 +95,11 @@ Content-Type: application/json
 }
 
 
+###
+POST http://localhost:3100/api/v2/student/seed
+Content-Type: application/json
+
+
 
 
 
@@ -265,8 +270,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2M2I0N2VkO
 Content-Type: application/json
 
 {
-    "name":"JSS1A",
-    "description":"Junior Secondary"
+    "name":"SS1A",
+    "description":"Senior Secondary"
     
 }
 

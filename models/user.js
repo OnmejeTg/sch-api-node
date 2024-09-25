@@ -29,11 +29,11 @@ const userSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
   },
-  userType:{
-    type:String,
-    enum:['student', 'teacher', 'admin', 'principal', 'bursar', 'librarian'],
-    default:"student"
-  }
+  userType: {
+    type: String,
+    enum: ["student", "teacher", "admin", "principal", "bursar", "librarian"],
+    default: "student",
+  },
 });
 
 // Hash password before saving
@@ -57,7 +57,6 @@ userSchema.methods.verifyPassword = async function (enteredPassword) {
 userSchema.methods.fullName = function () {
   return `${this.surname} ${this.othername}`;
 };
-  
 
 // Create model
 const User = mongoose.model("User", userSchema);

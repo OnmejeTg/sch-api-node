@@ -16,6 +16,8 @@ import path from "path";
 import * as fs from "fs/promises";
 // import path from 'path';
 import * as XLSX from "xlsx";
+import ClassLevel from "../../models/classModel.js";
+import { generateFakeStudents } from "../../seeders/studentSeeder.js";
 
 //*******************LOGIN*******************
 const login = async (req, res) => {
@@ -207,13 +209,17 @@ const getStudents = async (req, res) => {
 const getStudent = async (req, res) => {
   try {
     const studentId = req.params.id;
-    let student
+    let student;
     try {
-       student = await Student.findOne({ _id:studentId }).populate('currentClassLevel');
+      student = await Student.findOne({ _id: studentId }).populate(
+        "currentClassLevel"
+      );
     } catch (error) {
-      student = await Student.findOne({studentId }).populate('currentClassLevel');
+      student = await Student.findOne({ studentId }).populate(
+        "currentClassLevel"
+      );
     }
-    
+
     if (!student) {
       return res.status(404).json({
         success: false,
@@ -443,6 +449,34 @@ const createStudentAuthUser = async (req, res) => {
   }
 };
 
+const seedStudents = async (req, res) => {
+  try {
+    await Student.deleteMany({});
+    await User.deleteMany({ userType: "student" });
+    const classLevels = await ClassLevel.find();
+    // console.log(classLevels);
+    if (classLevels.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "No class found to assign student" });
+    }
+    const fakeStudents = await generateFakeStudents(10, classLevels);
+    console.log(fakeStudents);
+    for (const fakeStudent of fakeStudents) {
+      const student = new Student(fakeStudent);
+      await student.save();
+    }
+    return res
+      .status(201)
+      .json({ message: "Studentd database seeded successfully " });
+  } catch (err) {
+    console.error(`Error seeding database: ${err.message}`);
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+};
+
 export {
   registerStudent,
   getStudents,
@@ -453,4 +487,5 @@ export {
   deleteStudent,
   uploadPicture,
   createStudentAuthUser,
+  seedStudents,
 };
