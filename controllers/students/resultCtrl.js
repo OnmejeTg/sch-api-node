@@ -353,8 +353,6 @@ const generateResultPDFCtrl = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 const calResult = asyncHandler(async (req, res) => {
   try {
     const { classId, resultType } = req.body;
@@ -460,15 +458,19 @@ const calClassPosition = asyncHandler(async (req, res) => {
   }
 
   // Determine number of terms
-  const numberOfTerms = resultType === "annual" && ["JSS3A", "SS2A", "SS2B"].includes(classLevel.name) ? 2 : 3;
+  const numberOfTerms =
+    resultType === "annual" &&
+    ["JSS3A", "SS2A", "SS2B"].includes(classLevel.name)
+      ? 2
+      : 3;
 
   // Retrieve results for the class
   const results = await model.find({ classLevel: classId });
 
   // Ensure all results have the same number of subjects
-  const numSubsArray = results.map(result => result.subjects.length);
+  const numSubsArray = results.map((result) => result.subjects.length);
   const numSubs = numSubsArray[0];
-  const allSubjectsEqual = numSubsArray.every(num => num === numSubs);
+  const allSubjectsEqual = numSubsArray.every((num) => num === numSubs);
 
   // if (!allSubjectsEqual) {
   //   return res.status(400).json({ message: "All students must have the same number of subjects" });
@@ -476,13 +478,16 @@ const calClassPosition = asyncHandler(async (req, res) => {
 
   // Calculate total score and class average
   const totalStudents = results.length;
-  const totalScore = results.reduce((sum, result) => sum + result.grandScore, 0);
+  const totalScore = results.reduce(
+    (sum, result) => sum + result.grandScore,
+    0
+  );
   const classAverage = totalScore / (numSubs * numberOfTerms * totalStudents);
 
   // Extract scores and sort
-  const scores = results.map(result => ({
+  const scores = results.map((result) => ({
     studentId: result.studentId,
-    grandScore: result.grandScore
+    grandScore: result.grandScore,
   }));
   scores.sort((a, b) => b.grandScore - a.grandScore);
 
@@ -507,9 +512,9 @@ const calClassPosition = asyncHandler(async (req, res) => {
             position: score.rank,
             classAverage: classAverage,
             // remarks: remarks
-          }
-        }
-      }
+          },
+        },
+      },
     };
   });
 
@@ -520,12 +525,13 @@ const calClassPosition = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     message: "Class positions calculated successfully",
-    scores
+    scores,
   });
 });
 
-
 const getResultByClassId = asyncHandler(async (req, res) => {
+  const classId = req.params.classId;
+  console.log(classId);
   try {
     const results = await StudentResult.find({ classLevel: classId }).populate([
       "studentId",
