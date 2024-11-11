@@ -397,9 +397,48 @@ const calResult = asyncHandler(async (req, res) => {
     });
 
     // Calculate average, highest, lowest, and rank for each subject
+    // for (const [subjectName, scores] of Object.entries(subjectScores)) {
+    //   const totalScore = scores.reduce((sum, score) => sum + score.total, 0);
+    //   const average = totalScore / (scores.length * numberOfTerms);
+
+    //   // Sort scores to determine highest, lowest, and rank
+    //   scores.sort((a, b) => b.total - a.total);
+
+    //   const highest = scores[0].total;
+    //   const lowest = scores[scores.length - 1].total;
+
+    //   // Assign ranks
+    //   let currentRank = 1;
+    //   scores.forEach((score, index) => {
+    //     if (index > 0 && scores[index - 1].total !== score.total) {
+    //       currentRank = index + 1;
+    //     }
+    //     score.rank = currentRank;
+    //   });
+
+    //   // Update results with calculated values
+    //   results.forEach((result) => {
+    //     result.subjects.forEach((subject) => {
+    //       if (subject.name === subjectName) {
+    //         const studentScore = scores.find(
+    //           (score) => score.studentId === result.studentId
+    //         );
+    //         subject.average = average;
+    //         subject.highest = highest;
+    //         subject.lowest = lowest;
+    //         subject.position = studentScore.rank;
+    //       }
+    //     });
+    //   });
+    // }
+
     for (const [subjectName, scores] of Object.entries(subjectScores)) {
       const totalScore = scores.reduce((sum, score) => sum + score.total, 0);
-      const average = totalScore / (scores.length * numberOfTerms);
+
+      // Calculate average and round to 2 decimal places
+      const average = parseFloat(
+        (totalScore / (scores.length * numberOfTerms)).toFixed(2)
+      );
 
       // Sort scores to determine highest, lowest, and rank
       scores.sort((a, b) => b.total - a.total);
@@ -458,11 +497,16 @@ const calClassPosition = asyncHandler(async (req, res) => {
   }
 
   // Determine number of terms
+
   const numberOfTerms =
     resultType === "annual" &&
     ["JSS3A", "SS2A", "SS2B"].includes(classLevel.name)
       ? 2
       : 3;
+
+  if (!resultType === "annual") {
+    numberOfTerms = 1;
+  }
 
   // Retrieve results for the class
   const results = await model.find({ classLevel: classId });
@@ -489,6 +533,7 @@ const calClassPosition = asyncHandler(async (req, res) => {
     studentId: result.studentId,
     grandScore: result.grandScore,
   }));
+  console.log(scores);
   scores.sort((a, b) => b.grandScore - a.grandScore);
 
   // Assign ranks and prepare bulk operations
@@ -531,7 +576,7 @@ const calClassPosition = asyncHandler(async (req, res) => {
 
 const getResultByClassId = asyncHandler(async (req, res) => {
   const classId = req.params.classId;
-  console.log(classId);
+
   try {
     const results = await StudentResult.find({ classLevel: classId }).populate([
       "studentId",
@@ -881,6 +926,29 @@ const assignResultClassLevel = asyncHandler(async (req, res) => {
   }
 });
 
+const RoundOffAverage = async (req, res) => {
+  try {
+    const results = await StudentResult.find();
+    for (const result of results) {
+      // Recalculate the average and save with two decimal places
+      if (result.subjects && result.subjects.length > 0) {
+        result.grandScore = result.subjects.reduce(
+          (acc, subject) => acc + subject.total,
+          0
+        );
+        result.average = parseFloat(
+          (result.grandScore / result.subjects.length).toFixed(2)
+        );
+
+        await result.save(); // Save each updated record
+      }
+    }
+    res.send("All averages updated successfully.");
+  } catch (error) {
+    console.error("Error updating averages:", error);
+  }
+};
+
 export {
   uploadScores,
   allResults,
@@ -899,4 +967,5 @@ export {
   printAnnualResult,
   allAnnualResults,
   assignResultClassLevel,
+  RoundOffAverage,
 };

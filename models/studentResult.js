@@ -54,83 +54,82 @@ subjectSchema.pre("save", function (next) {
   this.total =
     this.assessment1 + this.assessment2 + this.assessment3 + this.exam;
 
-    if (this.total >= 75) {
-      this.grade = "A";
-    } else if (this.total >= 65) {
-      this.grade = "B";
-    } else if (this.total >= 55) {
-      this.grade = "C";
-    } else if (this.total >= 40) {
-      this.grade = "D";
-    } else {
-      this.grade="F";
-}
+  if (this.total >= 75) {
+    this.grade = "A";
+  } else if (this.total >= 65) {
+    this.grade = "B";
+  } else if (this.total >= 55) {
+    this.grade = "C";
+  } else if (this.total >= 40) {
+    this.grade = "D";
+  } else {
+    this.grade = "F";
+  }
 
   next();
 });
 
-
 const affirmativeSkillsSchema = new Schema({
-  punctuality:{
-    type:String,
-    default:'F'
+  punctuality: {
+    type: String,
+    default: "F",
   },
-  politeness:{
-    type:String,
-     default:'F'
+  politeness: {
+    type: String,
+    default: "F",
   },
-  neatness:{
-    type:String,
-     default:'F'
+  neatness: {
+    type: String,
+    default: "F",
   },
-  honesty:{
-    type:String,
-     default:'F'
+  honesty: {
+    type: String,
+    default: "F",
   },
-  leadership_skill:{
-    type:String,
-     default:'F'
+  leadership_skill: {
+    type: String,
+    default: "F",
   },
-  cooperation:{
-    type:String,
-     default:'F'
+  cooperation: {
+    type: String,
+    default: "F",
   },
-  attentiveness:{
-    type:String,
-     default:'F'
+  attentiveness: {
+    type: String,
+    default: "F",
   },
-  perseverance:{
-    type:String,
-     default:'F'
+  perseverance: {
+    type: String,
+    default: "F",
   },
-  attitude_to_work:{
-    type:String,
-     default:'F'
+  attitude_to_work: {
+    type: String,
+    default: "F",
   },
-})
+});
 
 const psychomotorSkillsSchema = new Schema({
-  handwriting:{
-    type:String,
-    default:'F'
+  handwriting: {
+    type: String,
+    default: "F",
   },
-  verbal_fluency:{
-    type:String,
-     default:'F'
+  verbal_fluency: {
+    type: String,
+    default: "F",
   },
-  sports:{
-    type:String,
-     default:'F'
+  sports: {
+    type: String,
+    default: "F",
   },
-  handling_tools:{
-    type:String,
-     default:'F'
+  handling_tools: {
+    type: String,
+    default: "F",
   },
-  drawing:{
-    type:String,
-     default:'F'
+  drawing: {
+    type: String,
+    default: "F",
   },
-})
+});
 
 const studentResultSchema = new Schema(
   {
@@ -144,8 +143,8 @@ const studentResultSchema = new Schema(
       type: Number,
       default: 0,
     },
-    affirmativeSkills:[affirmativeSkillsSchema],
-    psychomotorSkills:[psychomotorSkillsSchema],
+    affirmativeSkills: [affirmativeSkillsSchema],
+    psychomotorSkills: [psychomotorSkillsSchema],
     grandScore: {
       type: Number,
       default: 0,
@@ -163,10 +162,6 @@ const studentResultSchema = new Schema(
     },
     remarks: {
       type: String,
-      
-      // required: true,
-      // enum: ["A", "B", "C", 'D', 'E', 'F'],
-      // default: "F",
     },
     position: {
       type: Number,
@@ -178,7 +173,7 @@ const studentResultSchema = new Schema(
     },
     classLevel: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:"ClassLevel",
+      ref: "ClassLevel",
     },
     academicTerm: {
       type: mongoose.Schema.Types.ObjectId,
@@ -207,7 +202,9 @@ studentResultSchema.pre("save", function (next) {
       (acc, subject) => acc + subject.total,
       0
     );
-    this.average = this.grandScore / this.subjects.length;
+    this.average = parseFloat(
+      (this.grandScore / this.subjects.length).toFixed(2)
+    );
 
     if (this.average >= this.passMark) {
       this.status = "passed";
