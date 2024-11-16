@@ -3,13 +3,12 @@ import Subject from "../../models/subject.js"; // Assuming the path to your mode
 
 // Create a new Subject
 const createSubject = asyncHandler(async (req, res) => {
-  const { name, description, academicTermId } = req.body;
+  const { name, short_name } = req.body;
 
   // Create new subject
   const newSubject = new Subject({
     name,
-    description,
-    academicTerm: academicTermId,
+    short_name,
     createdBy: req.user.id, // Assuming req.user.id is available
   });
   await newSubject.save();
@@ -23,9 +22,7 @@ const createSubject = asyncHandler(async (req, res) => {
 
 // Get all Subjects
 const getSubjects = asyncHandler(async (req, res) => {
-  const subjects = await Subject.find().populate(
-    "teacher academicTerm createdBy"
-  );
+  const subjects = await Subject.find().populate("teacher");
   res.status(200).json({
     status: "success",
     data: subjects,
@@ -35,7 +32,7 @@ const getSubjects = asyncHandler(async (req, res) => {
 // Update a Subject
 const updateSubject = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, description, staffId, academicTermId } = req.body;
+  const { name, staffId, short_name } = req.body;
 
   let subject = await Subject.findById(id);
   if (!subject) {
@@ -44,9 +41,8 @@ const updateSubject = asyncHandler(async (req, res) => {
   }
 
   subject.name = name || subject.name;
-  subject.description = description || subject.description;
+  subject.short_name = short_name || subject.short_name;
   subject.teacher = staffId || subject.teacher;
-  subject.academicTerm = academicTermId || subject.academicTerm;
 
   await subject.save();
 

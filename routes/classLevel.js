@@ -8,7 +8,8 @@ import {
   getStudentsByClassLevel,
   addStudentToClass,
   assignClass,
-  getStudentClass
+  getStudentClass,
+  assignSubject,
 } from "../controllers/admin/classLevelCtrl.js";
 import { isAdmin, isLoggedin, isTeacherOrAdmin } from "../middleware/auth.js";
 
@@ -19,7 +20,7 @@ const classLevelRouter = express.Router();
 // classLevelRouter.get("/:id", isAdmin, getClassLevelById);
 // classLevelRouter.update("/:id", isAdmin, updateClassLevel);
 // classLevelRouter.delete("/:id", isAdmin, deleteClassLevel);
-classLevelRouter.route("/xyz").get(getStudentClass)
+classLevelRouter.route("/xyz").get(getStudentClass);
 classLevelRouter
   .route("/")
   .post(isAdmin, createClassLevel)
@@ -30,9 +31,13 @@ classLevelRouter
   .put(isAdmin, updateClassLevel)
   .delete(isAdmin, deleteClassLevel);
 
-classLevelRouter.route("/get-students/:id").get(isTeacherOrAdmin, getStudentsByClassLevel)
-classLevelRouter.route("/add-students-to-class/:id").post(isAdmin, addStudentToClass)
-classLevelRouter.route("/asign-class/:id").get(assignClass)
-
+classLevelRouter
+  .route("/get-students/:id")
+  .get(isTeacherOrAdmin, getStudentsByClassLevel);
+classLevelRouter
+  .route("/add-students-to-class/:id")
+  .post(isAdmin, addStudentToClass);
+classLevelRouter.route("/asign-class/:id").post(assignClass);
+classLevelRouter.route("/assign-subject/:id").post(assignSubject);
 
 export default classLevelRouter;

@@ -26,15 +26,15 @@ const academicTermSchema = new Schema(
       ref: "Admin",
       required: true,
     },
-    academicYear: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "AcademicYear",
-      required: true,
-    },
+    // academicYear: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "AcademicYear",
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );
 
 const AcademicTerm = mongoose.model("AcademicTerm", academicTermSchema);
 
-export default AcademicTerm
+export default AcademicTerm;

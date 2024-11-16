@@ -15,6 +15,8 @@ import Teacher from "../../models/teacher.js";
 import studentAnnualResult from "../../models/studentAnnualResult.js";
 import ClassLevel from "../../models/classModel.js";
 import { processResults } from "../../utils/studentUtils.js";
+import Subject from "../../models/subject.js";
+import mongoose from "mongoose";
 
 const uploadScores = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -949,6 +951,72 @@ const RoundOffAverage = async (req, res) => {
   }
 };
 
+const InitializeResult = async (req, res) => {
+  try {
+    const { classId } = req.params;
+
+    // Fetch class level details
+    const classLevel = await ClassLevel.findById(classId);
+    if (!classLevel) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+
+    // Fetch students in the class
+    const students = await Student.find({ currentClassLevel: classLevel._id });
+    if (!students.length) {
+      return res
+        .status(404)
+        .json({ message: "No students found in this class" });
+    }
+
+    // Fetch subjects for the class
+    const subjects = await Subject.find({ _id: { $in: classLevel.subjects } });
+    if (!subjects.length) {
+      return res
+        .status(404)
+        .json({ message: "No subjects found for this class" });
+    }
+
+    // Prepare default subjects for each student
+    const defaultSubjects = subjects.map((subject) => ({
+      name: subject.name,
+      assessment1: 0,
+      assessment2: 0,
+      assessment3: 0,
+      exam: 0,
+      total: 0,
+      average: 0,
+      highest: 0,
+      lowest: 0,
+      position: 0,
+      grade: "F",
+    }));
+
+    // Prepare results for all students
+    const results = students.map((student) => ({
+      studentId: student._id,
+      subjects: defaultSubjects,
+      passMark: 50,
+      status: "failed", // default status
+      remarks: "Poor", // default remarks
+      classLevel: student.currentClassLevel,
+      academicTerm: "6657d6c6ddb4401185d80ca5", // Replace with actual term ID
+      academicYear: "66407c202d008cc52e0d3317", // Replace with actual year ID
+      isPublished: false, // default value
+    }));
+
+    // Bulk insert results
+    await StudentResult.insertMany(results);
+
+    return res.status(201).json({
+      message: `${students.length} results initialized successfully`,
+    });
+  } catch (error) {
+    console.error("Error creating student results:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export {
   uploadScores,
   allResults,
@@ -968,4 +1036,5 @@ export {
   allAnnualResults,
   assignResultClassLevel,
   RoundOffAverage,
+  InitializeResult,
 };

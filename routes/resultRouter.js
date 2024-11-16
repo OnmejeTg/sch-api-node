@@ -18,6 +18,7 @@ import {
   allAnnualResults,
   assignResultClassLevel,
   RoundOffAverage,
+  InitializeResult,
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -72,5 +73,6 @@ resultRouter.get("/annual-pdf/:studentId", printAnnualResult);
 resultRouter.get("/all-annual-results", allAnnualResults);
 resultRouter.get("/assign-res-class", assignResultClassLevel);
 resultRouter.post("/round-up-average", RoundOffAverage);
+resultRouter.post("/initialize-result/:classId", InitializeResult);
 
 export default resultRouter;

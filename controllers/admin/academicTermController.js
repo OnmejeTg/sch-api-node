@@ -10,7 +10,7 @@ const createAcademicTerm = async (req, res) => {
       description,
       duration,
       createdBy,
-      academicYear
+      academicYear,
     });
     const savedTerm = await newAcademicTerm.save();
     res.status(201).json(savedTerm);
@@ -24,7 +24,7 @@ const createAcademicTerm = async (req, res) => {
 const getAllTerms = async (req, res) => {
   try {
     // Fetch all term from the database
-    const term = await AcademicTerm.find().populate('academicYear');
+    const term = await AcademicTerm.find();
 
     // Respond with success message and the retrieved teacher data
     res.status(200).json({
@@ -46,7 +46,7 @@ const getAllTerms = async (req, res) => {
 const getTerm = async (req, res) => {
   try {
     const id = req.params.id;
-    const term = await AcademicTerm.findById(id).populate('academicYear');;
+    const term = await AcademicTerm.findById(id).populate("academicYear");
     if (!term) {
       return res.status(404).json({
         success: false,
@@ -128,9 +128,7 @@ const deleteTerm = async (req, res) => {
 
 const getCurrentTerm = asyncHandler(async (req, res) => {
   try {
-    const academicTerm = await AcademicTerm.findOne({ isCurrent: true }).sort({
-      updatedAt: -1,
-    });
+    const academicTerm = await AcademicTerm.findOne({ isCurrent: true });
 
     if (!academicTerm) {
       return res.status(404).json({
@@ -153,6 +151,38 @@ const getCurrentTerm = asyncHandler(async (req, res) => {
   }
 });
 
+const activateTerm = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    await AcademicTerm.updateMany({}, { isCurrent: false });
+    const term = await AcademicTerm.findByIdAndUpdate(
+      id,
+      { isCurrent: true },
+      { new: true }
+    );
+
+    if (!term) {
+      return res.status(404).json({
+        success: false,
+        message: "Term not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Term activated successfully",
+      data: term,
+    });
+  } catch (error) {
+    console.error("Error activating term:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
 export {
   createAcademicTerm,
   getAllTerms,
@@ -160,4 +190,5 @@ export {
   deleteTerm,
   getTerm,
   getCurrentTerm,
+  activateTerm,
 };
