@@ -17,7 +17,7 @@ const academicYearSchema = new mongoose.Schema(
     },
     isCurrent: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -45,9 +45,7 @@ const academicYearSchema = new mongoose.Schema(
   }
 );
 
-
 //model
 const AcademicYear = mongoose.model("AcademicYear", academicYearSchema);
-
 
 export default AcademicYear;

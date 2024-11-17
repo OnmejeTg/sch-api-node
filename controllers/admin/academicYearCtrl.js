@@ -11,6 +11,7 @@ const createAcademicYear = asyncHandler(async (req, res) => {
   if (existingAcademicYear) {
     throw new Error("Academic Year already exists");
   }
+  await AcademicYear.updateMany({}, { isCurrent: false });
 
   // Create new academic year
   const newAcademicYear = new AcademicYear({
@@ -112,7 +113,9 @@ const getAcademicYearById = asyncHandler(async (req, res) => {
 
 const getCurrentYear = asyncHandler(async (req, res) => {
   try {
-    const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({ updatedAt: -1 });
+    const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
+      updatedAt: -1,
+    });
 
     if (!academicYear) {
       return res.status(404).json({
