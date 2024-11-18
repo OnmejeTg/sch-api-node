@@ -3,12 +3,12 @@ import Subject from "../../models/subject.js"; // Assuming the path to your mode
 
 // Create a new Subject
 const createSubject = asyncHandler(async (req, res) => {
-  const { name, short_name } = req.body;
+  const { name, shortName } = req.body;
 
   // Create new subject
   const newSubject = new Subject({
     name,
-    short_name,
+    short_name: shortName,
     createdBy: req.user.id, // Assuming req.user.id is available
   });
   await newSubject.save();
