@@ -27,7 +27,7 @@ app.use(express.json());
 
 const corsOptions = {
   origin: [
-    "https://mcssw.onrender.com/",
+    "https://mcssw.onrender.com",
     "https://new-project-35520.web.app",
     "http://localhost:5173",
   ],
