@@ -109,7 +109,6 @@ const getStudentsByClassLevel = asyncHandler(async (req, res) => {
   try {
     const classLevel = req.params.id;
     const students = await Student.find({ currentClassLevel: classLevel });
-    console.log("student found:", students.length);
 
     if (!students || students.length === 0) {
       return res.status(404).json({
@@ -120,6 +119,7 @@ const getStudentsByClassLevel = asyncHandler(async (req, res) => {
 
     res.status(200).json({
       status: "success",
+      count: students.length,
       data: students,
     });
   } catch (error) {
@@ -130,18 +130,69 @@ const getStudentsByClassLevel = asyncHandler(async (req, res) => {
   }
 });
 
+// const addStudentToClass = asyncHandler(async (req, res) => {
+//   try {
+//     const classLevelId = req.params.id;
+
+//     // Validate classLevelId (optional but recommended)
+//     if (!mongoose.Types.ObjectId.isValid(classLevelId)) {
+//       return res.status(400).json({ message: "Invalid class level ID" });
+//     }
+
+//     // Efficiently fetch students and class level in a single query
+//     const [students, classLevel] = await Promise.all([
+//       Student.find({ currentClassLevel: classLevelId }), // Filter students by class level
+//       ClassLevel.findById(classLevelId),
+//     ]);
+
+//     if (!classLevel) {
+//       return res.status(404).json({ message: "Class level not found" });
+//     }
+
+//     // Efficient bulk update using updateMany with upsert option
+//     const studentIds = students.map((student) => student._id);
+//     // console.log(studentIds);
+//     let update = {};
+//     if (students.length === 0) {
+//       update = {
+//         $set: { students: [] },
+//         $set: { numOfStudents: 0 },
+//       };
+//     }
+//     update = {
+//       $set: { students: { $each: studentIds } },
+//       $set: { numOfStudents: studentIds.length },
+//     };
+
+//     console.log(update);
+
+//     const updatedClassLevel = await ClassLevel.findByIdAndUpdate(
+//       classLevelId,
+//       update,
+//       { new: true, runValidators: true }
+//     );
+
+//     res
+//       .status(200)
+//       .json({ message: "Students added successfully", updatedClassLevel });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
 const addStudentToClass = asyncHandler(async (req, res) => {
   try {
     const classLevelId = req.params.id;
 
-    // Validate classLevelId (optional but recommended)
+    // Validate classLevelId
     if (!mongoose.Types.ObjectId.isValid(classLevelId)) {
       return res.status(400).json({ message: "Invalid class level ID" });
     }
 
-    // Efficiently fetch students and class level in a single query
+    // Fetch students and class level concurrently
     const [students, classLevel] = await Promise.all([
-      Student.find({ currentClassLevel: classLevelId }), // Filter students by class level
+      Student.find({ currentClassLevel: classLevelId }).select("_id"),
       ClassLevel.findById(classLevelId),
     ]);
 
@@ -149,22 +200,26 @@ const addStudentToClass = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "Class level not found" });
     }
 
-    // Efficient bulk update using updateMany with upsert option
+    // Prepare the update object
     const studentIds = students.map((student) => student._id);
     const update = {
-      $addToSet: { students: { $each: studentIds } },
-      $set: { numOfStudents: studentIds.length },
+      students: studentIds, // Overwrite students array with new array
+      numOfStudents: studentIds.length, // Update the count
     };
 
+    // Update the class level
     const updatedClassLevel = await ClassLevel.findByIdAndUpdate(
       classLevelId,
-      update,
+      { $set: update },
       { new: true, runValidators: true }
     );
 
-    res
-      .status(200)
-      .json({ message: "Students added successfully", updatedClassLevel });
+    // Respond with success
+    res.status(200).json({
+      message: "Students added successfully",
+      updatedClassLevel,
+      count: updatedClassLevel.students.length, // Number of students in the class level now
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

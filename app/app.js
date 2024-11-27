@@ -20,24 +20,26 @@ import announcementRouter from "../routes/announcements.js";
 import inquiresRouter from "../routes/inquiries.js";
 import resultRouter from "../routes/resultRouter.js";
 import feeRouter from "../routes/feeRouter.js";
-import  auditRouter  from "../routes/auditRouter.js";
+import auditRouter from "../routes/auditRouter.js";
 
 const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: ['https://new-project-35520.web.app', 'https://new-project-35520.web.app', 'http://localhost:5173'],
+  origin: [
+    "https://mcssw.onrender.com/",
+    "https://new-project-35520.web.app",
+    "http://localhost:5173",
+  ],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  allowedHeaders: 'Authorization,Origin,X-Requested-With,Content-Type,Accept',
-  credentials: true // Allow credentials
-
+  allowedHeaders: "Authorization,Origin,X-Requested-With,Content-Type,Accept",
+  credentials: true, // Allow credentials
 };
 
 // Use CORS middleware
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 
 // Mount your routers
 app.use("/api/v2/student", studentRouter);
@@ -53,9 +55,9 @@ app.use("/api/v2/question", questionRouter);
 app.use("/api/v2/payment", schoolFeeRouter);
 app.use("/api/v2/announcement", announcementRouter);
 app.use("/api/v2/inquiry", inquiresRouter);
-app.use('/api/v2/result', resultRouter)
-app.use('/api/v2/fee', feeRouter)
-app.use('/api/v2/audit', auditRouter)
+app.use("/api/v2/result", resultRouter);
+app.use("/api/v2/fee", feeRouter);
+app.use("/api/v2/audit", auditRouter);
 
 // Use error handlers
 app.use(notFoundHandler);
