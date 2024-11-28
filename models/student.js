@@ -43,6 +43,10 @@ const studentSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    graduationDate: {
+      type: Date,
+      default: null,
+    },
     isWithdrawn: {
       type: Boolean,
       default: false,

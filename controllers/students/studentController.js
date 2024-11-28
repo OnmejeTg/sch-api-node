@@ -183,7 +183,7 @@ const getStudents = async (req, res) => {
   try {
     // Fetch all students from the database
     // const students = await Student.find()
-    const students = await Student.find().populate([
+    const students = await Student.find({ active: true }).populate([
       "authUser",
       "currentClassLevel",
       "currentPayment",
@@ -193,6 +193,7 @@ const getStudents = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Students retrieved successfully",
+      length: students.length,
       data: students,
     });
   } catch (error) {
@@ -477,6 +478,135 @@ const seedStudents = async (req, res) => {
   }
 };
 
+const graduateStudent = async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const student = await Student.findByIdAndUpdate(
+      studentId,
+      { isGraduated: true, active: false },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+    student.graduationDate = new Date();
+    student.currentClassLevel = null;
+
+    res.status(200).json({
+      success: true,
+      message: "Student graduated successfully",
+      data: student,
+    });
+  } catch (error) {
+    console.error("Failed to graduate student:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to graduate student",
+      error: error.message,
+    });
+  }
+};
+const withdrawStudent = async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const student = await Student.findByIdAndUpdate(
+      studentId,
+      { isWithdrawn: true, active: false },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+    student.currentClassLevel = null;
+
+    res.status(200).json({
+      success: true,
+      message: "Student withdrawn successfully",
+      data: student,
+    });
+  } catch (error) {
+    console.error("Failed to withdraw student:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to withdraw student",
+      error: error.message,
+    });
+  }
+};
+const suspendStudent = async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const student = await Student.findByIdAndUpdate(
+      studentId,
+      { isSuspended: true, active: false },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+    student.currentClassLevel = null;
+
+    res.status(200).json({
+      success: true,
+      message: "Student suspended successfully",
+      data: student,
+    });
+  } catch (error) {
+    console.error("Failed to suspend student:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to suspend student",
+      error: error.message,
+    });
+  }
+};
+
+const getSelectStudents = async (req, res) => {
+  try {
+    const { selection } = req.query;
+
+    // Mapping selection to the corresponding query
+    const queryMap = {
+      graduated: { isGraduated: true },
+      withdrawn: { isWithdrawn: true },
+      suspended: { isSuspended: true },
+      active: { active: true },
+    };
+
+    // Default to an empty query if selection is not matched
+    const query = queryMap[selection] || {};
+
+    // Fetching students with the specified query and populating fields
+    const students = await Student.find(query).populate([
+      "authUser",
+      "currentClassLevel",
+      "currentPayment",
+    ]);
+
+    return res
+      .status(200)
+      .json({ status: true, length: students.length, data: students });
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export {
   registerStudent,
   getStudents,
@@ -488,4 +618,8 @@ export {
   uploadPicture,
   createStudentAuthUser,
   seedStudents,
+  graduateStudent,
+  suspendStudent,
+  withdrawStudent,
+  getSelectStudents,
 };

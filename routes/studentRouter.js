@@ -10,6 +10,10 @@ import {
   uploadPicture,
   createStudentAuthUser,
   seedStudents,
+  graduateStudent,
+  withdrawStudent,
+  suspendStudent,
+  getSelectStudents,
 } from "../controllers/students/studentController.js";
 import {
   isAdmin,
@@ -38,5 +42,9 @@ studentRouter.delete("/delete/:id", isAdmin, deleteStudent);
 studentRouter.post("/upload-pics/", uploadPicture);
 studentRouter.get("/createAuthUser/:id", createStudentAuthUser);
 studentRouter.post("/seed", seedStudents);
+studentRouter.put("/graduate/:id", isAdmin, graduateStudent);
+studentRouter.put("/withdraw/:id", isAdmin, withdrawStudent);
+studentRouter.put("/suspend/:id", isAdmin, suspendStudent);
+studentRouter.get("/", isAdmin, getSelectStudents);
 
 export default studentRouter;
