@@ -2,6 +2,8 @@ import Student from "../../models/student.js";
 import User from "../../models/user.js";
 import {
   generateStudentID,
+  getLastStudentId,
+  incrementLastNumber,
   isValidUserData,
 } from "../../utils/studentUtils.js";
 import {
@@ -108,7 +110,12 @@ const registerStudent = async (req, res) => {
     } = req.body;
 
     // Generate student ID
-    const studentId = await generateStudentID(entrySession);
+    let studentId = await getLastStudentId(entrySession);
+    const studentExists = await Student.exists({ studentId });
+    if (studentExists) {
+      studentId = incrementLastNumber(studentId);
+    }
+
     const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
     });
