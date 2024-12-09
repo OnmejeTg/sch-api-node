@@ -87,6 +87,106 @@ const logout = async (req, res) => {
 };
 
 //***********************Create Student*********************
+// const registerStudent = async (req, res) => {
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+
+//   try {
+//     const {
+//       surname,
+//       othername,
+//       email,
+//       classLevels,
+//       dateOfBirth,
+//       sex,
+//       entrySession,
+//       parentSurname,
+//       parentOthername,
+//       parentOccupation,
+//       phone,
+//       address,
+//       healthStatus,
+//       religion,
+//     } = req.body;
+
+//     console.log("registerStudent", req.body);
+
+//     // Generate student ID
+//     let studentId = await getLastStudentId(entrySession);
+//     const studentExists = await Student.exists({ studentId });
+//     if (studentExists) {
+//       studentId = incrementLastNumber(studentId);
+//     }
+
+//     const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
+//       updatedAt: -1,
+//     });
+
+//     // Create student object
+//     const student = new Student({
+//       studentId,
+//       surname,
+//       othername,
+//       email,
+//       classLevels,
+//       dateOfBirth,
+//       sex,
+//       entrySession,
+//       parentSurname,
+//       parentOthername,
+//       parentOccupation,
+//       phone,
+//       address,
+//       healthStatus,
+//       religion,
+//       academicYear,
+//     });
+
+//     // Save student to database
+//     const savedStudent = await student.save({ session });
+
+//     // Create auth user object
+//     const newUser = await User.create(
+//       [
+//         {
+//           username: studentId,
+//           surname: surname,
+//           othername: othername,
+//           password: surname.toLowerCase(), // Consider using a more secure password strategy
+//           userType: "student",
+//         },
+//       ],
+//       { session }
+//     );
+
+//     // Update student with authUser reference
+//     savedStudent.authUser = newUser[0]._id;
+//     await savedStudent.save({ session });
+
+//     // Commit the transaction
+//     await session.commitTransaction();
+//     session.endSession();
+
+//     // Respond with success message and the saved student data
+//     return res.status(201).json({
+//       success: true,
+//       message: "Student registered successfully",
+//       data: savedStudent,
+//     });
+//   } catch (error) {
+//     // If any error occurs, abort the transaction
+//     await session.abortTransaction();
+//     session.endSession();
+
+//     console.error("Error registering student:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to register student",
+//       error: error.message,
+//     });
+//   }
+// };
+
 const registerStudent = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -109,18 +209,24 @@ const registerStudent = async (req, res) => {
       religion,
     } = req.body;
 
-    // Generate student ID
+    console.log("registerStudent", req.body);
+
+    // Generate and validate student ID
     let studentId = await getLastStudentId(entrySession);
-    const studentExists = await Student.exists({ studentId });
-    if (studentExists) {
+    if (await Student.exists({ studentId })) {
       studentId = incrementLastNumber(studentId);
     }
 
+    // Get the current academic year
     const academicYear = await AcademicYear.findOne({ isCurrent: true }).sort({
       updatedAt: -1,
     });
 
-    // Create student object
+    if (!academicYear) {
+      throw new Error("No active academic year found");
+    }
+
+    // Create and save the student
     const student = new Student({
       studentId,
       surname,
@@ -140,39 +246,38 @@ const registerStudent = async (req, res) => {
       academicYear,
     });
 
-    // Save student to database
     const savedStudent = await student.save({ session });
 
-    // Create auth user object
-    const newUser = await User.create(
+    // Create the auth user
+    const [newUser] = await User.create(
       [
         {
           username: studentId,
-          surname: surname,
-          othername: othername,
-          password: surname.toLowerCase(), // Consider using a more secure password strategy
+          surname,
+          othername,
+          password: surname.toLowerCase(), // Replace with a secure password generation strategy
           userType: "student",
         },
       ],
       { session }
     );
 
-    // Update student with authUser reference
-    savedStudent.authUser = newUser[0]._id;
+    // Link the auth user to the student
+    savedStudent.authUser = newUser._id;
     await savedStudent.save({ session });
 
     // Commit the transaction
     await session.commitTransaction();
     session.endSession();
 
-    // Respond with success message and the saved student data
+    // Respond with success
     return res.status(201).json({
       success: true,
       message: "Student registered successfully",
       data: savedStudent,
     });
   } catch (error) {
-    // If any error occurs, abort the transaction
+    // Abort the transaction in case of error
     await session.abortTransaction();
     session.endSession();
 
