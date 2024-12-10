@@ -19,7 +19,7 @@ const sendOtp = asyncHandler(async (email, otp) => {
   const sendCompanyMail = await transporter.sendMail({
     from: "adusaater@gmail.com",
     to: email,
-    subject: "Dannon Email Verification",
+    subject: "Mcss UChi",
     html: ` 
         <p>Dear User,
             <br>
@@ -51,7 +51,4 @@ const sendOtp = asyncHandler(async (email, otp) => {
   }
 });
 
-
-export {
-    sendOtp,
-}
+export { sendOtp };

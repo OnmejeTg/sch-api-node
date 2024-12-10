@@ -20,7 +20,7 @@ function drawHeader(doc, pageWidth) {
     { align: "center" }
   );
   doc.text(
-    "TEL: +2347043786532, EMAIL: mcsswannune@gmail.com",
+    "TEL: +2347043786532, EMAIL: mcssuchi@gmail.com",
     pageWidth / 2,
     HEADER_HEIGHT,
     { align: "center" }
@@ -269,15 +269,13 @@ function drawSummary(doc, summary) {
   doc.line(104, SUMMARY_START_Y, 104, SUMMARY_START_Y + SUMMARY_HEIGHT);
   doc.line(136, SUMMARY_START_Y, 136, SUMMARY_START_Y + SUMMARY_HEIGHT);
   doc.line(167, SUMMARY_START_Y, 167, SUMMARY_START_Y + SUMMARY_HEIGHT);
-  const marksObtainable = summary.subjects?.length *100
-  
+  const marksObtainable = summary.subjects?.length * 100;
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("Marks Obtainable", 12, 202);
   doc.text(
-    marksObtainable !== undefined
-      ? marksObtainable.toString()
-      : "",
+    marksObtainable !== undefined ? marksObtainable.toString() : "",
     23,
     213
   );
@@ -305,7 +303,13 @@ function drawSummary(doc, summary) {
   );
 }
 
-function drawFooter(doc, pageWidth, remarks, teacherSignature, principalSignature) {
+function drawFooter(
+  doc,
+  pageWidth,
+  remarks,
+  teacherSignature,
+  principalSignature
+) {
   const {
     KEY_BOX_HEIGHT,
     POWERED_BY_Y,
@@ -322,26 +326,13 @@ function drawFooter(doc, pageWidth, remarks, teacherSignature, principalSignatur
   );
   doc.setFont("helvetica", "normal");
   doc.text(remarks.classTeacher || "", 49, REMARKS_Y);
-  doc.addImage(
-    teacherSignature,
-    "JPEG",
-    170,
-    REMARKS_Y-13,
-    20,
-    20
-  );
-  doc.addImage(
-    principalSignature,
-    "JPEG",
-    170,
-    REMARKS_Y+3,
-    20,
-    20
-  );
+  doc.addImage(teacherSignature, "JPEG", 170, REMARKS_Y - 13, 20, 20);
+  doc.addImage(principalSignature, "JPEG", 170, REMARKS_Y + 3, 20, 20);
   doc.text("Sign___________________", 163, REMARKS_Y);
 
   doc.setFont("helvetica", "bold");
-  doc.text("Principal's, Remark:_________________________________________________________________",
+  doc.text(
+    "Principal's, Remark:_________________________________________________________________",
     10,
     REMARKS_Y + 16
   );

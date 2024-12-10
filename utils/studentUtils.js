@@ -42,7 +42,7 @@ const getLastStudentId = async (entrySession) => {
       return newStudentId;
     } else {
       // If no last student found, return the initial student ID
-      return `MCSSW-${entrySession.slice(2, 4)}-001`;
+      return `MCSSU-${entrySession.slice(2, 4)}-001`;
     }
   } catch (error) {
     console.error("Error fetching last student ID:", error);
@@ -66,7 +66,7 @@ const generateStudentID = async function (entrySession) {
 
     // Generate the student ID
     const paddedCount = String(start).padStart(3, "0"); // Pad the count with leading zeros
-    const studentId = `MCSSW-${entrySession.slice(2, 4)}-${paddedCount}`;
+    const studentId = `MCSSU-${entrySession.slice(2, 4)}-${paddedCount}`;
 
     // Increment the counter value
     start += 1;

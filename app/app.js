@@ -26,11 +26,7 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: [
-    "https://mcssw.onrender.com",
-    "https://new-project-35520.web.app",
-    "http://localhost:5173",
-  ],
+  origin: ["http://localhost:5173"],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   allowedHeaders: "Authorization,Origin,X-Requested-With,Content-Type,Accept",
   credentials: true, // Allow credentials

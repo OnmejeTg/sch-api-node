@@ -454,7 +454,7 @@ const deleteStudent = async (req, res) => {
     });
   }
 };
-
+// TODO: Change path to uchi directoryPath
 const uploadPicture = async (req, res) => {
   const directoryPath = path.join(process.cwd(), "MCSSW STUDENTS/SSS 2B");
   let studentCount = 0;

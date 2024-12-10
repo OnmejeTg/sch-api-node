@@ -20,7 +20,7 @@ function drawAnnualHeader(doc, pageWidth) {
     { align: "center" }
   );
   doc.text(
-    "TEL: +2347043786532, EMAIL: mcsswannune@gmail.com",
+    "TEL: +2347043786532, EMAIL: mcssuchi@gmail.com",
     pageWidth / 2,
     HEADER_HEIGHT,
     { align: "center" }
@@ -149,7 +149,11 @@ function drawAnnualScoreSheet(doc, result) {
       110 + 7 * index
     );
     doc.text(total !== undefined ? total.toString() : "", 83, 110 + 7 * index);
-    doc.text(average !== undefined ? average.toFixed(1).toString() : "", 92, 110 + 7 * index);
+    doc.text(
+      average !== undefined ? average.toFixed(1).toString() : "",
+      92,
+      110 + 7 * index
+    );
     doc.text(
       highest !== undefined ? highest.toString() : "",
       100.8,
@@ -165,11 +169,7 @@ function drawAnnualScoreSheet(doc, result) {
       120,
       110 + 7 * index
     );
-    doc.text(
-      grade !== undefined ? grade.toString() : "",
-      129,
-      110 + 7 * index
-    );
+    doc.text(grade !== undefined ? grade.toString() : "", 129, 110 + 7 * index);
     // doc.text(grade || "", 138, 110 + 7 * index);
   });
 }
@@ -269,15 +269,13 @@ function drawAnnualSummary(doc, summary) {
   doc.line(104, SUMMARY_START_Y, 104, SUMMARY_START_Y + SUMMARY_HEIGHT);
   doc.line(136, SUMMARY_START_Y, 136, SUMMARY_START_Y + SUMMARY_HEIGHT);
   doc.line(167, SUMMARY_START_Y, 167, SUMMARY_START_Y + SUMMARY_HEIGHT);
-  const marksObtainable = summary.subjects?.length *300
-  
+  const marksObtainable = summary.subjects?.length * 300;
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("Marks Obtainable", 12, 202);
   doc.text(
-    marksObtainable !== undefined
-      ? marksObtainable.toString()
-      : "",
+    marksObtainable !== undefined ? marksObtainable.toString() : "",
     23,
     213
   );
@@ -305,7 +303,13 @@ function drawAnnualSummary(doc, summary) {
   // );
 }
 
-function drawAnnualFooter(doc, pageWidth, remarks, teacherSignature, principalSignature) {
+function drawAnnualFooter(
+  doc,
+  pageWidth,
+  remarks,
+  teacherSignature,
+  principalSignature
+) {
   const {
     KEY_BOX_HEIGHT,
     POWERED_BY_Y,
@@ -322,26 +326,13 @@ function drawAnnualFooter(doc, pageWidth, remarks, teacherSignature, principalSi
   );
   doc.setFont("helvetica", "normal");
   doc.text(remarks.classTeacher || "", 49, REMARKS_Y);
-  doc.addImage(
-    teacherSignature,
-    "JPEG",
-    170,
-    REMARKS_Y-13,
-    20,
-    20
-  );
-  doc.addImage(
-    principalSignature,
-    "JPEG",
-    170,
-    REMARKS_Y+3,
-    20,
-    20
-  );
+  doc.addImage(teacherSignature, "JPEG", 170, REMARKS_Y - 13, 20, 20);
+  doc.addImage(principalSignature, "JPEG", 170, REMARKS_Y + 3, 20, 20);
   doc.text("Sign___________________", 163, REMARKS_Y);
 
   doc.setFont("helvetica", "bold");
-  doc.text("Principal's, Remark:_________________________________________________________________",
+  doc.text(
+    "Principal's, Remark:_________________________________________________________________",
     10,
     REMARKS_Y + 16
   );

@@ -131,38 +131,6 @@ const studentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Pre-save hook to create a default authUser
-// studentSchema.pre('save', async function (next) {
-//   if (this.isNew && !this.authUser) {
-//     try {
-//       const newUser = await User.create({
-//         username: this.studentId,
-//         surname: this.surname,
-//         othername: this.othername,
-//         password: this.surname.toLowerCase(),
-//         userType: 'student'
-//       });
-//       this.authUser = newUser._id;F
-//     } catch (error) {
-//       return next(error);
-//     }
-//   }
-//   next();
-// });
-
-// Pre-validate hook to calculate student count and set default studentId
-// studentSchema.pre('validate', async function (next) {
-//   if (this.isNew && !this.studentId) {
-//     try {
-//       const count = await mongoose.model('Student').countDocuments();
-//       this.studentId = `MCSSW-${this.entrySession.slice(2, 4)}-${count + 1}`;
-//     } catch (error) {
-//       return next(error);
-//     }
-//   }
-//   next();
-// });
-
 studentSchema.methods.fullName = function () {
   return `${this.surname} ${this.othername}`;
 };
