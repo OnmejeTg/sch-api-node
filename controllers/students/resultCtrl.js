@@ -14,7 +14,7 @@ import axios from "axios";
 import Teacher from "../../models/teacher.js";
 import studentAnnualResult from "../../models/studentAnnualResult.js";
 import ClassLevel from "../../models/classModel.js";
-import { processResults } from "../../utils/studentUtils.js";
+import { downloadPdfs, processResults } from "../../utils/studentUtils.js";
 import Subject from "../../models/subject.js";
 import mongoose from "mongoose";
 
@@ -1051,6 +1051,40 @@ const InitializeAllResults = async (req, res) => {
   }
 };
 
+const DownloadResult = async (req, res) => {
+  const { classId } = req.params;
+
+  try {
+    // Fetch results and populate student data
+    const students = await Student.find({ currentClassLevel: classId });
+
+    const studentIds = students.map((student) => student._id);
+
+    // Extract IDs of filtered results
+
+    if (studentIds.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No results found for the specified class." });
+    }
+
+    // Download PDFs
+    await downloadPdfs(
+      studentIds,
+      "http://localhost:3100/api/v2/result/get-result-pdf",
+      "ss2a"
+    );
+
+    // console.log("Result IDs:", resultIDs);
+    return res.status(200).json({ message: "PDFs downloaded successfully." });
+  } catch (error) {
+    console.error("Error filtering results by class:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred.", error: error.message });
+  }
+};
+
 export {
   uploadScores,
   allResults,
@@ -1071,4 +1105,5 @@ export {
   assignResultClassLevel,
   RoundOffAverage,
   InitializeAllResults,
+  DownloadResult,
 };

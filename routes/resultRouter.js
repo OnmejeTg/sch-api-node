@@ -18,6 +18,7 @@ import {
   allAnnualResults,
   assignResultClassLevel,
   RoundOffAverage,
+  DownloadResult,
   InitializeAllResults,
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
@@ -74,5 +75,7 @@ resultRouter.get("/all-annual-results", allAnnualResults);
 resultRouter.get("/assign-res-class", assignResultClassLevel);
 resultRouter.post("/round-up-average", RoundOffAverage);
 resultRouter.post("/initialize-result", InitializeAllResults);
+
+resultRouter.get("/download-result/:classId", DownloadResult);
 
 export default resultRouter;

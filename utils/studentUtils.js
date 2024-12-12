@@ -1,7 +1,7 @@
 import Student from "../models/student.js";
 import { promises as fs } from "fs";
 import path from "path";
-
+import fetch from "node-fetch";
 import ClassLevel from "../models/classModel.js";
 
 import { fileURLToPath } from "url";
@@ -132,10 +132,55 @@ async function processResults(results) {
   return formattedData;
 }
 
+const downloadPdfs = async (ids, endpointUrl, classFolder) => {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    console.error("Invalid ID list provided.");
+    return;
+  }
+
+  for (const id of ids) {
+    try {
+      const url = `${endpointUrl}/${id}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to download PDF for ID: ${id}, Status: ${response.status}`
+        );
+      }
+      // Extract original file name from Content-Disposition header
+      const contentDisposition = response.headers.get("Content-Disposition");
+      const filenameRegex = /filename="([^"]+)"/;
+      const match = filenameRegex.exec(contentDisposition);
+      let originalFilename = "document_" + id + ".pdf";
+      if (match && match[1]) {
+        originalFilename = match[1];
+      }
+
+      const filePath = path.join(
+        __dirname,
+        `downloads/${classFolder}`,
+        originalFilename
+      );
+      await fs.writeFile(filePath, await response.buffer());
+
+      console.log(`Successfully downloaded PDF for ID: ${id} to ${filePath}`);
+    } catch (error) {
+      console.error(`Error downloading PDF for ID: ${id} - ${error.message}`);
+    }
+  }
+};
+
 export {
   generateStudentID,
   isValidUserData,
   processResults,
   incrementLastNumber,
   getLastStudentId,
+  downloadPdfs,
 };
