@@ -20,6 +20,7 @@ import {
   RoundOffAverage,
   DownloadResult,
   InitializeAllResults,
+  UpdateGrade,
 } from "../controllers/students/resultCtrl.js";
 import { isTeacherOrAdmin, isAdmin } from "../middleware/auth.js";
 import { memoryupload } from "../utils/multer.js";
@@ -77,5 +78,6 @@ resultRouter.post("/round-up-average", RoundOffAverage);
 resultRouter.post("/initialize-result", InitializeAllResults);
 
 resultRouter.get("/download-result/:classId", DownloadResult);
+resultRouter.put("/update-grade/:classId", UpdateGrade);
 
 export default resultRouter;

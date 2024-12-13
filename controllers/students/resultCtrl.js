@@ -9,6 +9,7 @@ import {
   generatePDF,
   generateAnnualPDF,
   createGradingFunction,
+  UpdateGradeFunc,
 } from "../../utils/result/studentResult.js";
 import axios from "axios";
 import Teacher from "../../models/teacher.js";
@@ -1072,7 +1073,7 @@ const DownloadResult = async (req, res) => {
     await downloadPdfs(
       studentIds,
       "http://localhost:3100/api/v2/result/get-result-pdf",
-      "ss2a"
+      "jss2b"
     );
 
     // console.log("Result IDs:", resultIDs);
@@ -1082,6 +1083,43 @@ const DownloadResult = async (req, res) => {
     return res
       .status(500)
       .json({ message: "An error occurred.", error: error.message });
+  }
+};
+
+const UpdateGrade = async (req, res) => {
+  try {
+    const results = await StudentResult.find();
+
+    if (!results || results.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No results found for the specified class level." });
+    }
+
+    const gradeMappings = [
+      { min: 75, remarks: "A" },
+      { min: 60, remarks: "B" },
+      { min: 50, remarks: "C" },
+      { min: 40, remarks: "D" },
+      { min: 0, remarks: "F" },
+    ];
+
+    for (const result of results) {
+      const avg = result.average;
+      const grade = gradeMappings.find(({ min }) => avg >= min);
+      if (grade) {
+        result.remarks = grade.remarks;
+        await result.save();
+      }
+    }
+
+    return res.status(200).json({ message: "Grades updated successfully." });
+  } catch (error) {
+    console.error("Error updating grades:", error);
+    return res.status(500).json({
+      message: "An error occurred while updating grades.",
+      error: error.message,
+    });
   }
 };
 
@@ -1106,4 +1144,5 @@ export {
   RoundOffAverage,
   InitializeAllResults,
   DownloadResult,
+  UpdateGrade,
 };

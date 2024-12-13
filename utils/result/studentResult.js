@@ -18,7 +18,7 @@ import {
   drawAnnualPsychomotorSkills,
   drawAnnualSummary,
   drawAnnualFooter,
-} from "./annualPDFUtils.js"
+} from "./annualPDFUtils.js";
 import { CONSTANTS } from "./constants.js";
 
 async function generatePDF(
@@ -73,13 +73,7 @@ async function generatePDF(
   const principalSignature = await getImageBase64(principalSignatureUrl);
   const remarks = getRemarks(student.data.grandScore);
 
-  drawFooter(
-    doc,
-    pageWidth,
-    remarks,
-    teacherSignature,
-    principalSignature
-  );
+  drawFooter(doc, pageWidth, remarks, teacherSignature, principalSignature);
 
   return doc;
 }
@@ -146,8 +140,7 @@ async function generateAnnualPDF(
   return doc;
 }
 
-
-//TODO: refine this function taking into account the fact that total number obtainable are not same for all classes 
+//TODO: refine this function taking into account the fact that total number obtainable are not same for all classes
 const getRemarks = (total) => {
   let remarks = {
     classTeacher: "",
@@ -180,16 +173,20 @@ const AnnualRemarks = (total) => {
     headTeacher: "",
   };
 
-  if (total >= 2700) { // 90% of 3000
+  if (total >= 2700) {
+    // 90% of 3000
     remarks.classTeacher = "Excellent performance.";
     remarks.headTeacher = "Outstanding work! Keep it up.";
-  } else if (total >= 2400) { // 80% of 3000
+  } else if (total >= 2400) {
+    // 80% of 3000
     remarks.classTeacher = "Very good performance.";
     remarks.headTeacher = "Great job! Continue the hard work.";
-  } else if (total >= 2100) { // 70% of 3000
+  } else if (total >= 2100) {
+    // 70% of 3000
     remarks.classTeacher = "Good performance.";
     remarks.headTeacher = "Well done! Aim for even higher.";
-  } else if (total >= 1800) { // 60% of 3000
+  } else if (total >= 1800) {
+    // 60% of 3000
     remarks.classTeacher = "Satisfactory performance.";
     remarks.headTeacher = "Good effort. Try to improve further.";
   } else {
@@ -200,19 +197,17 @@ const AnnualRemarks = (total) => {
   return remarks;
 };
 
-
-
 function createGradingFunction(maxScore) {
   // Calculate the thresholds based on the max score
   const thresholds = {
     A: maxScore * 0.75, // 75% of maxScore
     B: maxScore * 0.65, // 65% of maxScore
     C: maxScore * 0.55, // 55% of maxScore
-    D: maxScore * 0.40  // 40% of maxScore
+    D: maxScore * 0.4, // 40% of maxScore
   };
 
   // Return a function that calculates the grade based on the score
-  return function(score) {
+  return function (score) {
     let remarks = "";
     if (score >= thresholds.A) {
       remarks = "A";
@@ -229,6 +224,27 @@ function createGradingFunction(maxScore) {
   };
 }
 
+function UpdateGradeFunc(result) {
+  console.log("Updating grade", result);
+  const avg = result.average;
+  if (avg >= 70) {
+    result.remarks = "A";
+  } else if (avg >= 60) {
+    result.remarks = "B";
+  } else if (avg >= 50) {
+    result.remarks = "C";
+  } else if (avg >= 40) {
+    result.remarks = "D";
+  } else {
+    result.remarks = "F";
+  }
+  return result;
+}
 
-
-export { generatePDF, generateAnnualPDF, createGradingFunction, AnnualRemarks };
+export {
+  generatePDF,
+  generateAnnualPDF,
+  createGradingFunction,
+  AnnualRemarks,
+  UpdateGradeFunc,
+};

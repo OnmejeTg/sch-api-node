@@ -196,32 +196,32 @@ const studentResultSchema = new Schema(
 );
 
 // Calculate grand score, average, status, and remarks before saving
-studentResultSchema.pre("save", function (next) {
-  if (this.subjects && this.subjects.length > 0) {
-    this.grandScore = this.subjects.reduce(
-      (acc, subject) => acc + subject.total,
-      0
-    );
-    this.average = parseFloat(
-      (this.grandScore / this.subjects.length).toFixed(2)
-    );
+// studentResultSchema.pre("save", function (next) {
+//   if (this.subjects && this.subjects.length > 0) {
+//     this.grandScore = this.subjects.reduce(
+//       (acc, subject) => acc + subject.total,
+//       0
+//     );
+//     this.average = parseFloat(
+//       (this.grandScore / this.subjects.length).toFixed(2)
+//     );
 
-    if (this.average >= this.passMark) {
-      this.status = "passed";
-      if (this.average >= 90) {
-        this.remarks = "Excellent";
-      } else if (this.average >= 75) {
-        this.remarks = "Good";
-      } else {
-        this.remarks = "Poor";
-      }
-    } else {
-      this.status = "failed";
-      this.remarks = "Poor";
-    }
-  }
-  next();
-});
+//     if (this.average >= this.passMark) {
+//       this.status = "passed";
+//       if (this.average >= 90) {
+//         this.remarks = "Excellent";
+//       } else if (this.average >= 75) {
+//         this.remarks = "Good";
+//       } else {
+//         this.remarks = "Poor";
+//       }
+//     } else {
+//       this.status = "failed";
+//       this.remarks = "Poor";
+//     }
+//   }
+//   next();
+// });
 
 const StudentResult = mongoose.model("StudentResult", studentResultSchema);
 
